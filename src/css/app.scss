@@ -1,1 +1,14 @@
 // app global css in SCSS form
+.iphone-bottom-notch {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.user-card {
+  border-radius: 25px;
+}
+
+.user-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto;
+  row-gap: 10px;
+}

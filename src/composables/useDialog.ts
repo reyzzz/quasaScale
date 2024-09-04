@@ -28,10 +28,10 @@ export function useDialog() {
         label: 'Cancel',
         'no-caps': true,
         flat: true,
-        color: 'primary',
+        color: 'negative',
       },
       ok: {
-        label: 'Updated',
+        label: 'Confirm',
         color: 'primary',
         'no-caps': true,
         flat: true,

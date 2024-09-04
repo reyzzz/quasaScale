@@ -1,5 +1,5 @@
 <template>
-  <q-card flat bordered class="user-card q-mx-md">
+  <q-card flat bordered class="rounded-borders">
     <q-card-section>
       <div class="row justify-between items-center q-mb-sm">
         <div class="text-bold text-h6">

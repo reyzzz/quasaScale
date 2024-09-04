@@ -1,15 +1,17 @@
 <template>
-  <div class="q-ma-sm" :class="$q.platform.is.desktop ? 'user-container' : ''">
-    <template v-for="(user, index) in users" :key="index">
-      <user-card
-        :name="user.name"
-        :creation_date="user.creationDate"
-        :class="$q.platform.is.mobile ? 'q-my-sm' : ''"
-        @update-name="updateName($event, user)"
-        @delete-user="deleteUser(index)"
-      />
-    </template>
-  </div>
+  <q-page padding>
+    <div class="grid">
+      <template v-for="(user, index) in users" :key="index">
+        <user-card
+          :name="user.name"
+          :creation_date="user.creationDate"
+          :class="$q.platform.is.mobile ? 'q-my-sm' : ''"
+          @update-name="updateName($event, user)"
+          @delete-user="deleteUser(index)"
+        />
+      </template>
+    </div>
+  </q-page>
 </template>
 
 <script setup lang="ts">

@@ -2,13 +2,12 @@
 .iphone-bottom-notch {
   padding-bottom: env(safe-area-inset-bottom);
 }
-.user-card {
-  border-radius: 25px;
+.rounded-borders {
+  border-radius: 12px !important;
 }
 
-.user-container {
+.grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: auto;
-  row-gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(min(350px, 100%), 1fr));
+  gap: 5px;
 }

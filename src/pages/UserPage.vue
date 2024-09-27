@@ -1,72 +1,206 @@
 <template>
   <q-page padding>
-    <div class="grid">
-      <template v-for="(user, index) in users" :key="index">
-        <user-card
-          :name="user.name"
-          :creation_date="user.creationDate"
-          :class="$q.platform.is.mobile ? 'q-my-sm' : ''"
-          @update-name="updateName($event, user)"
-          @delete-user="deleteUser(index)"
+    <q-table
+      :grid="grid_view || $q.screen.lt.sm"
+      class="rounded-xl"
+      :rows="users"
+      :columns="cols"
+      row-key="name"
+      :filter="filter"
+      :pagination="{ rowsPerPage: 0 }"
+      flat
+      bordered
+      hide-pagination
+    >
+      <template v-slot:top-right>
+        <q-input
+          borderless
+          dense
+          debounce="300"
+          v-model="filter"
+          placeholder="Search"
+          color="white"
+          class="q-mr-xl"
+        >
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+        <q-btn
+          icon="add"
+          :label="$q.screen.gt.sm ? 'New User' : ''"
+          color="accent"
+          outline
         />
       </template>
-    </div>
+      <template #body="props">
+        <q-tr :props="props">
+          <q-td>{{ props.row.id }}</q-td>
+          <q-td>{{ props.row.name }}</q-td>
+          <q-td>{{ props.row.creationDate }}</q-td>
+          <q-td key="actions" :props="props">
+            <q-btn
+              icon="edit"
+              flat
+              round
+              color="blue-13"
+              dense
+              class="q-ml-md"
+              @click="renameUser(props.row)"
+            >
+              <q-tooltip> Rename user </q-tooltip>
+            </q-btn>
+            <q-btn
+              icon="key"
+              flat
+              round
+              color="green"
+              dense
+              class="q-ml-md"
+              @click="managePreAuthKeys(props.row)"
+            >
+              <q-tooltip> Manage PreAuthKey </q-tooltip>
+            </q-btn>
+            <q-btn
+              icon="delete"
+              flat
+              round
+              color="negative"
+              dense
+              class="q-ml-md"
+              @click="deleteUser(props.rowIndex)"
+            >
+              <q-tooltip> Delete User </q-tooltip>
+            </q-btn>
+          </q-td>
+        </q-tr>
+      </template>
+      <template #item="props">
+        <q-card flat bordered class="rounded-borders q-mr-sm q-mb-sm user-card">
+          <q-card-section class="q-pb-xs">
+            <div class="row q-mb-sm justify-between">
+              <div class="text-h5 row items-center">
+                {{ props.row.name }}
+              </div>
+              <q-btn flat round dense icon="more_vert">
+                <q-menu auto-close>
+                  <q-list style="width: max-content">
+                    <q-item clickable @click="managePreAuthKeys(props.row)">
+                      <q-item-section class="text-blue-13"
+                        >Manage PreAuthKey</q-item-section
+                      >
+                    </q-item>
+                    <q-item clickable @click="renameUser(props.row)">
+                      <q-item-section class="text-blue-13"
+                        >Rename User</q-item-section
+                      >
+                    </q-item>
+
+                    <q-separator />
+                    <q-item clickable @click="deleteUser(props.row)">
+                      <q-item-section class="text-negative"
+                        >Delete User</q-item-section
+                      >
+                    </q-item>
+                  </q-list>
+                </q-menu>
+              </q-btn>
+            </div>
+
+            <div class="text-weight-medium text-primary">
+              Creation Date:
+              <span class="text-secondary">{{ props.row.creationDate }} </span>
+            </div>
+
+            <div class="text-weight-medium text-primary q-my-sm">
+              PreAuthKeys:
+              <span class="text-secondary">{{ props.row.name }} </span>
+            </div>
+          </q-card-section>
+        </q-card>
+      </template>
+    </q-table>
+
+    <SafeTeleport to="#target">
+      <QitTitle title="Users" />
+    </SafeTeleport>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import UserCard from 'src/components/UserCard.vue'
+import { storeToRefs } from 'pinia'
+import { QTableColumn, useQuasar } from 'quasar'
+import PreAuthKeyComponent from 'src/components/PreAuthKeyComponent.vue'
+import QitTitle from 'src/components/QitTitle.vue'
+
+import { useDialog } from 'src/composables/useDialog'
+import { useNotify } from 'src/composables/useNorify'
+import { useSettingsStore } from 'src/stores/settings-store'
+import { useUsersStore } from 'src/stores/users-store'
 import { User } from 'src/types/Database'
 import { ref } from 'vue'
-const users = ref<User[]>([
+import { SafeTeleport } from 'vue-safe-teleport'
+const { users } = storeToRefs(useUsersStore())
+const $q = useQuasar()
+const cols = ref<QTableColumn[]>([
   {
-    id: 1,
-    name: 'test',
-    creationDate: '01/3/2024 14:28:31',
-    pre_auth_keys: [],
+    name: 'id',
+    required: true,
+    label: 'ID',
+    field: 'id',
+    align: 'left',
   },
   {
-    id: 2,
-    name: 'test',
-    creationDate: '01/3/2024 14:28:31',
-    pre_auth_keys: [],
+    name: 'name',
+    required: true,
+    label: 'Name',
+    field: 'name',
+    align: 'left',
   },
   {
-    id: 3,
-    name: 'test',
-    creationDate: '01/3/2024 14:28:31',
-    pre_auth_keys: [],
+    name: 'creationDate',
+    required: true,
+    label: 'Creation Date',
+    field: 'creationDate',
+    align: 'left',
   },
   {
-    id: 4,
-    name: 'test',
-    creationDate: '01/3/2024 14:28:31',
-    pre_auth_keys: [],
-  },
-  {
-    id: 5,
-    name: 'test',
-    creationDate: '01/3/2024 14:28:31',
-    pre_auth_keys: [],
-  },
-  {
-    id: 6,
-    name: 'test',
-    creationDate: '01/3/2024 14:28:31',
-    pre_auth_keys: [],
-  },
-  {
-    id: 7,
-    name: 'test',
-    creationDate: '01/3/2024 14:28:31',
-    pre_auth_keys: [],
+    name: 'actions',
+    label: 'Actions',
+    field: '',
+    align: 'right',
   },
 ])
-function updateName(name: string, user: User) {
-  user.name = name
+const filter = ref('')
+const user_edit = ref<User | null>(null)
+const { grid_view } = storeToRefs(useSettingsStore())
+function renameUser(user: User) {
+  useDialog()
+    .prompt(user.name)
+    .onOk((data: string) => {
+      user.name = data
+    })
 }
 
 function deleteUser(index: number) {
-  users.value = users.value.filter((val, ind) => index !== ind)
+  useDialog()
+    .del()
+    .onOk(() => {
+      users.value = users.value.filter((val, ind) => index !== ind)
+      useNotify('User delete successfully', 'check')
+    })
+}
+
+function managePreAuthKeys(user: User) {
+  user_edit.value = user
+  if (user_edit.value !== null) {
+    useDialog().show(
+      PreAuthKeyComponent,
+      {
+        pre_auth_keys: user_edit.value.pre_auth_keys,
+      },
+      $q.platform.is.mobile ? 'bottom' : 'standard'
+    )
+  }
 }
 </script>

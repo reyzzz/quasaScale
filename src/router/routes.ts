@@ -15,6 +15,11 @@ const routes: RouteRecordRaw[] = [
         name: 'nodes',
         component: () => import('pages/NodePage.vue'),
       },
+      {
+        path: '/dns',
+        name: 'dns',
+        component: () => import('pages/DNSPage.vue'),
+      },
     ],
   },
 

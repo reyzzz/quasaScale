@@ -15,9 +15,11 @@
   "dependencies": {
     "@quasar/extras": "^1.16.12",
     "axios": "^1.7.7",
+    "pinia": "^2.2.2",
     "quasar": "^2.16.9",
     "vue": "^3.4.38",
-    "vue-router": "^4.4.3"
+    "vue-router": "^4.4.3",
+    "vue-safe-teleport": "^0.1.2"
   },
   "devDependencies": {
     "@quasar/app-vite": "^1.9.5",

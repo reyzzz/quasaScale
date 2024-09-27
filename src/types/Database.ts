@@ -5,12 +5,13 @@ export interface User {
   pre_auth_keys: PreAuthKeys[]
 }
 
-export interface Device {
+export interface Node {
   id: number
-  device_last_seen: string
+  node_last_seen: string
   ip_address: string
-  assigned_user: User
-  device_route: string
+  assigned_user_id: number
+  assigned_user_name?: string
+  node_route: string
   tags: string[]
 }
 
@@ -18,11 +19,17 @@ export interface Settings {
   headscale_url: string
   headscale_api_key: string
 }
-interface PreAuthKeys {
+export interface PreAuthKeys {
   id: number
   key: string
   expiration_date: string
   reusable: boolean
   ephemeral: boolean
   used: boolean
+}
+
+export interface DNSRecord {
+  name: string //unique
+  type: string
+  value: string
 }

@@ -32,7 +32,7 @@ export function useDialog() {
       },
       ok: {
         label: 'Confirm',
-        color: 'primary',
+        color: 'blue',
         'no-caps': true,
         flat: true,
       },
@@ -49,7 +49,8 @@ export function useDialog() {
   }
   function show(
     componentToRender: Component,
-    componentProps?: Record<string, unknown>
+    componentProps?: Record<string, unknown>,
+    position?: 'standard' | 'top' | 'right' | 'bottom' | 'left' | undefined
   ) {
     return Dialog.create({
       component: DialogComponent,
@@ -57,6 +58,7 @@ export function useDialog() {
         componentToRender: componentToRender,
         componentToRenderProps: componentProps ?? {},
         persistent: true,
+        position: position ?? 'standard',
       },
       ok: false,
       cancel: false,

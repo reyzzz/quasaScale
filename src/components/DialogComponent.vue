@@ -4,7 +4,7 @@
     class="full-width"
     @hide="onDialogHide"
     :persistent="persistent"
-    :position="$q.platform.is.mobile ? 'bottom' : 'standard'"
+    :position="position"
     no-shake
     transition-show="slide-up"
     transition-hide="slide-down"
@@ -23,13 +23,13 @@
 
 <script setup lang="ts">
 import { useDialogPluginComponent } from 'quasar'
-import { onMounted, onUnmounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
 
-const props = defineProps<{
-  componentToRender: any
+import type { Component } from 'vue'
+defineProps<{
+  componentToRender: Component
   componentToRenderProps: Record<string, unknown>
   persistent: false
+  position: 'standard' | 'top' | 'right' | 'bottom' | 'left' | undefined
 }>()
 
 defineEmits([
@@ -39,18 +39,4 @@ defineEmits([
 ])
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
   useDialogPluginComponent()
-
-onMounted(() => {
-  location.hash = '#' + props.componentToRender.name
-})
-onUnmounted(() => {
-  location.hash = ''
-})
-const route = useRoute()
-watch(
-  () => route.hash,
-  (newHash) => {
-    if (newHash === '') onDialogCancel()
-  }
-)
 </script>

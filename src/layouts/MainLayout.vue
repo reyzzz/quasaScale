@@ -2,7 +2,17 @@
   <q-layout view="lHh Lpr lFf">
     <q-header>
       <q-toolbar>
-        <q-btn
+      :reveal-offset="100"
+      :class="$q.dark.isActive ? 'bg-dark-header' : 'bg-primary'"
+      class="text-white q-py-xs q-mb-xs row justify-between"
+    >
+      <div>
+        <TeleportTarget
+          id="target"
+          class="q-toolbar row no-wrap items-center"
+          role="toolbar"
+        />
+      </div>
           flat
           dense
           round

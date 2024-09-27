@@ -6,8 +6,15 @@
   border-radius: 12px !important;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(350px, 100%), 1fr));
-  gap: 5px;
+.bg-dark-header {
+  background: #253037 !important;
+}
+.card-center {
+  max-width: 450px;
+  width: 100%;
+  margin: 0 auto;
+  border-radius: 12px !important;
+}
+.user-card {
+  width: 390px;
 }

@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header>
-      <q-toolbar>
+    <q-header
+      reveal
       :reveal-offset="100"
       :class="$q.dark.isActive ? 'bg-dark-header' : 'bg-primary'"
       class="text-white q-py-xs q-mb-xs row justify-between"
@@ -13,31 +13,40 @@
           role="toolbar"
         />
       </div>
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-          v-if="$q.platform.is.desktop"
-        />
 
-        <q-toolbar-title> QuasaScale App </q-toolbar-title>
-      </q-toolbar>
+      <q-btn
+        color="blue"
+        size="md"
+        flat
+        round
+        outline
+        :icon="grid_view ? 'fa-solid fa-list' : 'grid_view'"
+        @click="grid_view = !grid_view"
+      />
     </q-header>
 
     <q-drawer
-      v-model="leftDrawerOpen"
+      v-if="$q.screen.gt.sm ? true : false"
+      v-model="drawer"
       show-if-above
-      bordered
-      v-if="$q.platform.is.desktop"
+      :width="250"
+      :class="$q.dark.isActive ? 'bg-dark-header' : 'bg-blue-grey-1'"
     >
+      <div
+        class="row q-py-sm q-px-md items-center text-h5 text-purple-14 text-bold"
+      >
+        <q-icon name="tap_and_play" />
+        <span class="q-ml-md">HeadScale</span>
+      </div>
       <q-list>
-        <q-item-label header class="text-primary text-h6 title">
-          HeadScale
-        </q-item-label>
         <template v-for="(link, index) in linksList" :key="index">
-          <q-item clickable v-ripple :to="{ name: link.route }">
+          <q-item
+            clickable
+            v-ripple
+            :to="{ name: link.route }"
+            exact
+            class="q-mx-md"
+          >
             <q-item-section avatar>
               <q-icon :name="link.icon" size="md" />
             </q-item-section>
@@ -48,7 +57,7 @@
     </q-drawer>
     <q-footer
       class="bg-white footer-top-border q-py-sm iphone-bottom-notch"
-      v-if="$q.platform.is.mobile"
+      v-if="$q.screen.lt.sm"
     >
       <q-tabs
         no-caps
@@ -79,21 +88,33 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
+import { useSettingsStore } from 'src/stores/settings-store'
+import { storeToRefs } from 'pinia'
 defineOptions({
   name: 'MainLayout',
 })
 
 const $q = useQuasar()
-const leftDrawerOpen = ref(false)
+const drawer = ref(true)
+const { grid_view } = storeToRefs(useSettingsStore())
 const linksList = ref([
   {
-    title: 'User',
+    title: 'Nodes',
+    icon: 'devices',
+    route: 'nodes',
+    label: 'Nodes',
+  },
+  {
+    title: 'Users',
     icon: 'person',
-    route: 'user',
+    route: 'users',
     label: 'User',
   },
+  {
+    title: 'DNS',
+    icon: 'dns',
+    route: 'dns',
+    label: 'DNS',
+  },
 ])
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
 </script>

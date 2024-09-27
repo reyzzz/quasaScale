@@ -1,0 +1,276 @@
+<template>
+  <q-page padding>
+    <q-table
+      :grid="grid_view || $q.screen.lt.sm"
+      class="rounded-xl"
+      :rows="nodes"
+      :columns="cols"
+      row-key="name"
+      :filter="filter"
+      :pagination="{ rowsPerPage: 0 }"
+      flat
+      bordered
+      hide-pagination
+    >
+      <template v-slot:top-right>
+        <q-input
+          borderless
+          dense
+          debounce="300"
+          v-model="filter"
+          placeholder="Search"
+          color="white"
+          class="q-mr-xl"
+        >
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+        <q-btn
+          @click="addNode"
+          icon="add"
+          :label="$q.screen.gt.sm ? 'New Node' : ''"
+          color="accent"
+          outline
+        />
+      </template>
+      <template #body="props">
+        <q-tr :props="props">
+          <q-td>{{ props.row.id }}</q-td>
+          <q-td>{{ props.row.node_last_seen }}</q-td>
+          <q-td>{{ props.row.ip_address }}</q-td>
+          <q-td>{{ props.row.assigned_user_name }}</q-td>
+          <q-td>{{ props.row.node_route }}</q-td>
+          <q-td
+            ><template v-for="(tag, index) in props.row.tags" :key="index">
+              <q-badge
+                outline
+                color="blue-13"
+                :label="tag"
+                class="q-mr-sm"
+              /> </template
+          ></q-td>
+          <q-td key="actions" :props="props">
+            <q-btn
+              icon="edit"
+              flat
+              round
+              color="blue-13"
+              dense
+              class="q-ml-md"
+              @click="editNode(props.row, props.rowIndex)"
+            >
+              <q-tooltip> Edit Node </q-tooltip>
+            </q-btn>
+            <q-btn
+              icon="delete"
+              flat
+              round
+              color="negative"
+              dense
+              class="q-ml-md"
+              @click="deleteNode(props.rowIndex)"
+            >
+              <q-tooltip> Delete Node </q-tooltip>
+            </q-btn>
+          </q-td>
+        </q-tr>
+      </template>
+      <template #item="props">
+        <q-card
+          flat
+          bordered
+          class="rounded-borders q-mr-sm q-mb-sm"
+          style="width: 400px"
+        >
+          <q-card-section class="q-pb-xs">
+            <div class="row q-mb-sm justify-between">
+              <div class="text-h5 row items-center">
+                <template v-for="(tag, index) in props.row.tags" :key="index">
+                  <q-badge
+                    outline
+                    color="blue-13"
+                    :label="tag"
+                    class="q-mr-sm"
+                  />
+                </template>
+              </div>
+              <q-btn flat round dense icon="more_vert">
+                <q-menu auto-close>
+                  <q-list style="width: max-content">
+                    <q-item
+                      clickable
+                      @click="editNode(props.row, props.rowIndex)"
+                    >
+                      <q-item-section class="text-blue-13"
+                        >Edit Node</q-item-section
+                      >
+                    </q-item>
+
+                    <q-separator />
+                    <q-item clickable @click="deleteNode(props.rowIndex)">
+                      <q-item-section class="text-negative"
+                        >Delete Node</q-item-section
+                      >
+                    </q-item>
+                  </q-list>
+                </q-menu>
+              </q-btn>
+            </div>
+            <div class="row q-mb-sm">
+              <div class="text-weight-medium text-primary col-5">
+                User:
+                <span class="text-secondary"
+                  >{{ props.row.assigned_user_name }}
+                </span>
+              </div>
+
+              <div class="text-weight-medium text-primary col-7">
+                Ip Address:
+                <span class="text-secondary">{{ props.row.ip_address }} </span>
+              </div>
+            </div>
+            <div class="row q-mb-sm">
+              <div class="text-weight-medium text-primary col-5">
+                Route:
+                <span class="text-secondary">{{ props.row.node_route }} </span>
+              </div>
+              <div class="text-weight-medium text-primary col-7">
+                Last Seen:
+                <span class="text-secondary"
+                  >{{ props.row.node_last_seen }}
+                </span>
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+      </template>
+    </q-table>
+    <SafeTeleport to="#target">
+      <QitTitle title="Nodes" />
+    </SafeTeleport>
+  </q-page>
+</template>
+
+<script setup lang="ts">
+import { storeToRefs } from 'pinia'
+import { QTableColumn } from 'quasar'
+import NodeConfiguration from 'src/components/NodeConfiguration.vue'
+import { useDialog } from 'src/composables/useDialog'
+import { useNotify } from 'src/composables/useNorify'
+import { useSettingsStore } from 'src/stores/settings-store'
+import { useUsersStore } from 'src/stores/users-store'
+import { Node } from 'src/types/Database'
+import { onMounted, ref } from 'vue'
+
+const filter = ref('')
+const { grid_view } = storeToRefs(useSettingsStore())
+const { users } = storeToRefs(useUsersStore())
+const nodes = ref<Node[]>([
+  {
+    id: 1,
+    node_last_seen: '2024-09-27 17:24',
+    ip_address: '192.168.1.1',
+    assigned_user_id: 1,
+    node_route: 'r',
+    tags: ['test1', 'test2'],
+  },
+])
+const cols = ref<QTableColumn[]>([
+  {
+    name: 'id',
+    required: true,
+    label: 'ID',
+    field: 'id',
+    align: 'left',
+  },
+  {
+    name: 'node_last_seen',
+    required: true,
+    label: 'Node Last Seen',
+    field: 'node_last_seen',
+    align: 'left',
+  },
+  {
+    name: 'ip_address',
+    required: true,
+    label: 'Ip Address',
+    field: 'node_last_seen',
+    align: 'left',
+  },
+  {
+    name: 'assigned_user_name',
+    required: true,
+    label: 'Assigned User',
+    field: 'assigned_user',
+    align: 'left',
+  },
+  {
+    name: 'node_route',
+    required: true,
+    label: 'Node Route',
+    field: 'node_route',
+    align: 'left',
+  },
+  {
+    name: 'tags',
+    required: true,
+    label: 'Tags',
+    field: 'tags',
+    align: 'left',
+  },
+  {
+    name: 'actions',
+    label: 'Actions',
+    field: '',
+    align: 'right',
+  },
+])
+
+function editNode(node: Node, index: number) {
+  useDialog()
+    .show(NodeConfiguration, {
+      node: node,
+    })
+    .onOk((updatedNode: Node) => {
+      nodes.value[index] = updatedNode
+    })
+}
+function addNode() {
+  const node = {
+    node_last_seen: '2024-09-27 17:24',
+    ip_address: '',
+    assigned_user_id: 1,
+    node_route: '',
+    tags: [],
+  }
+  useDialog()
+    .show(NodeConfiguration, {
+      node: node,
+    })
+    .onOk((updatedNode: Node) => {
+      nodes.value.push(updatedNode)
+    })
+}
+
+function deleteNode(index: number) {
+  useDialog()
+    .del()
+    .onOk(() => {
+      nodes.value = nodes.value.filter((_, ind) => index !== ind)
+      useNotify('Node delete successfully', 'check')
+    })
+}
+onMounted(() => {
+  nodes.value = nodes.value.map((node) => {
+    const user = users.value.find((user) => {
+      return user.id === node.assigned_user_id
+    })
+    if (!user) return node
+    return {
+      ...node,
+      assigned_user_name: user.name,
+    }
+  })
+})
+</script>

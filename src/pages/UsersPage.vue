@@ -8,6 +8,7 @@
       row-key="name"
       :filter="filter"
       :pagination="{ rowsPerPage: 0 }"
+      title="Users"
       flat
       bordered
       hide-pagination
@@ -120,26 +121,14 @@
         </q-card>
       </template>
     </q-table>
-
-    <SafeTeleport to="#target">
-      <QitTitle title="Users" />
-    </SafeTeleport>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
 import { QTableColumn, useQuasar } from 'quasar'
 import PreAuthKeyComponent from 'src/components/PreAuthKeyComponent.vue'
-import QitTitle from 'src/components/QitTitle.vue'
-
-import { useDialog } from 'src/composables/useDialog'
-import { useNotify } from 'src/composables/useNorify'
-import { useSettingsStore } from 'src/stores/settings-store'
-import { useUsersStore } from 'src/stores/users-store'
 import { User } from 'src/types/Database'
-import { ref } from 'vue'
-import { SafeTeleport } from 'vue-safe-teleport'
+
 const { users } = storeToRefs(useUsersStore())
 const $q = useQuasar()
 const cols = ref<QTableColumn[]>([
@@ -199,7 +188,7 @@ function managePreAuthKeys(user: User) {
       {
         pre_auth_keys: user_edit.value.pre_auth_keys,
       },
-      $q.platform.is.mobile ? 'bottom' : 'standard'
+      $q.platform.is.mobile ? 'bottom' : 'standard',
     )
   }
 }

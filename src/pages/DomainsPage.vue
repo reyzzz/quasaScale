@@ -2,6 +2,7 @@
   <q-page padding>
     <q-table
       :grid="grid_view || $q.screen.lt.sm"
+      title="DNS Records"
       class="rounded-xl"
       :rows="dnsRecords"
       :columns="cols"
@@ -108,40 +109,35 @@
         </q-card>
       </template>
     </q-table>
-    <QitTitle title="DNS Records" />
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
 import { QTableColumn, useQuasar } from 'quasar'
 import DNSConfiguration from 'src/components/DNSConfiguration.vue'
-import { useDialog } from 'src/composables/useDialog'
-import { useNotify } from 'src/composables/useNorify'
-import { useSettingsStore } from 'src/stores/settings-store'
 import { DNSRecord } from 'src/types/Database'
-import { ref } from 'vue'
+
 const $q = useQuasar()
 const { grid_view } = storeToRefs(useSettingsStore())
 const cols = ref<QTableColumn[]>([
   {
     name: 'name',
     required: true,
-    label: 'Name',
+    label: 'Domain Name',
     field: 'name',
     align: 'left',
   },
   {
     name: 'type',
     required: true,
-    label: 'Type',
+    label: 'Record Type',
     field: 'type',
     align: 'left',
   },
   {
     name: 'value',
     required: true,
-    label: 'Value',
+    label: 'Tailnet IP Address',
     field: 'value',
     align: 'left',
   },

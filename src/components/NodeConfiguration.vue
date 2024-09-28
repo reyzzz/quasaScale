@@ -55,11 +55,8 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
 import { extend, useQuasar } from 'quasar'
-import { useUsersStore } from 'src/stores/users-store'
 import { Node } from 'src/types/Database'
-import { ref } from 'vue'
 const $q = useQuasar()
 defineOptions({ name: 'node-dialog' })
 const props = defineProps<{

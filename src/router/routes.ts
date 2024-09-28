@@ -6,19 +6,19 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
-        path: '/user',
+        path: '/users',
         name: 'users',
-        component: () => import('pages/UserPage.vue'),
+        component: () => import('pages/UsersPage.vue'),
       },
       {
-        path: '/node',
+        path: '/nodes',
         name: 'nodes',
-        component: () => import('pages/NodePage.vue'),
+        component: () => import('pages/NodesPage.vue'),
       },
       {
         path: '/dns',
         name: 'dns',
-        component: () => import('pages/DNSPage.vue'),
+        component: () => import('pages/DomainsPage.vue'),
       },
     ],
   },

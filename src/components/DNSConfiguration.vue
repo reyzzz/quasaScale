@@ -48,9 +48,7 @@
 
 <script setup lang="ts">
 import { extend } from 'quasar'
-import { useNotify } from 'src/composables/useNorify'
 import { DNSRecord } from 'src/types/Database'
-import { ref } from 'vue'
 
 defineOptions({ name: 'dns-dialog' })
 const props = defineProps<{
@@ -73,7 +71,7 @@ function saveChanges() {
     useNotify(
       'name already use for a different ip address',
       'warning',
-      'negative'
+      'negative',
     )
     return
   }

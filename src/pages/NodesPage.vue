@@ -2,6 +2,7 @@
   <q-page padding>
     <q-table
       :grid="grid_view || $q.screen.lt.sm"
+      title="Nodes"
       class="rounded-xl"
       :rows="nodes"
       :columns="cols"
@@ -146,22 +147,13 @@
         </q-card>
       </template>
     </q-table>
-    <SafeTeleport to="#target">
-      <QitTitle title="Nodes" />
-    </SafeTeleport>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
 import { QTableColumn } from 'quasar'
 import NodeConfiguration from 'src/components/NodeConfiguration.vue'
-import { useDialog } from 'src/composables/useDialog'
-import { useNotify } from 'src/composables/useNorify'
-import { useSettingsStore } from 'src/stores/settings-store'
-import { useUsersStore } from 'src/stores/users-store'
 import { Node } from 'src/types/Database'
-import { onMounted, ref } from 'vue'
 
 const filter = ref('')
 const { grid_view } = storeToRefs(useSettingsStore())
@@ -194,7 +186,7 @@ const cols = ref<QTableColumn[]>([
   {
     name: 'ip_address',
     required: true,
-    label: 'Ip Address',
+    label: 'IP Address',
     field: 'node_last_seen',
     align: 'left',
   },

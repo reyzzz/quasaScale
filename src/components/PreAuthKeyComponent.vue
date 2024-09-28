@@ -135,7 +135,7 @@
 <script setup lang="ts">
 import { date, extend } from 'quasar'
 import { PreAuthKeys } from 'src/types/Database'
-import { ref } from 'vue'
+
 defineOptions({ name: 'preAuthKeys-dialog' })
 const props = defineProps<{
   onDialogOK: (payload?: unknown) => void
@@ -148,6 +148,6 @@ const ephemeral = ref(false)
 const reusable = ref(false)
 const expiration = ref(date.formatDate(new Date(), 'YYYY-MM-DD HH:mm'))
 const _preAuthKeys = ref<PreAuthKeys[]>(
-  extend(true, [], props.componentProps.pre_auth_keys)
+  extend(true, [], props.componentProps.pre_auth_keys),
 )
 </script>

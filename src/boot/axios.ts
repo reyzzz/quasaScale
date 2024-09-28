@@ -1,6 +1,6 @@
 import { boot } from 'quasar/wrappers'
 import axios, { AxiosInstance } from 'axios'
-import VueSafeTeleport from 'vue-safe-teleport'
+import 'uno.css'
 declare module 'vue' {
   interface ComponentCustomProperties {
     $axios: AxiosInstance
@@ -26,8 +26,6 @@ export default boot(({ app }) => {
   app.config.globalProperties.$api = api
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
   //       so you can easily perform requests against your app's API
-
-  app.use(VueSafeTeleport)
 })
 
 export { api }

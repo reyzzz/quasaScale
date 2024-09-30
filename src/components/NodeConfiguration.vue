@@ -3,12 +3,25 @@
     <q-form @submit="saveChanges">
       <q-card-section class="q-py-sm">
         <div class="row justify-between items-center">
-          <div>
-            <template v-for="(tag, index) in _node.tags" :key="index">
-              <q-badge outline color="blue-13" :label="tag" class="q-mr-sm" />
-            </template>
-            <q-btn icon="add" round flat dense @click="addTag" />
-          </div>
+          <div class="col-grow row items-center">
+  <q-scroll-area class="col-grow w-full h-40px max-h-300 q-pa-sm" :vertical-offset="[0,-4]">
+    <div class="row no-wrap">
+      <q-btn icon="add" round flat dense @click="addTag" size="sm" class="q-mr-sm"  >
+        <q-tooltip>
+                  Add tag
+          </q-tooltip>
+        </q-btn>
+      <template v-for="(tag, index) in _node.tags" :key="index">
+        <q-badge outline color="primary" :label="tag"   />
+        <q-btn flat round dense size="xs" icon="cancel" class="q-mr-xs" color="accent" @click="removeTag(index)" />
+          
+          
+      </template>
+    </div>
+    
+  </q-scroll-area>
+  
+</div>
           <div>
             <q-btn
               icon="save"
@@ -57,9 +70,8 @@
 </template>
 
 <script setup lang="ts">
-import { extend, useQuasar } from 'quasar'
+import { extend } from 'quasar'
 import { Node } from 'src/types/Database'
-const $q = useQuasar()
 defineOptions({ name: 'node-dialog' })
 const props = defineProps<{
   onDialogOK: (payload: Node) => void
@@ -72,16 +84,6 @@ const _node = ref<Node>(extend(true, {}, props.componentProps.node))
 
 function addTag() {
   $q.dialog({
-    title: 'Add Tag',
-    message: 'Enter you tag',
-    prompt: {
-      model: '',
-      type: 'text', // optional
-    },
-    color: 'blue',
-    cancel: true,
-    persistent: true,
-  }).onOk((data) => {
     _node.value.tags.push(data)
   })
 }
@@ -97,6 +99,12 @@ function saveChanges() {
 
   props.onDialogOK(_node.value)
 }
+
+function removeTag(index: number) {
+ _node.value.tags.splice(index, 1);
+
+}
+
 function validatedIp(ip: string) {
       const ipRegex = /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}$/;
       return ipRegex.test(ip);

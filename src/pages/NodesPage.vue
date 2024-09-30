@@ -88,24 +88,13 @@
           style="width: 400px"
         >
           <q-card-section class="q-pb-xs">
-            <q-scroll-area
-              class="h-25px w-full mt-5px"
-              :vertical-offset="[0, -5]"
-            >
-              <div class="text-h5 row items-center no-wrap">
-                <template v-for="(tag, index) in props.row.tags" :key="index">
-                  <q-badge
-                    outline
-                    color="primary"
-                    :label="tag"
-                    class="q-mr-sm q-mb-sm"
-                  />
-                </template>
-              </div>
-            </q-scroll-area>
             <div class="row justify-between items-center q-mb-sm">
-              <div class="text-h6">
+              <div class="text-h6 row items-center col-10 gap-5px">
                 {{ props.row.name }}
+
+                <template v-for="(tag, index) in props.row.tags" :key="index">
+                  <q-badge outline color="primary" :label="tag" />
+                </template>
               </div>
               <q-btn flat round dense icon="more_vert">
                 <q-menu auto-close>

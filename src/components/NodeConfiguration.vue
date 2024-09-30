@@ -41,7 +41,9 @@
           hide-bottom-space
           v-model="_node.ip_address"
           label="Ip Address"
-          :rules="[(val) => !!val || 'Field required']"
+          :rules="[(val) => !!val || 'Field required' , 
+                    (val) => validatedIp(val) || 'wrong ip format'
+          ]"
         />
         <q-input
           outlined
@@ -94,5 +96,12 @@ function saveChanges() {
   }
 
   props.onDialogOK(_node.value)
+}
+function validatedIp(ip: string) {
+      const ipRegex = /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}$/;
+      return ipRegex.test(ip);
+    
+}
+
 }
 </script>

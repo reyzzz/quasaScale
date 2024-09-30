@@ -39,7 +39,9 @@
           hide-bottom-space
           v-model="_dns.value"
           label="DNS Value"
-          :rules="[(val) => !!val || 'Field required']"
+          :rules="[(val) => !!val || 'Field required', 
+                    (val) => validatedIp(val) || 'Wrong ip format'
+          ]"
         />
       </q-card-section>
     </q-form>
@@ -62,19 +64,38 @@ const dnsTypes = ['A', 'B', 'C', 'D']
 const _dns = ref<DNSRecord>(extend(true, {}, props.componentProps.dns))
 
 function saveChanges() {
-  const dns = props.componentProps.dnsRecords.find((dnsRecord) => {
-    return (
-      dnsRecord.name === _dns.value.name && dnsRecord.value !== _dns.value.value
-    )
+  // let dns = props.componentProps.dnsRecords.find((dnsRecord) => {
+  //   return (
+  //     dnsRecord.name === _dns.value.name && dnsRecord.value !== _dns.value.value
+  //   )
+  // })
+  // if (dns) {
+  //   useNotify(
+  //     'name already use for a different ip address',
+  //     'warning',
+  //     'negative',
+  //   )
+  //   return
+  // }
+  
+  if(props.componentProps.dns.name !== _dns.value.name) {
+    const dns = props.componentProps.dnsRecords.find((dnsRecord) => {
+    return dnsRecord.name === _dns.value.name
   })
-  if (dns) {
-    useNotify(
-      'name already use for a different ip address',
+  if(dns){
+ useNotify(
+      'DNS name already used',
       'warning',
       'negative',
     )
     return
   }
+  }
   props.onDialogOK(_dns.value)
+}
+function validatedIp(ip: string) {
+      const ipRegex = /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}$/;
+      return ipRegex.test(ip);
+    
 }
 </script>

@@ -21,6 +21,9 @@
     "vue-router": "^4.4.3"
   },
   "devDependencies": {
+    "@iconify-json/carbon": "^1.2.1",
+    "@iconify-json/material-symbols": "^1.2.1",
+    "@iconify-json/material-symbols-light": "^1.2.1",
     "@quasar/app-vite": "2.0.0-beta.21",
     "@types/node": "^20.5.9",
     "@typescript-eslint/eslint-plugin": "^7.16.0",

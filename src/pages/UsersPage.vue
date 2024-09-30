@@ -112,19 +112,15 @@
             </div>
 
             <div>
-              <span class="text-weight-bold text-accent">
-
-                Creation Date:
-              </span>
+              <span class="text-weight-bold text-accent"> Creation Date: </span>
               <span class="text-secondary">{{ props.row.creationDate }} </span>
             </div>
 
             <div class="q-my-sm">
-              <span class="text-weight-bold text-accent">
-
-                PreAuthKeys:
+              <span class="text-weight-bold text-accent"> PreAuthKeys: </span>
+              <span class="text-secondary"
+                >{{ props.row.pre_auth_keys.length }}
               </span>
-              <span class="text-secondary">{{ props.row.pre_auth_keys.length }} </span>
             </div>
           </q-card-section>
         </q-card>
@@ -172,51 +168,50 @@ const cols = ref<QTableColumn[]>([
 const filter = ref('')
 
 const { grid_view } = storeToRefs(useSettingsStore())
-function renameUser(user: User) {
+function renameUser(user: User): void {
   $q.dialog({
     cancel: {
-        label: 'Cancel',
-        'no-caps': true,
-        flat: true,
-        color: 'negative',
-      },
-      ok: {
-        label: 'Confirm',
-        color: 'blue',
-        'no-caps': true,
-        flat: true,
-      },
-      prompt: {
-        model: user.name,
-        type: 'text',
-        isValid(value) {
-        if (value.length === 0) return false;
+      label: 'Cancel',
+      'no-caps': true,
+      flat: true,
+      color: 'negative',
+    },
+    ok: {
+      label: 'Confirm',
+      color: 'blue',
+      'no-caps': true,
+      flat: true,
+    },
+    prompt: {
+      model: user.name,
+      type: 'text',
+      isValid(value) {
+        if (value.length === 0) return false
         const result = checkUsername(value, user.name)
 
-        return result === true; 
+        return result === true
       },
-         rules: [
-        (val) => !!val || 'Field is required', 
-        
-          (val: string) => {
-            const result = checkUsername(val, user.name);
-            return result === true || result  
-          }
+      rules: [
+        (val) => !!val || 'Field is required',
+
+        (val: string) => {
+          const result = checkUsername(val, user.name)
+          return result === true || result
+        },
       ],
-    
-      },
-      color: 'primary',
-      html: true,
-      message: 'Insert username',
-      persistent: true,
-      title: 'Rename User',
+    },
+    color: 'primary',
+    html: true,
+    message: 'Insert username',
+    persistent: true,
+    title: 'Rename User',
   }).onOk((username) => {
     user.name = username
-    useNotify('Username updated successfully', 'check');
+    useNotify('Username updated successfully', 'check')
   })
 }
 
-function deleteUser(index: number) {
+function deleteUser(index: number): void {
   useDialog()
     .del()
     .onOk(() => {
@@ -225,37 +220,41 @@ function deleteUser(index: number) {
     })
 }
 
-function managePreAuthKeys(user: User) {
-    useDialog().show(
+function managePreAuthKeys(user: User): void {
+  useDialog()
+    .show(
       PreAuthKeyComponent,
       {
         pre_auth_keys: user.pre_auth_keys,
       },
       $q.platform.is.mobile ? 'bottom' : 'standard',
-    ).onOk((pre_auth_keys: PreAuthKeys[]) => {
+    )
+    .onOk((pre_auth_keys: PreAuthKeys[]) => {
       user.pre_auth_keys = pre_auth_keys
       useNotify('PreAuthsKeys updated successfully', 'check')
     })
-  }
+}
 
-function addUser() {
-  useDialog().prompt('', 'Insert username', 'Add User', checkUsername ).onOk((userName) => {
-    const creationDate = date.formatDate(new Date(), 'YYYY-MM-DD HH:mm')
-    const user: User = {
-      id: users.value.length,
-      name: userName,
-      creationDate: creationDate,
-      pre_auth_keys: [],
-    }
-    users.value.push(user)
-    useNotify('User added successfully', 'check')
-  })
+function addUser(): void {
+  useDialog()
+    .prompt('', 'Insert username', 'Add User', checkUsername)
+    .onOk((userName) => {
+      const creationDate = date.formatDate(new Date(), 'YYYY-MM-DD HH:mm')
+      const user: User = {
+        id: users.value.length,
+        name: userName,
+        creationDate: creationDate,
+        pre_auth_keys: [],
+      }
+      users.value.push(user)
+      useNotify('User added successfully', 'check')
+    })
 }
 function checkUsername(name: string, org_name?: string): boolean | string {
-  if(org_name) {
-    if(name === org_name) return true;
+  if (org_name) {
+    if (name === org_name) return true
   }
   const user = users.value.find((user) => user.name === name)
-  return user ? 'UserName already exist' : true; 
+  return user ? 'UserName already exist' : true
 }
 </script>

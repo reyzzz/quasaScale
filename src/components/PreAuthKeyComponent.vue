@@ -1,20 +1,21 @@
 <template>
-  <q-card  style="height: calc(100vh - 300px)" class="max-w-450px w-full">
+  <q-card style="height: calc(100vh - 300px)" class="max-w-450px w-full">
     <q-card-section class="row justify-between items-center">
-      <div class="text-h6" >PreAuthKeys {{$q.screen.gt.sm ? 'Management' : ''}}</div>
+      <div class="text-h6">
+        PreAuthKeys {{ $q.screen.gt.sm ? 'Management' : '' }}
+      </div>
       <div>
         <q-btn
-              icon="save"
-              flat
-              round
-              color="blue"
-              type="submit"
-              class="q-mr-md"
-              @click="submit"
-            />
-            <q-btn  icon="close" round flat v-close-popup/>
+          icon="save"
+          flat
+          round
+          color="blue"
+          type="submit"
+          class="q-mr-md"
+          @click="submit"
+        />
+        <q-btn icon="close" round flat v-close-popup />
       </div>
-      
     </q-card-section>
     <q-card-section>
       <q-btn
@@ -26,7 +27,12 @@
         @click="showAddKeySection = true"
       />
       <q-scroll-area style="height: calc(100vh - 500px)" class="q-pa-md">
-        <q-card flat bordered class=" rounded-[12px] q-mb-sm" v-if="showAddKeySection">
+        <q-card
+          flat
+          bordered
+          class="rounded-[12px] q-mb-sm"
+          v-if="showAddKeySection"
+        >
           <q-card-section class="q-py-sm">
             <div class="row justify-between items-center">
               <div class="q-mb-sm">
@@ -41,7 +47,14 @@
                   color="purple-13"
                 />
               </div>
-              <q-btn icon="check" color="positive" round flat dense @click="addKey"/>
+              <q-btn
+                icon="check"
+                color="positive"
+                round
+                flat
+                dense
+                @click="addKey"
+              />
             </div>
 
             <div>
@@ -162,21 +175,21 @@ const _preAuthKeys = ref<PreAuthKeys[]>(
   extend(true, [], props.componentProps.pre_auth_keys),
 )
 
-function addKey() {
-  const preAuthKey:PreAuthKeys = {
+function addKey(): void {
+  const preAuthKey: PreAuthKeys = {
     id: _preAuthKeys.value.length,
     ephemeral: ephemeral.value,
     reusable: reusable.value,
     used: false,
     key: 'ascasdcasdc',
-    expiration_date: expiration.value
+    expiration_date: expiration.value,
   }
   _preAuthKeys.value.push(preAuthKey)
   showAddKeySection.value = false
-  ephemeral.value = false;
-  reusable.value = false;
+  ephemeral.value = false
+  reusable.value = false
 }
-function submit() {
+function submit(): void {
   props.onDialogOK(_preAuthKeys.value)
 }
 </script>

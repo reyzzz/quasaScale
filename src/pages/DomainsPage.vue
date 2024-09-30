@@ -2,7 +2,7 @@
   <q-page padding>
     <q-table
       :grid="grid_view || $q.screen.lt.sm"
-      :title="$q.screen.lt.sm ? 'DNS' :  'DNS Records'"
+      :title="$q.screen.lt.sm ? 'DNS' : 'DNS Records'"
       class="rounded-xl"
       table-header-class="text-[#929289] font-bold"
       title-class="text-[#e59c21] text-shadow-[rgb(255,153,0)_0px_0px_1px,rgba(249,164,0,0.6)_0px_0px_5px,rgba(249,164,0,0.4)_0px_5px_4px]"
@@ -99,18 +99,12 @@
             </div>
 
             <div>
-              <span class="text-weight-bold text-accent">
-
-                Type:
-              </span>
+              <span class="text-weight-bold text-accent"> Type: </span>
               <span class="text-secondary">{{ props.row.type }} </span>
             </div>
 
             <div class="q-my-sm">
-              <span class="text-weight-bold text-accent">
-                
-                Value:
-              </span>
+              <span class="text-weight-bold text-accent"> Value: </span>
               <span class="text-secondary">{{ props.row.value }} </span>
             </div>
           </q-card-section>
@@ -176,7 +170,7 @@ const dnsRecords = ref<DNSRecord[]>([
   },
 ])
 
-function editDNS(dnsRecord: DNSRecord, index: number) {
+function editDNS(dnsRecord: DNSRecord, index: number): void {
   useDialog()
     .show(DNSConfiguration, {
       dns: dnsRecord,
@@ -188,7 +182,7 @@ function editDNS(dnsRecord: DNSRecord, index: number) {
     })
 }
 
-function addDNS() {
+function addDNS(): void {
   const dnsRecord: DNSRecord = {
     name: '',
     type: 'A',
@@ -205,7 +199,7 @@ function addDNS() {
     })
 }
 
-function deleteDNS(index: number) {
+function deleteDNS(index: number): void {
   useDialog()
     .del()
     .onOk(() => {

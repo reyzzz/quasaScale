@@ -88,20 +88,22 @@
         >
           <q-card-section class="q-pb-xs">
             <div class="row q-mb-sm justify-between items-center">
-              
-                <q-scroll-area  class=" h-25px col-grow q-mt-xs" :vertical-offset="[0,-5]" >
-                   <div class="text-h5 row items-center no-wrap ">
-                      <template v-for="(tag, index) in props.row.tags" :key="index">
-                        <q-badge
-                        outline
-                        color="primary"
-                        :label="tag"
-                        class="q-mr-sm q-mb-sm"
-                        />
-                      </template>
-                    </div>
-                </q-scroll-area>
-              
+              <q-scroll-area
+                class="h-25px col-grow q-mt-xs"
+                :vertical-offset="[0, -5]"
+              >
+                <div class="text-h5 row items-center no-wrap">
+                  <template v-for="(tag, index) in props.row.tags" :key="index">
+                    <q-badge
+                      outline
+                      color="primary"
+                      :label="tag"
+                      class="q-mr-sm q-mb-sm"
+                    />
+                  </template>
+                </div>
+              </q-scroll-area>
+
               <q-btn flat round dense icon="more_vert">
                 <q-menu auto-close>
                   <q-list class="w-max">
@@ -126,10 +128,7 @@
             </div>
             <div class="row q-mb-sm">
               <div class="col-5">
-                <span  class="text-weight-bold text-accent">
-
-                  User:
-                </span>
+                <span class="text-weight-bold text-accent"> User: </span>
                 <span class="text-secondary"
                   >{{ props.row.assigned_user_name }}
                 </span>
@@ -137,23 +136,17 @@
 
               <div class="col-7">
                 <span class="text-weight-bold text-accent"> Ip Address:</span>
-               
+
                 <span class="text-secondary">{{ props.row.ip_address }} </span>
               </div>
             </div>
             <div class="row q-mb-sm">
               <div class="col-5">
-                <span  class="text-weight-bold text-accent">
-
-                  Route:
-                </span>
+                <span class="text-weight-bold text-accent"> Route: </span>
                 <span class="text-secondary">{{ props.row.node_route }} </span>
               </div>
               <div class="col-7">
-                <span class="text-weight-bold text-accent">
-                  
-                  Last Seen:
-                </span>
+                <span class="text-weight-bold text-accent"> Last Seen: </span>
                 <span class="text-secondary"
                   >{{ props.row.node_last_seen }}
                 </span>
@@ -235,7 +228,7 @@ const cols = ref<QTableColumn[]>([
   },
 ])
 
-function editNode(node: Node, index: number) {
+function editNode(node: Node, index: number): void {
   useDialog()
     .show(NodeConfiguration, {
       node: node,
@@ -245,7 +238,7 @@ function editNode(node: Node, index: number) {
       useNotify('Node updated successfully', 'check')
     })
 }
-function addNode() {
+function addNode(): void {
   const node = {
     node_last_seen: '2024-09-27 17:24',
     ip_address: '',
@@ -263,7 +256,7 @@ function addNode() {
     })
 }
 
-function deleteNode(index: number) {
+function deleteNode(index: number): void {
   useDialog()
     .del()
     .onOk(() => {

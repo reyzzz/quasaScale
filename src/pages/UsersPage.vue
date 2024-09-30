@@ -134,9 +134,9 @@
 </template>
 
 <script setup lang="ts">
-import { QTableColumn, useQuasar } from 'quasar'
+import { date, QTableColumn, useQuasar } from 'quasar'
 import PreAuthKeyComponent from 'src/components/PreAuthKeyComponent.vue'
-import { User } from 'src/types/Database'
+import { PreAuthKeys, User } from 'src/types/Database'
 
 const { users } = storeToRefs(useUsersStore())
 const $q = useQuasar()
@@ -170,14 +170,50 @@ const cols = ref<QTableColumn[]>([
   },
 ])
 const filter = ref('')
-const user_edit = ref<User | null>(null)
+
 const { grid_view } = storeToRefs(useSettingsStore())
 function renameUser(user: User) {
-  useDialog()
-    .prompt(user.name)
-    .onOk((data: string) => {
-      user.name = data
-    })
+  $q.dialog({
+    cancel: {
+        label: 'Cancel',
+        'no-caps': true,
+        flat: true,
+        color: 'negative',
+      },
+      ok: {
+        label: 'Confirm',
+        color: 'blue',
+        'no-caps': true,
+        flat: true,
+      },
+      prompt: {
+        model: user.name,
+        type: 'text',
+        isValid(value) {
+        if (value.length === 0) return false;
+        const result = checkUsername(value, user.name)
+
+        return result === true; 
+      },
+         rules: [
+        (val) => !!val || 'Field is required', 
+        
+          (val: string) => {
+            const result = checkUsername(val, user.name);
+            return result === true || result  
+          }
+      ],
+    
+      },
+      color: 'primary',
+      html: true,
+      message: 'Insert username',
+      persistent: true,
+      title: 'Rename User',
+  }).onOk((username) => {
+    user.name = username
+    useNotify('Username updated successfully', 'check');
+  })
 }
 
 function deleteUser(index: number) {
@@ -190,15 +226,36 @@ function deleteUser(index: number) {
 }
 
 function managePreAuthKeys(user: User) {
-  user_edit.value = user
-  if (user_edit.value !== null) {
     useDialog().show(
       PreAuthKeyComponent,
       {
-        pre_auth_keys: user_edit.value.pre_auth_keys,
+        pre_auth_keys: user.pre_auth_keys,
       },
       $q.platform.is.mobile ? 'bottom' : 'standard',
-    )
+    ).onOk((pre_auth_keys: PreAuthKeys[]) => {
+      user.pre_auth_keys = pre_auth_keys
+      useNotify('PreAuthsKeys updated successfully', 'check')
+    })
   }
+
+function addUser() {
+  useDialog().prompt('', 'Insert username', 'Add User', checkUsername ).onOk((userName) => {
+    const creationDate = date.formatDate(new Date(), 'YYYY-MM-DD HH:mm')
+    const user: User = {
+      id: users.value.length,
+      name: userName,
+      creationDate: creationDate,
+      pre_auth_keys: [],
+    }
+    users.value.push(user)
+    useNotify('User added successfully', 'check')
+  })
+}
+function checkUsername(name: string, org_name?: string): boolean | string {
+  if(org_name) {
+    if(name === org_name) return true;
+  }
+  const user = users.value.find((user) => user.name === name)
+  return user ? 'UserName already exist' : true; 
 }
 </script>

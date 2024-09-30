@@ -1,6 +1,11 @@
 <template>
-  <q-card style="height: calc(100vh - 300px)" class="max-w-450px w-full">
-    <q-card-section class="row justify-between items-center">
+  <q-card
+    :bordered="$q.screen.gt.xs"
+    flat
+    style="height: calc(100vh - 314px)"
+    class="w-100% rounded-xl! bg-stone-950"
+  >
+    <q-card-section class="row justify-between items-center q-py-sm">
       <div class="text-h6">
         PreAuthKeys {{ $q.screen.gt.sm ? 'Management' : '' }}
       </div>
@@ -12,17 +17,22 @@
       <q-btn
         icon="add"
         label="add key"
-        flat
+        color="primary"
+        outline
         dense
-        class="q-mb-sm q-ml-md"
-        @click="showAddKeySection = true"
+        class="q-mb-sm"
+        @click="addKeySection = true"
       />
-      <q-scroll-area style="height: calc(100vh - 500px)" class="q-pa-md">
+      <q-scroll-area
+        style="height: calc(100vh - 500px)"
+        :visible="false"
+        :thumb-style="{ width: '3px', backgroundColor: '#ff8700' }"
+      >
         <q-card
           flat
           bordered
-          class="rounded-[12px] q-mb-sm"
-          v-if="showAddKeySection"
+          class="rounded-xl q-mb-sm q-mr-xs"
+          v-if="addKeySection"
         >
           <q-card-section class="q-py-sm">
             <div class="row justify-between items-center">
@@ -104,7 +114,7 @@
           </q-card-section>
         </q-card>
         <template v-for="pre_auth_key in _preAuthKeys" :key="pre_auth_key.id">
-          <q-card flat bordered class="rounded-[12px] q-mb-sm">
+          <q-card flat bordered class="rounded-xl q-mb-sm q-mr-xs">
             <q-card-section class="q-py-sm">
               <div class="q-mb-sm">
                 <q-badge
@@ -130,13 +140,13 @@
               </div>
 
               <div class="text-secondary">
-                <span class="text-weight-bold text-accent q-mr-xs">Key:</span
-                >{{ pre_auth_key.key }}
+                <span class="text-weight-bold text-accent q-mr-xs">Key: </span>
+                {{ pre_auth_key.key }}
               </div>
               <div class="text-secondary">
-                <span class="text-weight-bold text-accent q-mr-xs"
-                  >Expiration:</span
-                >
+                <span class="text-weight-bold text-accent q-mr-xs">
+                  Expiration:
+                </span>
                 {{ pre_auth_key.expiration_date }}
               </div>
             </q-card-section>
@@ -144,8 +154,15 @@
         </template>
       </q-scroll-area>
     </q-card-section>
-    <q-card-actions class="row justify-center">
-      <q-btn label="Save" color="green" @click="submit" rounded class="w-3/4" />
+    <q-card-actions vertical>
+      <q-btn
+        label="Save"
+        color="primary"
+        outline
+        @click="submit"
+        rounded
+        icon="save"
+      />
     </q-card-actions>
   </q-card>
 </template>
@@ -161,7 +178,7 @@ const props = defineProps<{
     pre_auth_keys: PreAuthKeys[]
   }
 }>()
-const showAddKeySection = ref(false)
+const addKeySection = ref(false)
 const ephemeral = ref(false)
 const reusable = ref(false)
 const expiration = ref(date.formatDate(new Date(), 'YYYY-MM-DD HH:mm'))
@@ -179,7 +196,7 @@ function addKey(): void {
     expiration_date: expiration.value,
   }
   _preAuthKeys.value.push(preAuthKey)
-  showAddKeySection.value = false
+  addKeySection.value = false
   ephemeral.value = false
   reusable.value = false
 }

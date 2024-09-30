@@ -35,6 +35,7 @@
           :label="$q.screen.gt.sm ? 'New Node' : ''"
           color="primary"
           outline
+          :dense="$q.screen.lt.sm"
         />
       </template>
       <template #body="props">
@@ -81,12 +82,7 @@
         </q-tr>
       </template>
       <template #item="props">
-        <q-card
-          flat
-          bordered
-          class="rounded-[12px] q-mr-sm q-mb-sm"
-          style="width: 400px"
-        >
+        <q-card flat bordered class="rounded-xl">
           <q-card-section class="q-pb-xs">
             <div class="row justify-between items-center q-mb-sm">
               <div class="text-h6 row items-center col-10 gap-5px">
@@ -103,9 +99,9 @@
                       clickable
                       @click="editNode(props.row, props.rowIndex)"
                     >
-                      <q-item-section class="text-primary"
-                        >Edit Node</q-item-section
-                      >
+                      <q-item-section class="text-primary">
+                        Edit Node
+                      </q-item-section>
                     </q-item>
 
                     <q-separator />

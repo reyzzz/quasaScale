@@ -35,6 +35,7 @@
           color="primary"
           outline
           @click="addUser"
+          :dense="$q.screen.lt.sm"
         />
       </template>
       <template #body="props">
@@ -66,7 +67,7 @@
               class="q-ml-md"
               @click="managePreAuthKeys(props.row)"
             >
-              <q-tooltip> Manage PreAuthKey </q-tooltip>
+              <q-tooltip> Manage PreAuthKeys </q-tooltip>
             </q-btn>
             <q-btn
               icon="delete"
@@ -83,7 +84,7 @@
         </q-tr>
       </template>
       <template #item="props">
-        <q-card flat bordered class="rounded-[12px] q-mr-sm q-mb-sm w-400px">
+        <q-card flat bordered class="rounded-xl">
           <q-card-section class="q-pb-xs">
             <div class="row q-mb-sm justify-between">
               <div class="text-h5 row items-center">
@@ -93,21 +94,21 @@
                 <q-menu auto-close>
                   <q-list class="w-max">
                     <q-item clickable @click="managePreAuthKeys(props.row)">
-                      <q-item-section class="text-primary"
-                        >Manage PreAuthKey</q-item-section
-                      >
+                      <q-item-section class="text-primary">
+                        Manage PreAuthKeys
+                      </q-item-section>
                     </q-item>
                     <q-item clickable @click="renameUser(props.row)">
-                      <q-item-section class="text-primary"
-                        >Rename User</q-item-section
-                      >
+                      <q-item-section class="text-primary">
+                        Rename user
+                      </q-item-section>
                     </q-item>
 
                     <q-separator />
                     <q-item clickable @click="deleteUser(props.row)">
-                      <q-item-section class="text-negative"
-                        >Delete User</q-item-section
-                      >
+                      <q-item-section class="text-negative">
+                        Delete user
+                      </q-item-section>
                     </q-item>
                   </q-list>
                 </q-menu>
@@ -232,13 +233,9 @@ function deleteUser(index: number): void {
 
 function managePreAuthKeys(user: User): void {
   useDialog()
-    .show(
-      PreAuthKeyComponent,
-      {
-        pre_auth_keys: user.pre_auth_keys,
-      },
-      $q.platform.is.mobile ? 'bottom' : 'standard',
-    )
+    .show(PreAuthKeyComponent, {
+      pre_auth_keys: user.pre_auth_keys,
+    })
     .onOk((pre_auth_keys: PreAuthKeys[]) => {
       user.pre_auth_keys = pre_auth_keys
       useNotify('PreAuthsKeys updated successfully', 'check')

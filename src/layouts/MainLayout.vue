@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh Lpr lFf">
-    <q-header class="bg-[#040404]" bordered dark>
+    <q-header bordered class="bg-dark">
       <q-toolbar>
         <q-toolbar-title
           class="text-weight-bold text-[#ff8700] opacity-[1!important] text-shadow-[rgb(255,135,0)_0px_0px_1px,rgba(249,82,0,0.6)_0px_0px_5px,rgba(249,15,0,0.4)_0px_5px_4px]"
@@ -53,8 +53,8 @@
     </q-drawer>
 
     <q-footer
-      boredred
-      class="pb-[env(safe-area-inset-bottom)]"
+      bordered
+      class="pb-[env(safe-area-inset-bottom)] bg-dark"
       v-if="$q.screen.lt.sm"
     >
       <q-tabs

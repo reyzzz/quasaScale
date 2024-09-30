@@ -1,13 +1,15 @@
 <template>
-  <q-card flat bordered style="width: 500px">
+  <q-card
+    flat
+    :bordered="$q.screen.gt.xs"
+    class="w-100% rounded-xl! bg-stone-950"
+  >
     <q-form @submit="saveChanges">
       <q-card-section class="q-py-sm">
         <div class="row justify-between items-center">
           <div class="text-h6">
             {{
-              componentProps.dns.name.length > 0
-                ? 'Update ' + _dns.name
-                : 'Add DNS'
+              componentProps.dns.name.length > 0 ? 'Edit Domain' : 'Add Domain'
             }}
           </div>
           <div>
@@ -43,13 +45,14 @@
           ]"
         />
       </q-card-section>
-      <q-card-actions class="row justify-center">
+      <q-card-actions vertical>
         <q-btn
-          :label="componentProps.dns.name.length > 0 ? 'Update' : 'Save'"
-          color="green"
+          label="Save"
+          color="primary"
           type="submit"
-          class="col-11"
+          outline
           rounded
+          icon="save"
         />
       </q-card-actions>
     </q-form>

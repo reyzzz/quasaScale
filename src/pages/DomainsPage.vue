@@ -35,6 +35,7 @@
           :label="$q.screen.gt.sm ? 'New DNS' : ''"
           color="primary"
           outline
+          :dense="$q.screen.lt.sm"
         />
       </template>
       <template #body="props">
@@ -69,7 +70,7 @@
         </q-tr>
       </template>
       <template #item="props">
-        <q-card flat bordered class="rounded-[12px] q-mr-sm q-mb-sm w-400px">
+        <q-card flat bordered class="rounded-xl">
           <q-card-section class="q-pb-xs">
             <div class="row q-mb-sm justify-between">
               <div class="text-h5 row items-center">
@@ -82,9 +83,9 @@
                       clickable
                       @click="editDNS(props.row, props.rowIndex)"
                     >
-                      <q-item-section class="text-primary"
-                        >Edit DNS</q-item-section
-                      >
+                      <q-item-section class="text-primary">
+                        Edit DNS
+                      </q-item-section>
                     </q-item>
 
                     <q-separator />

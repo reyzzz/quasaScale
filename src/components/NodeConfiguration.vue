@@ -1,9 +1,13 @@
 <template>
-  <q-card flat bordered style="width: 500px">
+  <q-card
+    flat
+    :bordered="$q.screen.gt.xs"
+    class="rounded-xl! w-100% bg-stone-950"
+  >
     <q-form @submit="saveChanges">
       <q-card-section class="q-py-sm">
         <div class="row justify-between items-center">
-          <div class="col-grow row items-center text-h6">
+          <div class="items-center text-h6">
             {{ _node.id ? 'Edit Node' : 'Add Node' }}
           </div>
           <div>
@@ -11,7 +15,7 @@
           </div>
         </div>
       </q-card-section>
-      <q-card-section class="col q-gutter-y-sm">
+      <q-card-section class="q-gutter-y-sm">
         <q-input
           outlined
           hide-bottom-space

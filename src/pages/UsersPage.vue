@@ -188,7 +188,7 @@ function renameUser(user: User): void {
     },
     ok: {
       label: 'Confirm',
-      color: 'blue',
+      color: 'primary',
       'no-caps': true,
       flat: true,
     },
@@ -210,7 +210,7 @@ function renameUser(user: User): void {
         },
       ],
     },
-    color: 'primary',
+    color: 'secondary',
     html: true,
     message: 'Insert username',
     persistent: true,

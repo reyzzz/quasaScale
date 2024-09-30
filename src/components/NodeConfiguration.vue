@@ -4,7 +4,7 @@
       <q-card-section class="q-py-sm">
         <div class="row justify-between items-center">
           <div class="col-grow row items-center text-h6">
-            {{ _node.id ? 'Update ' + _node.name : 'Add Node' }}
+            {{ _node.id ? 'Edit Node' : 'Add Node' }}
           </div>
           <div>
             <q-btn flat round icon="close" v-close-popup />
@@ -63,13 +63,14 @@
           label="Node Route"
         />
       </q-card-section>
-      <q-card-actions class="row justify-center">
+      <q-card-actions vertical>
         <q-btn
-          :label="_node.id ? 'Update' : 'Save'"
-          color="green"
+          label="Save"
+          color="primary"
+          icon="save"
           type="submit"
-          class="col-11"
           rounded
+          outline
         />
       </q-card-actions>
     </q-form>

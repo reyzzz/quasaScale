@@ -83,7 +83,7 @@ const { users } = storeToRefs(useUsersStore())
 const _node = ref<Node>(extend(true, {}, props.componentProps.node))
 
 function addTag() {
-  $q.dialog({
+useDialog().prompt('', 'Insert tag', 'Add tag', checkTag).onOk((data) => {
     _node.value.tags.push(data)
   })
 }
@@ -111,5 +111,7 @@ function validatedIp(ip: string) {
     
 }
 
+function checkTag(val: string): boolean | string {
+  return _node.value.tags.includes(val) ? 'Tag already used' : true; 
 }
 </script>

@@ -22,7 +22,7 @@ export function useDialog() {
       title: 'Confirm',
     })
   }
-  function prompt(promptModel: string, msg?: string) {
+  function prompt(promptModel: string, msg?: string, title?: string, customRule?: (val: string) => boolean| string) {
     return Dialog.create({
       cancel: {
         label: 'Cancel',
@@ -39,12 +39,31 @@ export function useDialog() {
       prompt: {
         model: promptModel,
         type: 'text',
-        isValid: (val) => val.length > 0,
+        isValid(value) {
+        if (value.length === 0) return false;
+        if (customRule) {
+          const result = customRule(value);
+          return result === true; 
+        }
+
+        return true; 
       },
+         rules: [
+        (val) => !!val || 'Field is required', 
+        ...(customRule ? [
+          (val: string) => {
+            const result = customRule(val);
+            return result === true || result || 'Invalid Input'; 
+          }
+        ] : []),
+      ],
+    
+      },
+      color: 'primary',
       html: true,
       message: msg || 'Are you sure you want to update this item?',
       persistent: true,
-      title: 'Confirm Update',
+      title: title || 'Confirm Update',
     })
   }
   function show(

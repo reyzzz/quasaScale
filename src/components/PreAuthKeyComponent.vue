@@ -5,15 +5,6 @@
         PreAuthKeys {{ $q.screen.gt.sm ? 'Management' : '' }}
       </div>
       <div>
-        <q-btn
-          icon="save"
-          flat
-          round
-          color="blue"
-          type="submit"
-          class="q-mr-md"
-          @click="submit"
-        />
         <q-btn icon="close" round flat v-close-popup />
       </div>
     </q-card-section>
@@ -153,6 +144,9 @@
         </template>
       </q-scroll-area>
     </q-card-section>
+    <q-card-actions class="row justify-center">
+      <q-btn label="Save" color="green" @click="submit" rounded class="w-3/4" />
+    </q-card-actions>
   </q-card>
 </template>
 

@@ -40,8 +40,9 @@
       <template #body="props">
         <q-tr :props="props">
           <q-td>{{ props.row.id }}</q-td>
+          <q-td>{{ props.row.name }}</q-td>
           <q-td>{{ props.row.node_last_seen }}</q-td>
-          <q-td>{{ props.row.ip_address }}</q-td>
+          <q-td>{{ props.row.IP_address }}</q-td>
           <q-td>{{ props.row.assigned_user_name }}</q-td>
           <q-td>{{ props.row.node_route }}</q-td>
           <q-td
@@ -87,23 +88,25 @@
           style="width: 400px"
         >
           <q-card-section class="q-pb-xs">
-            <div class="row q-mb-sm justify-between items-center">
-              <q-scroll-area
-                class="h-25px col-grow q-mt-xs"
-                :vertical-offset="[0, -5]"
-              >
-                <div class="text-h5 row items-center no-wrap">
-                  <template v-for="(tag, index) in props.row.tags" :key="index">
-                    <q-badge
-                      outline
-                      color="primary"
-                      :label="tag"
-                      class="q-mr-sm q-mb-sm"
-                    />
-                  </template>
-                </div>
-              </q-scroll-area>
-
+            <q-scroll-area
+              class="h-25px w-full mt-5px"
+              :vertical-offset="[0, -5]"
+            >
+              <div class="text-h5 row items-center no-wrap">
+                <template v-for="(tag, index) in props.row.tags" :key="index">
+                  <q-badge
+                    outline
+                    color="primary"
+                    :label="tag"
+                    class="q-mr-sm q-mb-sm"
+                  />
+                </template>
+              </div>
+            </q-scroll-area>
+            <div class="row justify-between items-center q-mb-sm">
+              <div class="text-h6">
+                {{ props.row.name }}
+              </div>
               <q-btn flat round dense icon="more_vert">
                 <q-menu auto-close>
                   <q-list class="w-max">
@@ -126,6 +129,7 @@
                 </q-menu>
               </q-btn>
             </div>
+
             <div class="row q-mb-sm">
               <div class="col-5">
                 <span class="text-weight-bold text-accent"> User: </span>
@@ -135,9 +139,9 @@
               </div>
 
               <div class="col-7">
-                <span class="text-weight-bold text-accent"> Ip Address:</span>
+                <span class="text-weight-bold text-accent"> IP Address:</span>
 
-                <span class="text-secondary">{{ props.row.ip_address }} </span>
+                <span class="text-secondary">{{ props.row.IP_address }} </span>
               </div>
             </div>
             <div class="row q-mb-sm">
@@ -170,8 +174,9 @@ const { users } = storeToRefs(useUsersStore())
 const nodes = ref<Node[]>([
   {
     id: 1,
+    name: 'device1',
     node_last_seen: '2024-09-27 17:24',
-    ip_address: '192.168.1.1',
+    IP_address: '192.168.1.1',
     assigned_user_id: 1,
     node_route: 'r',
     tags: ['test1', 'test2'],
@@ -186,6 +191,13 @@ const cols = ref<QTableColumn[]>([
     align: 'left',
   },
   {
+    name: 'name',
+    required: true,
+    label: 'Name',
+    field: 'name',
+    align: 'left',
+  },
+  {
     name: 'node_last_seen',
     required: true,
     label: 'Node Last Seen',
@@ -193,7 +205,7 @@ const cols = ref<QTableColumn[]>([
     align: 'left',
   },
   {
-    name: 'ip_address',
+    name: 'IP_address',
     required: true,
     label: 'IP Address',
     field: 'node_last_seen',
@@ -241,7 +253,7 @@ function editNode(node: Node, index: number): void {
 function addNode(): void {
   const node = {
     node_last_seen: '2024-09-27 17:24',
-    ip_address: '',
+    IP_address: '',
     assigned_user_id: 1,
     node_route: '',
     tags: [],

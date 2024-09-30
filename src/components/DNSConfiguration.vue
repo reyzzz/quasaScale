@@ -3,16 +3,14 @@
     <q-form @submit="saveChanges">
       <q-card-section class="q-py-sm">
         <div class="row justify-between items-center">
-          <div class="text-h6">DNS Configuration</div>
+          <div class="text-h6">
+            {{
+              componentProps.dns.name.length > 0
+                ? 'Update ' + _dns.name
+                : 'Add DNS'
+            }}
+          </div>
           <div>
-            <q-btn
-              icon="save"
-              flat
-              round
-              color="blue"
-              type="submit"
-              class="q-mr-md"
-            />
             <q-btn flat round icon="close" v-close-popup />
           </div>
         </div>
@@ -45,6 +43,15 @@
           ]"
         />
       </q-card-section>
+      <q-card-actions class="row justify-center">
+        <q-btn
+          :label="componentProps.dns.name.length > 0 ? 'Update' : 'Save'"
+          color="green"
+          type="submit"
+          class="col-11"
+          rounded
+        />
+      </q-card-actions>
     </q-form>
   </q-card>
 </template>
@@ -90,9 +97,9 @@ function saveChanges(): void {
   }
   props.onDialogOK(_dns.value)
 }
-function validatedIp(ip: string): boolean {
+function validatedIp(IP: string): boolean {
   const ipRegex =
     /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}$/
-  return ipRegex.test(ip)
+  return ipRegex.test(IP)
 }
 </script>

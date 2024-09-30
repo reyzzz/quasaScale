@@ -82,7 +82,7 @@
                       clickable
                       @click="editDNS(props.row, props.rowIndex)"
                     >
-                      <q-item-section class="text-blue-13"
+                      <q-item-section class="text-primary"
                         >Edit DNS</q-item-section
                       >
                     </q-item>

@@ -42,6 +42,9 @@
           <q-td>{{ props.row.id }}</q-td>
           <q-td>{{ props.row.name }}</q-td>
           <q-td>{{ props.row.creationDate }}</q-td>
+          <q-td key="preAuthKeys" :props="props">
+            {{ props.row.pre_auth_keys.length }}</q-td
+          >
           <q-td key="actions" :props="props">
             <q-btn
               icon="edit"
@@ -156,6 +159,13 @@ const cols = ref<QTableColumn[]>([
     required: true,
     label: 'Creation Date',
     field: 'creationDate',
+    align: 'left',
+  },
+  {
+    name: 'preAuthKeys',
+    required: true,
+    label: 'Pre Auth Keys',
+    field: 'preAuthKeys',
     align: 'left',
   },
   {

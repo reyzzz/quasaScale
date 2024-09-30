@@ -26,15 +26,15 @@
     <q-drawer
       v-if="$q.screen.gt.xs ? true : false"
       v-model="drawer"
-      bordered
-      mini
       behavior="desktop"
+      mini
+      bordered
+      class="relative"
     >
-      <q-list>
-        <template v-for="link in linksList" :key="link.route">
+      <q-list class="q-gutter-y-sm pa4px">
+        <template v-for="link in linksList" :key="link.label">
           <q-item
             clickable
-            v-ripple
             :to="{ name: link.route }"
             exact
             active-class="text-[#f6ae2d]"
@@ -98,7 +98,7 @@ const linksList = ref([
     label: 'Nodes',
   },
   {
-    icon: 'i-material-symbols:manage-accounts w-8 h-8',
+    icon: 'i-material-symbols:person w-8 h-8',
     route: 'users',
     label: 'Users',
   },

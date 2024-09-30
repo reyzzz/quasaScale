@@ -7,8 +7,9 @@ export interface User {
 
 export interface Node {
   id: number
+  name: string
   node_last_seen: string
-  ip_address: string
+  IP_address: string
   assigned_user_id: number
   assigned_user_name?: string
   node_route: string

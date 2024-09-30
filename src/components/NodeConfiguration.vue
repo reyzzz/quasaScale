@@ -3,53 +3,22 @@
     <q-form @submit="saveChanges">
       <q-card-section class="q-py-sm">
         <div class="row justify-between items-center">
-          <div class="col-grow row items-center">
-            <q-scroll-area
-              class="col-grow w-full h-40px max-h-300 q-pa-sm"
-              :vertical-offset="[0, -4]"
-            >
-              <div class="row no-wrap">
-                <q-btn
-                  icon="add"
-                  round
-                  flat
-                  dense
-                  @click="addTag"
-                  size="sm"
-                  class="q-mr-sm"
-                >
-                  <q-tooltip> Add tag </q-tooltip>
-                </q-btn>
-                <template v-for="(tag, index) in _node.tags" :key="index">
-                  <q-badge outline color="primary" :label="tag" />
-                  <q-btn
-                    flat
-                    round
-                    dense
-                    size="xs"
-                    icon="cancel"
-                    class="q-mr-xs"
-                    color="accent"
-                    @click="removeTag(index)"
-                  />
-                </template>
-              </div>
-            </q-scroll-area>
+          <div class="col-grow row items-center text-h6">
+            {{ _node.id ? 'Update ' + _node.name : 'Add Node' }}
           </div>
           <div>
-            <q-btn
-              icon="save"
-              flat
-              round
-              color="blue"
-              type="submit"
-              class="q-mr-md"
-            />
             <q-btn flat round icon="close" v-close-popup />
           </div>
         </div>
       </q-card-section>
       <q-card-section class="col q-gutter-y-sm">
+        <q-input
+          outlined
+          hide-bottom-space
+          v-model="_node.name"
+          label="Node Name"
+          :rules="[(val) => !!val || 'Field required']"
+        />
         <q-select
           outlined
           v-model="_node.assigned_user_id"
@@ -66,12 +35,26 @@
         <q-input
           outlined
           hide-bottom-space
-          v-model="_node.ip_address"
-          label="Ip Address"
+          v-model="_node.IP_address"
+          label="IP Address"
           :rules="[
             (val) => !!val || 'Field required',
-            (val) => validatedIp(val) || 'Wrong ip format',
+            (val) => validatedIP(val) || 'Wrong ip format',
           ]"
+        />
+        <q-select
+          label="Wallets to skip"
+          outlined
+          v-model="_node.tags"
+          use-input
+          use-chips
+          multiple
+          hide-dropdown-icon
+          input-debounce="0"
+          new-value-mode="add-unique"
+          hint="Enter the tag and press enter"
+          hide-hint
+          hide-bottom-space
         />
         <q-input
           outlined
@@ -80,6 +63,15 @@
           label="Node Route"
         />
       </q-card-section>
+      <q-card-actions class="row justify-center">
+        <q-btn
+          :label="_node.id ? 'Update' : 'Save'"
+          color="green"
+          type="submit"
+          class="col-11"
+          rounded
+        />
+      </q-card-actions>
     </q-form>
   </q-card>
 </template>
@@ -97,14 +89,6 @@ const props = defineProps<{
 const { users } = storeToRefs(useUsersStore())
 const _node = ref<Node>(extend(true, {}, props.componentProps.node))
 
-function addTag(): void {
-  useDialog()
-    .prompt('', 'Insert tag', 'Add tag', checkTag)
-    .onOk((data) => {
-      _node.value.tags.push(data)
-    })
-}
-
 function saveChanges(): void {
   const user = users.value.find((user) => {
     return user.id === _node.value.assigned_user_id
@@ -117,17 +101,9 @@ function saveChanges(): void {
   props.onDialogOK(_node.value)
 }
 
-function removeTag(index: number): void {
-  _node.value.tags.splice(index, 1)
-}
-
-function validatedIp(ip: string): boolean {
+function validatedIP(IP: string): boolean {
   const ipRegex =
     /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}$/
-  return ipRegex.test(ip)
-}
-
-function checkTag(val: string): boolean | string {
-  return _node.value.tags.includes(val) ? 'Tag already used' : true
+  return ipRegex.test(IP)
 }
 </script>

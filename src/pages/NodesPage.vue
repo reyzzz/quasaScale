@@ -4,6 +4,8 @@
       :grid="grid_view || $q.screen.lt.sm"
       title="Nodes"
       class="rounded-xl"
+      table-header-class="text-[#929289] font-bold"
+      title-class="text-[#e59c21] text-shadow-[rgb(255,153,0)_0px_0px_1px,rgba(249,164,0,0.6)_0px_0px_5px,rgba(249,164,0,0.4)_0px_5px_4px]"
       :rows="nodes"
       :columns="cols"
       row-key="name"
@@ -31,7 +33,7 @@
           @click="addNode"
           icon="add"
           :label="$q.screen.gt.sm ? 'New Node' : ''"
-          color="accent"
+          color="primary"
           outline
         />
       </template>
@@ -46,7 +48,7 @@
             ><template v-for="(tag, index) in props.row.tags" :key="index">
               <q-badge
                 outline
-                color="blue-13"
+                color="primary"
                 :label="tag"
                 class="q-mr-sm"
               /> </template
@@ -81,29 +83,33 @@
         <q-card
           flat
           bordered
-          class="rounded-borders q-mr-sm q-mb-sm"
+          class="rounded-[12px] q-mr-sm q-mb-sm"
           style="width: 400px"
         >
           <q-card-section class="q-pb-xs">
-            <div class="row q-mb-sm justify-between">
-              <div class="text-h5 row items-center">
-                <template v-for="(tag, index) in props.row.tags" :key="index">
-                  <q-badge
-                    outline
-                    color="blue-13"
-                    :label="tag"
-                    class="q-mr-sm"
-                  />
-                </template>
-              </div>
+            <div class="row q-mb-sm justify-between items-center">
+              
+                <q-scroll-area  class=" h-25px col-grow q-mt-xs" :vertical-offset="[0,-5]" >
+                   <div class="text-h5 row items-center no-wrap ">
+                      <template v-for="(tag, index) in props.row.tags" :key="index">
+                        <q-badge
+                        outline
+                        color="primary"
+                        :label="tag"
+                        class="q-mr-sm q-mb-sm"
+                        />
+                      </template>
+                    </div>
+                </q-scroll-area>
+              
               <q-btn flat round dense icon="more_vert">
                 <q-menu auto-close>
-                  <q-list style="width: max-content">
+                  <q-list class="w-max">
                     <q-item
                       clickable
                       @click="editNode(props.row, props.rowIndex)"
                     >
-                      <q-item-section class="text-blue-13"
+                      <q-item-section class="text-primary"
                         >Edit Node</q-item-section
                       >
                     </q-item>
@@ -119,25 +125,35 @@
               </q-btn>
             </div>
             <div class="row q-mb-sm">
-              <div class="text-weight-medium text-primary col-5">
-                User:
+              <div class="col-5">
+                <span  class="text-weight-bold text-accent">
+
+                  User:
+                </span>
                 <span class="text-secondary"
                   >{{ props.row.assigned_user_name }}
                 </span>
               </div>
 
-              <div class="text-weight-medium text-primary col-7">
-                Ip Address:
+              <div class="col-7">
+                <span class="text-weight-bold text-accent"> Ip Address:</span>
+               
                 <span class="text-secondary">{{ props.row.ip_address }} </span>
               </div>
             </div>
             <div class="row q-mb-sm">
-              <div class="text-weight-medium text-primary col-5">
-                Route:
+              <div class="col-5">
+                <span  class="text-weight-bold text-accent">
+
+                  Route:
+                </span>
                 <span class="text-secondary">{{ props.row.node_route }} </span>
               </div>
-              <div class="text-weight-medium text-primary col-7">
-                Last Seen:
+              <div class="col-7">
+                <span class="text-weight-bold text-accent">
+                  
+                  Last Seen:
+                </span>
                 <span class="text-secondary"
                   >{{ props.row.node_last_seen }}
                 </span>
@@ -226,6 +242,7 @@ function editNode(node: Node, index: number) {
     })
     .onOk((updatedNode: Node) => {
       nodes.value[index] = updatedNode
+      useNotify('Node updated successfully', 'check')
     })
 }
 function addNode() {
@@ -242,6 +259,7 @@ function addNode() {
     })
     .onOk((updatedNode: Node) => {
       nodes.value.push(updatedNode)
+      useNotify('Node added successfully', 'check')
     })
 }
 

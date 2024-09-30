@@ -2,8 +2,10 @@
   <q-page padding>
     <q-table
       :grid="grid_view || $q.screen.lt.sm"
-      title="DNS Records"
+      :title="$q.screen.lt.sm ? 'DNS' :  'DNS Records'"
       class="rounded-xl"
+      table-header-class="text-[#929289] font-bold"
+      title-class="text-[#e59c21] text-shadow-[rgb(255,153,0)_0px_0px_1px,rgba(249,164,0,0.6)_0px_0px_5px,rgba(249,164,0,0.4)_0px_5px_4px]"
       :rows="dnsRecords"
       :columns="cols"
       row-key="name"
@@ -31,7 +33,7 @@
           @click="addDNS"
           icon="add"
           :label="$q.screen.gt.sm ? 'New DNS' : ''"
-          color="accent"
+          color="primary"
           outline
         />
       </template>
@@ -67,7 +69,7 @@
         </q-tr>
       </template>
       <template #item="props">
-        <q-card flat bordered class="rounded-borders q-mr-sm q-mb-sm user-card">
+        <q-card flat bordered class="rounded-[12px] q-mr-sm q-mb-sm w-400px">
           <q-card-section class="q-pb-xs">
             <div class="row q-mb-sm justify-between">
               <div class="text-h5 row items-center">
@@ -96,13 +98,19 @@
               </q-btn>
             </div>
 
-            <div class="text-weight-medium text-primary">
-              Type:
+            <div>
+              <span class="text-weight-bold text-accent">
+
+                Type:
+              </span>
               <span class="text-secondary">{{ props.row.type }} </span>
             </div>
 
-            <div class="text-weight-medium text-primary q-my-sm">
-              Value:
+            <div class="q-my-sm">
+              <span class="text-weight-bold text-accent">
+                
+                Value:
+              </span>
               <span class="text-secondary">{{ props.row.value }} </span>
             </div>
           </q-card-section>
@@ -176,6 +184,7 @@ function editDNS(dnsRecord: DNSRecord, index: number) {
     })
     .onOk((updatedDNS: DNSRecord) => {
       dnsRecords.value[index] = updatedDNS
+      useNotify('DNS updated successfully', 'check')
     })
 }
 
@@ -192,6 +201,7 @@ function addDNS() {
     })
     .onOk((updatedDNS: DNSRecord) => {
       dnsRecords.value.push(updatedDNS)
+      useNotify('DNS added successfully', 'check')
     })
 }
 

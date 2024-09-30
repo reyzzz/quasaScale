@@ -16,7 +16,7 @@
         onDialogCancel,
         componentProps: { ...componentToRenderProps },
       }"
-      class="iphone-bottom-notch"
+      class="pb-[env(safe-area-inset-bottom)]"
     />
   </q-dialog>
 </template>

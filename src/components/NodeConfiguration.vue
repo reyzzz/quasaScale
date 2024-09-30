@@ -55,7 +55,7 @@
           v-model="_node.ip_address"
           label="Ip Address"
           :rules="[(val) => !!val || 'Field required' , 
-                    (val) => validatedIp(val) || 'wrong ip format'
+                    (val) => validatedIp(val) || 'Wrong ip format'
           ]"
         />
         <q-input

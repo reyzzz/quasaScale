@@ -3,6 +3,8 @@
     <q-table
       :grid="grid_view || $q.screen.lt.sm"
       class="rounded-xl"
+      table-header-class="text-[#929289] font-bold"
+      title-class="text-[#e59c21] text-shadow-[rgb(255,153,0)_0px_0px_1px,rgba(249,164,0,0.6)_0px_0px_5px,rgba(249,164,0,0.4)_0px_5px_4px]"
       :rows="users"
       :columns="cols"
       row-key="name"
@@ -30,8 +32,9 @@
         <q-btn
           icon="add"
           :label="$q.screen.gt.sm ? 'New User' : ''"
-          color="accent"
+          color="primary"
           outline
+          @click="addUser"
         />
       </template>
       <template #body="props">
@@ -77,7 +80,7 @@
         </q-tr>
       </template>
       <template #item="props">
-        <q-card flat bordered class="rounded-borders q-mr-sm q-mb-sm user-card">
+        <q-card flat bordered class="rounded-[12px] q-mr-sm q-mb-sm w-400px">
           <q-card-section class="q-pb-xs">
             <div class="row q-mb-sm justify-between">
               <div class="text-h5 row items-center">
@@ -85,14 +88,14 @@
               </div>
               <q-btn flat round dense icon="more_vert">
                 <q-menu auto-close>
-                  <q-list style="width: max-content">
+                  <q-list class="w-max">
                     <q-item clickable @click="managePreAuthKeys(props.row)">
-                      <q-item-section class="text-blue-13"
+                      <q-item-section class="text-primary"
                         >Manage PreAuthKey</q-item-section
                       >
                     </q-item>
                     <q-item clickable @click="renameUser(props.row)">
-                      <q-item-section class="text-blue-13"
+                      <q-item-section class="text-primary"
                         >Rename User</q-item-section
                       >
                     </q-item>
@@ -108,14 +111,20 @@
               </q-btn>
             </div>
 
-            <div class="text-weight-medium text-primary">
-              Creation Date:
+            <div>
+              <span class="text-weight-bold text-accent">
+
+                Creation Date:
+              </span>
               <span class="text-secondary">{{ props.row.creationDate }} </span>
             </div>
 
-            <div class="text-weight-medium text-primary q-my-sm">
-              PreAuthKeys:
-              <span class="text-secondary">{{ props.row.name }} </span>
+            <div class="q-my-sm">
+              <span class="text-weight-bold text-accent">
+
+                PreAuthKeys:
+              </span>
+              <span class="text-secondary">{{ props.row.pre_auth_keys.length }} </span>
             </div>
           </q-card-section>
         </q-card>

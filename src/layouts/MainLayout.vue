@@ -1,14 +1,22 @@
 <template>
   <q-layout view="hHh Lpr lFf">
-    <q-header class="bg-dark-header" bordered dark>
+    <q-header class="bg-[#040404]" bordered dark>
       <q-toolbar>
-        <q-toolbar-title>QuasaScale</q-toolbar-title>
+        <q-toolbar-title
+          class="text-weight-bold text-[#ff8700] opacity-[1!important] text-shadow-[rgb(255,135,0)_0px_0px_1px,rgba(249,82,0,0.6)_0px_0px_5px,rgba(249,15,0,0.4)_0px_5px_4px]"
+          >QuasaScale</q-toolbar-title
+        >
         <q-btn
-          color="blue"
+          color="primary"
           flat
           round
+          size="sm"
           outline
-          :icon="grid_view ? 'fa-solid fa-list' : 'grid_view'"
+          :class="
+            grid_view
+              ? 'i-material-symbols:lists-rounded'
+              : 'i-material-symbols-light:grid-view-rounded'
+          "
           @click="grid_view = !grid_view"
           v-if="$q.screen.gt.xs"
         />
@@ -20,16 +28,25 @@
       v-model="drawer"
       bordered
       mini
-      class="bg-dark-header"
       behavior="desktop"
     >
       <q-list>
-        <template v-for="(link, index) in linksList" :key="index">
-          <q-item clickable v-ripple :to="{ name: link.route }" exact>
+        <template v-for="link in linksList" :key="link.route">
+          <q-item
+            clickable
+            v-ripple
+            :to="{ name: link.route }"
+            exact
+            active-class="text-[#f6ae2d]"
+            class="hover:rounded-lg"
+          >
             <q-item-section avatar>
-              <q-icon :name="link.icon" size="md" />
+              <span :class="link.icon">
+                <q-tooltip anchor="center right" self="center left">
+                  {{ link.label }}
+                </q-tooltip>
+              </span>
             </q-item-section>
-            <q-item-section class="text-h6">{{ link.label }}</q-item-section>
           </q-item>
         </template>
       </q-list>
@@ -37,22 +54,22 @@
 
     <q-footer
       boredred
-      class="q-py-sm iphone-bottom-notch"
+      class="pb-[env(safe-area-inset-bottom)]"
       v-if="$q.screen.lt.sm"
     >
       <q-tabs
         no-caps
         dense
         indicator-color="transparent"
-        :active-color="$q.dark.isActive ? 'white' : 'black'"
-        :class="$q.dark.isActive ? 'text-dark-primary' : 'text-blue-grey-7'"
+        active-class="text-[#f6ae2d]"
+        class="bg-dark q-py-sm"
         align="justify"
       >
         <q-route-tab
           v-for="link in linksList"
           :key="link.label"
           :to="{ name: link.route }"
-          :icon="link.icon"
+          :class="link.icon"
           :label="link.label"
           active-class="text-primary"
           :ripple="false"
@@ -76,17 +93,17 @@ const drawer = ref(true)
 const { grid_view } = storeToRefs(useSettingsStore())
 const linksList = ref([
   {
-    icon: 'devices',
+    icon: 'i-material-symbols:devices-outline-rounded w-8 h-8',
     route: 'nodes',
     label: 'Nodes',
   },
   {
-    icon: 'person',
+    icon: 'i-material-symbols:manage-accounts w-8 h-8',
     route: 'users',
     label: 'Users',
   },
   {
-    icon: 'dns',
+    icon: 'i-carbon:server-dns w-8 h-8',
     route: 'dns',
     label: 'DNS',
   },

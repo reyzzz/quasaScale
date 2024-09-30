@@ -1,20 +1,10 @@
 // app global css in SCSS form
-.iphone-bottom-notch {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-.rounded-borders {
-  border-radius: 12px !important;
+
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+body {
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
-.bg-dark-header {
-  background: #253037 !important;
-}
-.card-center {
-  max-width: 450px;
-  width: 100%;
-  margin: 0 auto;
-  border-radius: 12px !important;
-}
-.user-card {
-  width: 390px;
-}
+

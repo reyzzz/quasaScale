@@ -22,7 +22,12 @@ export function useDialog() {
       title: 'Confirm',
     })
   }
-  function prompt(promptModel: string, msg?: string, title?: string, customRule?: (val: string) => boolean| string) {
+  function prompt(
+    promptModel: string,
+    msg?: string,
+    title?: string,
+    customRule?: (val: string) => boolean | string,
+  ) {
     return Dialog.create({
       cancel: {
         label: 'Cancel',
@@ -40,24 +45,25 @@ export function useDialog() {
         model: promptModel,
         type: 'text',
         isValid(value) {
-        if (value.length === 0) return false;
-        if (customRule) {
-          const result = customRule(value);
-          return result === true; 
-        }
-
-        return true; 
-      },
-         rules: [
-        (val) => !!val || 'Field is required', 
-        ...(customRule ? [
-          (val: string) => {
-            const result = customRule(val);
-            return result === true || result || 'Invalid Input'; 
+          if (value.length === 0) return false
+          if (customRule) {
+            const result = customRule(value)
+            return result === true
           }
-        ] : []),
-      ],
-    
+
+          return true
+        },
+        rules: [
+          (val) => !!val || 'Field is required',
+          ...(customRule
+            ? [
+                (val: string) => {
+                  const result = customRule(val)
+                  return result === true || result || 'Invalid Input'
+                },
+              ]
+            : []),
+        ],
       },
       color: 'primary',
       html: true,
@@ -69,7 +75,6 @@ export function useDialog() {
   function show(
     componentToRender: Component,
     componentProps?: Record<string, unknown>,
-    position?: 'standard' | 'top' | 'right' | 'bottom' | 'left' | undefined
   ) {
     return Dialog.create({
       component: DialogComponent,
@@ -77,7 +82,6 @@ export function useDialog() {
         componentToRender: componentToRender,
         componentToRenderProps: componentProps ?? {},
         persistent: true,
-        position: position ?? 'standard',
       },
       ok: false,
       cancel: false,

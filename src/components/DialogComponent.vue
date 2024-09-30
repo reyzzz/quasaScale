@@ -1,10 +1,9 @@
 <template>
   <q-dialog
     ref="dialogRef"
-    class="full-width"
     @hide="onDialogHide"
     :persistent="persistent"
-    :position="position"
+    :position="$q.screen.lt.sm ? 'bottom' : 'standard'"
     no-shake
     transition-show="slide-up"
     transition-hide="slide-down"
@@ -23,13 +22,12 @@
 
 <script setup lang="ts">
 import { useDialogPluginComponent } from 'quasar'
-
 import type { Component } from 'vue'
+
 defineProps<{
   componentToRender: Component
   componentToRenderProps: Record<string, unknown>
   persistent: false
-  position: 'standard' | 'top' | 'right' | 'bottom' | 'left' | undefined
 }>()
 
 defineEmits([

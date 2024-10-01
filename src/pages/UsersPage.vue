@@ -51,7 +51,7 @@
               icon="edit"
               flat
               round
-              color="blue-13"
+              color="secondary"
               dense
               class="q-ml-md"
               @click="renameUser(props.row)"
@@ -117,12 +117,12 @@
 
             <div>
               <span class="text-weight-bold text-accent"> Creation Date: </span>
-              <span class="text-secondary">{{ props.row.creationDate }} </span>
+              <span class="text-info">{{ props.row.creationDate }} </span>
             </div>
 
             <div class="q-my-sm">
               <span class="text-weight-bold text-accent"> PreAuthKeys: </span>
-              <span class="text-secondary"
+              <span class="text-info"
                 >{{ props.row.pre_auth_keys.length }}
               </span>
             </div>
@@ -193,6 +193,9 @@ function renameUser(user: User): void {
       'no-caps': true,
       flat: true,
     },
+    style:
+      ' box-shadow: none; border: 1.5px solid #5c5c5c;border-radius: 12px ',
+
     prompt: {
       model: user.name,
       type: 'text',

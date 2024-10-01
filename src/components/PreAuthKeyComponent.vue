@@ -15,13 +15,13 @@
     </q-card-section>
     <q-card-section>
       <q-btn
-        icon="add"
-        label="add key"
+        :icon="addKeySection ? 'remove' : 'add'"
+        :label="addKeySection ? 'hide Input' : 'add key'"
         color="primary"
         outline
         dense
         class="q-mb-sm"
-        @click="addKeySection = true"
+        @click="addKeySection = !addKeySection"
       />
       <q-scroll-area
         style="height: calc(100vh - 500px)"
@@ -139,11 +139,11 @@
                 />
               </div>
 
-              <div class="text-secondary">
+              <div class="text-info">
                 <span class="text-weight-bold text-accent q-mr-xs">Key: </span>
                 {{ pre_auth_key.key }}
               </div>
-              <div class="text-secondary">
+              <div class="text-info">
                 <span class="text-weight-bold text-accent q-mr-xs">
                   Expiration:
                 </span>

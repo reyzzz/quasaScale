@@ -35,6 +35,9 @@
         <template v-for="link in linksList" :key="link.label">
           <q-item
             clickable
+            :disable="
+              link.route === 'dns' && quasascale_backend_url.length === 0
+            "
             :to="{ name: link.route }"
             exact
             active-class="text-[#f6ae2d]"
@@ -90,6 +93,7 @@ defineOptions({
 
 const $q = useQuasar()
 const drawer = ref(true)
+const { quasascale_backend_url } = storeToRefs(useConfigStore())
 const { grid_view } = storeToRefs(useSettingsStore())
 const linksList = ref([
   {
@@ -106,6 +110,11 @@ const linksList = ref([
     icon: 'i-carbon:server-dns w-8 h-8',
     route: 'dns',
     label: 'DNS',
+  },
+  {
+    icon: 'i-material-symbols:settings-rounded w-8 h-8',
+    route: 'settings',
+    label: 'Settings',
   },
 ])
 </script>

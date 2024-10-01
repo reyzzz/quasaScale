@@ -165,7 +165,7 @@ function editDNS(dnsRecord: DNSRecord, index: number): void {
     })
     .onOk(async (updatedDNS: DNSRecord) => {
       try {
-        await api.post('api/updatedDomain', {
+        await api.patch('api/updateDomain', {
           domain: updatedDNS,
           index: index,
         })

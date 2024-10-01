@@ -66,6 +66,7 @@ declare global {
   const triggerRef: typeof import('vue')['triggerRef']
   const unref: typeof import('vue')['unref']
   const useAttrs: typeof import('vue')['useAttrs']
+  const useConfigStore: typeof import('./stores/config-store')['useConfigStore']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
   const useDialog: typeof import('./composables/useDialog')['useDialog']

@@ -9,7 +9,8 @@ export interface Node {
   id: number
   name: string
   node_last_seen: string
-  IP_address: string
+  IP_address_v4: string
+  IP_address_v6: string
   assigned_user_id: number
   assigned_user_name?: string
   node_route: string
@@ -33,4 +34,12 @@ export interface DNSRecord {
   name: string //unique
   type: string
   value: string
+}
+
+export interface HeadscaleInstance {
+  id?: number
+  headscale_url: string
+  quasascale_backend_url?: string
+  headscale_api_key: string
+  active: boolean
 }

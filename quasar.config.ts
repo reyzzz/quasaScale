@@ -20,7 +20,7 @@ export default configure((/* ctx */) => {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['axios'],
+    boot: ['axios', 'db'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
     css: ['app.scss'],
@@ -54,7 +54,7 @@ export default configure((/* ctx */) => {
 
       // publicPath: '/',
       // analyze: true,
-      env: {},
+      env: { BUN_URL: 'http://localhost:3000/' },
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,

@@ -14,10 +14,22 @@ declare module 'vue' {
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const api = axios.create({ baseURL: 'https://api.example.com' })
+const api = axios.create()
 
-export default boot(({ app }) => {
+export default boot(({ app, store }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
+
+  watch(
+    () => store.state.value.config,
+    (newConfig) => {
+      if (newConfig) {
+        api.defaults.baseURL = newConfig.quasascale_backend_url || ''
+        api.defaults.headers.common['Authorization'] =
+          `Bearer ${newConfig.headscale_api_key || ''}`
+      }
+    },
+    { immediate: true, deep: true },
+  )
 
   app.config.globalProperties.$axios = axios
   // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)

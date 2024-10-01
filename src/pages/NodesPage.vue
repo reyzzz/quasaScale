@@ -43,7 +43,8 @@
           <q-td>{{ props.row.id }}</q-td>
           <q-td>{{ props.row.name }}</q-td>
           <q-td>{{ props.row.node_last_seen }}</q-td>
-          <q-td>{{ props.row.IP_address }}</q-td>
+          <q-td>{{ props.row.IP_address_v4 }}</q-td>
+          <q-td>{{ props.row.IP_address_v6 }}</q-td>
           <q-td>{{ props.row.assigned_user_name }}</q-td>
           <q-td>{{ props.row.node_route }}</q-td>
           <q-td
@@ -60,7 +61,7 @@
               icon="edit"
               flat
               round
-              color="blue-13"
+              color="secondary"
               dense
               class="q-ml-md"
               @click="editNode(props.row, props.rowIndex)"
@@ -118,28 +119,28 @@
             <div class="row q-mb-sm">
               <div class="col-5">
                 <span class="text-weight-bold text-accent"> User: </span>
-                <span class="text-secondary"
+                <span class="text-info"
                   >{{ props.row.assigned_user_name }}
                 </span>
               </div>
-
               <div class="col-7">
-                <span class="text-weight-bold text-accent"> IP Address:</span>
-
-                <span class="text-secondary">{{ props.row.IP_address }} </span>
+                <span class="text-weight-bold text-accent"> Last Seen: </span>
+                <span class="text-info">{{ props.row.node_last_seen }} </span>
               </div>
             </div>
             <div class="row q-mb-sm">
               <div class="col-5">
-                <span class="text-weight-bold text-accent"> Route: </span>
-                <span class="text-secondary">{{ props.row.node_route }} </span>
+                <span class="text-weight-bold text-accent"> IPv4:</span>
+                <span class="text-info">{{ props.row.IP_address_v4 }} </span>
               </div>
               <div class="col-7">
-                <span class="text-weight-bold text-accent"> Last Seen: </span>
-                <span class="text-secondary"
-                  >{{ props.row.node_last_seen }}
-                </span>
+                <span class="text-weight-bold text-accent"> IPv6: </span>
+                <span class="text-info">{{ props.row.IP_address_v6 }} </span>
               </div>
+            </div>
+            <div>
+              <span class="text-weight-bold text-accent"> Route: </span>
+              <span class="text-info">{{ props.row.node_route }} </span>
             </div>
           </q-card-section>
         </q-card>
@@ -161,7 +162,8 @@ const nodes = ref<Node[]>([
     id: 1,
     name: 'device1',
     node_last_seen: '2024-09-27 17:24',
-    IP_address: '192.168.1.1',
+    IP_address_v4: '192.168.1.1',
+    IP_address_v6: '2001:db8:85a3::8a2e:370:7334',
     assigned_user_id: 1,
     node_route: 'r',
     tags: ['test1', 'test2'],
@@ -190,10 +192,17 @@ const cols = ref<QTableColumn[]>([
     align: 'left',
   },
   {
-    name: 'IP_address',
+    name: 'IP_address_v4',
     required: true,
-    label: 'IP Address',
-    field: 'node_last_seen',
+    label: 'IPv4',
+    field: 'IP_address_v4',
+    align: 'left',
+  },
+  {
+    name: 'IP_address_v6',
+    required: true,
+    label: 'IPv6',
+    field: 'IP_address_v6',
     align: 'left',
   },
   {

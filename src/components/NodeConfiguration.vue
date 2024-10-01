@@ -39,15 +39,25 @@
         <q-input
           outlined
           hide-bottom-space
-          v-model="_node.IP_address"
-          label="IP Address"
+          v-model="_node.IP_address_v4"
+          label="IPv4"
           :rules="[
             (val) => !!val || 'Field required',
-            (val) => validatedIP(val) || 'Wrong ip format',
+            (val) => validatedIPv4(val) || 'Wrong ip format',
+          ]"
+        />
+        <q-input
+          outlined
+          hide-bottom-space
+          v-model="_node.IP_address_v6"
+          label="IPv6"
+          :rules="[
+            (val) => !!val || 'Field required',
+            (val) => validatedIPv6(val) || 'wrong ip format',
           ]"
         />
         <q-select
-          label="Wallets to skip"
+          label="Tags"
           outlined
           v-model="_node.tags"
           use-input
@@ -106,9 +116,16 @@ function saveChanges(): void {
   props.onDialogOK(_node.value)
 }
 
-function validatedIP(IP: string): boolean {
+function validatedIPv4(IP: string): boolean {
   const ipRegex =
     /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}$/
+  return ipRegex.test(IP)
+}
+function validatedIPv6(IP: string): boolean {
+  //Full IPv6 | compressed | mixed
+  const ipRegex =
+    /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,7}:|(?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}$/
+
   return ipRegex.test(IP)
 }
 </script>

@@ -109,7 +109,7 @@ const linksList = ref([
   {
     icon: 'i-carbon:server-dns w-8 h-8',
     route: 'dns',
-    label: 'DNS',
+    label: 'Domains',
   },
   {
     icon: 'i-material-symbols:settings-rounded w-8 h-8',

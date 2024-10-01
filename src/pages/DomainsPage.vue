@@ -48,7 +48,7 @@
               icon="edit"
               flat
               round
-              color="blue-13"
+              color="secondary"
               dense
               class="q-ml-md"
               @click="editDNS(props.row, props.rowIndex)"
@@ -101,12 +101,12 @@
 
             <div>
               <span class="text-weight-bold text-accent"> Type: </span>
-              <span class="text-secondary">{{ props.row.type }} </span>
+              <span class="text-info">{{ props.row.type }} </span>
             </div>
 
             <div class="q-my-sm">
               <span class="text-weight-bold text-accent"> Value: </span>
-              <span class="text-secondary">{{ props.row.value }} </span>
+              <span class="text-info">{{ props.row.value }} </span>
             </div>
           </q-card-section>
         </q-card>
@@ -116,7 +116,9 @@
 </template>
 
 <script setup lang="ts">
+import { AxiosError } from 'axios'
 import { QTableColumn, useQuasar } from 'quasar'
+import { api } from 'src/boot/axios'
 import DNSConfiguration from 'src/components/DNSConfiguration.vue'
 import { DNSRecord } from 'src/types/Database'
 
@@ -153,23 +155,7 @@ const cols = ref<QTableColumn[]>([
   },
 ])
 const filter = ref('')
-const dnsRecords = ref<DNSRecord[]>([
-  {
-    name: 'google',
-    type: 'A',
-    value: '192.168.3.3',
-  },
-  {
-    name: 'facebook',
-    type: 'A',
-    value: '192.168.3.4',
-  },
-  {
-    name: 'instagram',
-    type: 'A',
-    value: '192.168.3.5',
-  },
-])
+const dnsRecords = ref<DNSRecord[]>([])
 
 function editDNS(dnsRecord: DNSRecord, index: number): void {
   useDialog()
@@ -177,9 +163,25 @@ function editDNS(dnsRecord: DNSRecord, index: number): void {
       dns: dnsRecord,
       dnsRecords: dnsRecords.value,
     })
-    .onOk((updatedDNS: DNSRecord) => {
-      dnsRecords.value[index] = updatedDNS
-      useNotify('DNS updated successfully', 'check')
+    .onOk(async (updatedDNS: DNSRecord) => {
+      try {
+        await api.post('api/updatedDomain', {
+          domain: updatedDNS,
+          index: index,
+        })
+        dnsRecords.value[index] = updatedDNS
+        useNotify('DNS updated successfully', 'check')
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          useNotify(error.response?.data, 'warning', 'negative')
+        } else {
+          useNotify(
+            'An error happen while updating this domain',
+            'warning',
+            'negative',
+          )
+        }
+      }
     })
 }
 
@@ -194,18 +196,61 @@ function addDNS(): void {
       dns: dnsRecord,
       dnsRecords: dnsRecords.value,
     })
-    .onOk((updatedDNS: DNSRecord) => {
-      dnsRecords.value.push(updatedDNS)
-      useNotify('DNS added successfully', 'check')
+    .onOk(async (updatedDNS: DNSRecord) => {
+      try {
+        await api.post('api/addDomain', { domain: updatedDNS })
+        dnsRecords.value.push(updatedDNS)
+        useNotify('DNS added successfully', 'check')
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          useNotify(error.response?.data, 'warning', 'negative')
+        } else {
+          useNotify(
+            'An error happen while adding this domain',
+            'warning',
+            'negative',
+          )
+        }
+      }
     })
 }
 
 function deleteDNS(index: number): void {
   useDialog()
     .del()
-    .onOk(() => {
-      dnsRecords.value = dnsRecords.value.filter((_, ind) => index !== ind)
-      useNotify('DNS delete successfully', 'check')
+    .onOk(async () => {
+      try {
+        await api.post('api/deleteDomain', { index: index })
+        dnsRecords.value = dnsRecords.value.filter((_, ind) => index !== ind)
+        useNotify('DNS delete successfully', 'check')
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          useNotify(error.response?.data, 'warning', 'negative')
+        } else {
+          useNotify(
+            'An error happen while deleting this domain',
+            'warning',
+            'negative',
+          )
+        }
+      }
     })
 }
+onMounted(async () => {
+  try {
+    const data = await api.get('api/getDomains')
+    dnsRecords.value = data.data.yaml.map((data: DNSRecord) => {
+      return { ...data, active: false }
+    })
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      useNotify(error.response?.data, 'warning', 'negative')
+    } else {
+      useNotify('An error happen while fetching domains', 'warning', 'negative')
+    }
+  }
+})
 </script>
+<!-- [ { name: 'google', type: 'A', value: '192.168.3.3', }, { name: 'facebook',
+type: 'A', value: '192.168.3.4', }, { name: 'instagram', type: 'A', value:
+'192.168.3.5', }, ] -->

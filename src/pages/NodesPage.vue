@@ -91,7 +91,7 @@
       </template>
       <template #item="props">
         <q-card flat bordered class="rounded-xl">
-          <q-card-section class="q-pb-xs">
+          <q-card-section>
             <div class="row justify-between items-center q-mb-sm">
               <div class="text-h6 row items-center col-10 gap-5px">
                 {{ props.row.name }}
@@ -164,7 +164,7 @@
 <script setup lang="ts">
 import { QTableColumn } from 'quasar'
 import NodeConfiguration from 'src/components/NodeConfiguration.vue'
-import { HeadscaleNode } from 'src/types/Database'
+import { QuasascaleNode } from 'src/types/Database'
 
 const filter = ref('')
 const { grid_view } = storeToRefs(useSettingsStore())
@@ -172,7 +172,7 @@ const { getNodes, renameNode, changeUser, updateTags, removeNode, createNode } =
   useNodesStore()
 const { chopString, copyString, arraysEqual } = useUtils()
 
-const nodes = ref<HeadscaleNode[]>([])
+const nodes = ref<QuasascaleNode[]>([])
 const cols = ref<QTableColumn[]>([
   {
     name: 'id',
@@ -239,12 +239,12 @@ const cols = ref<QTableColumn[]>([
   },
 ])
 
-function editNode(node: HeadscaleNode, index: number): void {
+function editNode(node: QuasascaleNode, index: number): void {
   useDialog()
     .show(NodeConfiguration, {
       node: node,
     })
-    .onOk(async (updatedNode: HeadscaleNode) => {
+    .onOk(async (updatedNode: QuasascaleNode) => {
       try {
         if (node.name !== updatedNode.name) await renameNode(updatedNode)
         if (!arraysEqual(node.validTags, updatedNode.validTags))
@@ -262,7 +262,7 @@ function editNode(node: HeadscaleNode, index: number): void {
     })
 }
 function addNode(): void {
-  const node: HeadscaleNode = {
+  const node: QuasascaleNode = {
     name: '',
     lastSeen: '2024-09-27 17:24',
     IP_address_v4: '',
@@ -275,7 +275,7 @@ function addNode(): void {
     .show(NodeConfiguration, {
       node: node,
     })
-    .onOk(async (node: HeadscaleNode) => {
+    .onOk(async (node: QuasascaleNode) => {
       try {
         await createNode(node)
         nodes.value.push(node)

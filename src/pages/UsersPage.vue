@@ -83,9 +83,9 @@
       </template>
       <template #item="props">
         <q-card flat bordered class="rounded-xl">
-          <q-card-section class="q-pb-xs">
+          <q-card-section>
             <div class="row q-mb-sm justify-between">
-              <div class="text-h5 row items-center">
+              <div class="text-h5 row">
                 {{ props.row.name }}
               </div>
               <q-btn flat round dense icon="more_vert">

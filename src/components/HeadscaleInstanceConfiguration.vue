@@ -58,16 +58,16 @@
 </template>
 <script setup lang="ts">
 import { extend } from 'quasar'
-import { HeadscaleInstance } from 'src/types/Database'
+import { QuasascaleInstance } from 'src/types/Database'
 
 const props = defineProps<{
-  onDialogOK: (payload: HeadscaleInstance) => void
+  onDialogOK: (payload: QuasascaleInstance) => void
   componentProps: {
-    headscale_instance: HeadscaleInstance
+    headscale_instance: QuasascaleInstance
   }
 }>()
 
-const headscale_instance = ref<HeadscaleInstance>(
+const headscale_instance = ref<QuasascaleInstance>(
   extend(true, {}, props.componentProps.headscale_instance),
 )
 

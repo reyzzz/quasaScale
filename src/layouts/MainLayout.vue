@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh Lpr lFf">
+  <q-layout view="hHh Lpr fFf">
     <q-header bordered class="bg-dark">
       <q-toolbar>
         <q-toolbar-title
@@ -159,7 +159,7 @@ const linksList = ref([
     label: 'Domains',
   },
   {
-    icon: 'i-simple-icons:tailscale w-7 h-7',
+    icon: 'i-simple-icons:tailscale w-6 h-6',
     route: 'headscale-instances',
     label: 'Headscale Instances',
   },

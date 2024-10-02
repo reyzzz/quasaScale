@@ -26,14 +26,11 @@ export const useUsersStore = defineStore('users', () => {
       (preAthKey: Record<string, string>) => {
         return {
           ...preAthKey,
-          expiration_date: date.formatDate(
-            preAthKey.expiration,
-            'YYYY-MM-DD HH:mm:ss',
-          ),
+          expiration_date: new Date(preAthKey.expiration).toLocaleString(),
         }
       },
     )
-    user.pre_auth_keys = preauthkeys
+    return preauthkeys
   }
 
   async function removeUser(name: string): Promise<void> {

@@ -2,10 +2,9 @@ export interface User {
   id: string
   name: string
   createdAt: string
-  pre_auth_keys: PreAuthKeys[]
 }
 
-export interface HeadscaleNode {
+export interface QuasascaleNode {
   id?: string
   name: string
   lastSeen: string
@@ -36,7 +35,7 @@ export interface DNSRecord {
   value: string
 }
 
-export interface HeadscaleInstance {
+export interface QuasascaleInstance {
   id: number
   name: string
   quasascale_backend_url: string

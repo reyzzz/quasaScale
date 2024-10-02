@@ -1,8 +1,8 @@
 import Dexie, { Table } from 'dexie'
-import { HeadscaleInstance } from 'src/types/Database'
+import { QuasascaleInstance } from 'src/types/Database'
 
 class myLocalDatabase extends Dexie {
-  headscale_instances!: Table<HeadscaleInstance>
+  headscale_instances!: Table<QuasascaleInstance>
   constructor() {
     super('quasascale_db')
     this.version(1).stores({

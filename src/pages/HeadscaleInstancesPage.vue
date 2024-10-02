@@ -103,7 +103,7 @@
       </template>
       <template #item="props">
         <q-card flat bordered class="rounded-xl">
-          <q-card-section class="q-pb-xs">
+          <q-card-section>
             <div class="row q-mb-sm justify-between">
               <div class="text-h5 row items-center gap-5px">
                 <span class="relative flex h-3 w-3" v-if="props.row.active">
@@ -168,7 +168,7 @@
 <script lang="ts" setup>
 import { QTableColumn } from 'quasar'
 import HeadscaleInstanceConfiguration from 'src/components/HeadscaleInstanceConfiguration.vue'
-import { HeadscaleInstance } from 'src/types/Database'
+import { QuasascaleInstance } from 'src/types/Database'
 
 const { grid_view } = storeToRefs(useSettingsStore())
 const { instances } = storeToRefs(useHeadscaleInstancesStore())
@@ -229,7 +229,7 @@ async function add(): Promise<void> {
         name: '',
       },
     })
-    .onOk(async (data: HeadscaleInstance) => {
+    .onOk(async (data: QuasascaleInstance) => {
       try {
         await addHeadscaleInstance(data)
         useNotify('Headscale instance added successfully', 'check')
@@ -260,12 +260,12 @@ async function remove(id: number): Promise<void> {
       }
     })
 }
-async function update(headscale_instance: HeadscaleInstance) {
+async function update(headscale_instance: QuasascaleInstance) {
   useDialog()
     .show(HeadscaleInstanceConfiguration, {
       headscale_instance,
     })
-    .onOk(async (data: HeadscaleInstance) => {
+    .onOk(async (data: QuasascaleInstance) => {
       try {
         await updateHeadscaleInstance(data)
         useNotify('Headscale instance updated successfully', 'check')

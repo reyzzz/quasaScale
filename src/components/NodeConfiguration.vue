@@ -25,7 +25,7 @@
         />
         <q-select
           outlined
-          v-model="_node.assigned_user_id"
+          v-model="_node.user_id"
           :options="users"
           placeholder="select a user"
           label="User"
@@ -59,7 +59,7 @@
         <q-select
           label="Tags"
           outlined
-          v-model="_node.tags"
+          v-model="_node.validTags"
           use-input
           use-chips
           multiple
@@ -106,11 +106,11 @@ const _node = ref<HeadscaleNode>(extend(true, {}, props.componentProps.node))
 
 function saveChanges(): void {
   const user = users.value.find((user) => {
-    return user.id === _node.value.assigned_user_id
+    return user.id === _node.value.user_id
   })
 
   if (user) {
-    _node.value.assigned_user_name = user.name
+    _node.value.user = user
   }
 
   props.onDialogOK(_node.value)
@@ -128,4 +128,9 @@ function validatedIPv6(IP: string): boolean {
 
   return ipRegex.test(IP)
 }
+
+onMounted(() => {
+  if (props.componentProps.node.user_id === '0')
+    _node.value.user_id = users.value[0].id
+})
 </script>

@@ -1,20 +1,20 @@
 export interface User {
-  id: number
+  id: string
   name: string
-  creationDate: string
+  createdAt: string
   pre_auth_keys: PreAuthKeys[]
 }
 
 export interface HeadscaleNode {
-  id: number
+  id?: string
   name: string
-  node_last_seen: string
+  lastSeen: string
   IP_address_v4: string
   IP_address_v6: string
-  assigned_user_id: number
-  assigned_user_name?: string
+  user?: User
+  user_id: string
   node_route: string
-  tags: string[]
+  validTags: string[]
 }
 
 export interface Settings {
@@ -22,7 +22,7 @@ export interface Settings {
   headscale_api_key: string
 }
 export interface PreAuthKeys {
-  id: number
+  id?: string
   key: string
   expiration_date: string
   reusable: boolean

@@ -20,8 +20,8 @@ export const useUsersStore = defineStore('users', () => {
     )
   }
 
-  async function getuserPreAuthKeys(user: User): Promise<void> {
-    const resp = await api.get(`/preauthkey?user=${user.name}`)
+  async function getuserPreAuthKeys(name: string) {
+    const resp = await api.get(`/preauthkey?user=${name}`)
     const preauthkeys = resp.data.preAuthKeys.map(
       (preAthKey: Record<string, string>) => {
         return {

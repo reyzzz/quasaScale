@@ -14,15 +14,17 @@
       </div>
     </q-card-section>
     <q-card-section>
-      <q-btn
-        :icon="addKeySection ? 'remove' : 'add'"
-        :label="addKeySection ? 'hide Input' : 'add key'"
-        color="primary"
-        outline
-        dense
-        class="q-mb-sm"
-        @click="addKeySection = !addKeySection"
-      />
+      <div class="row justify-end mr-sm">
+        <q-btn
+          :icon="addKeySection ? 'remove' : 'add'"
+          :label="addKeySection ? 'hide Input' : 'add key'"
+          color="primary"
+          outline
+          dense
+          class="q-mb-sm"
+          @click="addKeySection = !addKeySection"
+        />
+      </div>
       <q-scroll-area
         style="height: calc(100vh - 500px)"
         :visible="false"
@@ -58,10 +60,6 @@
               />
             </div>
 
-            <div>
-              <span class="text-grey-6 q-mr-xs">Key:</span
-              >XXXXXXXX-XXXXXXXX-XXXXXXXX
-            </div>
             <div style="max-width: 300px" class="q-mt-md">
               <q-input filled v-model="expiration" label="Expiration Date">
                 <template v-slot:prepend>
@@ -134,22 +132,40 @@
                   />
                   <q-badge
                     outline
-                    color="red-10"
+                    color="secondary"
                     label="Used"
                     v-if="pre_auth_key.used"
                   />
-                </div>
-                <div
-                  class="text-negative hover:cursor-pointer"
-                  @click="expireKey(pre_auth_key.key)"
-                >
-                  EXPIRE
+                  <q-badge
+                    outline
+                    color="negative"
+                    class="q-ml-sm"
+                    label="expired"
+                    v-if="new Date(pre_auth_key.expiration_date) < new Date()"
+                  />
                 </div>
               </div>
+              <q-btn
+                class="absolute top-0 right-3"
+                @click="expireKey(pre_auth_key.key)"
+                label="Expire"
+                dense
+                round
+                color="negative"
+                flat
+              />
 
               <div class="text-info">
-                <span class="text-weight-bold text-accent q-mr-xs">Key: </span>
-                {{ pre_auth_key.key }}
+                <span
+                  class="text-weight-bold text-accent q-mr-xs hover:cursor-pointer"
+                  >Key:
+                </span>
+                <span
+                  @click="copyString(pre_auth_key.key)"
+                  class="hover:cursor-pointer"
+                >
+                  {{ pre_auth_key.key }}
+                </span>
               </div>
               <div class="text-info">
                 <span class="text-weight-bold text-accent q-mr-xs">
@@ -162,23 +178,14 @@
         </template>
       </q-scroll-area>
     </q-card-section>
-    <q-card-actions vertical>
-      <q-btn
-        label="Save"
-        color="primary"
-        outline
-        @click="submit"
-        rounded
-        icon="save"
-      />
-    </q-card-actions>
   </q-card>
 </template>
 
 <script setup lang="ts">
 import { date, extend } from 'quasar'
 import { PreAuthKeys } from 'src/types/Database'
-const { addPreAuthKey, expirePreAuthKey } = useUsersStore()
+const { addPreAuthKey, expirePreAuthKey, getuserPreAuthKeys } = useUsersStore()
+const { copyString } = useUtils()
 defineOptions({ name: 'preAuthKeys-dialog' })
 const props = defineProps<{
   onDialogOK: (payload: PreAuthKeys[]) => void
@@ -205,10 +212,7 @@ async function addKey(): Promise<void> {
       expiration_date: expiration.value,
     }
     const key = await addPreAuthKey(preAuthKey, props.componentProps.username)
-    preAuthKey.expiration_date = date.formatDate(
-      key.expiration,
-      'YYYY-MM-DD HH:mm',
-    )
+    preAuthKey.expiration_date = new Date().toLocaleString()
     preAuthKey.key = key.key
     _preAuthKeys.value.push(preAuthKey)
     addKeySection.value = false
@@ -221,11 +225,9 @@ async function addKey(): Promise<void> {
 async function expireKey(key: string) {
   try {
     await expirePreAuthKey(key, props.componentProps.username)
+    await getuserPreAuthKeys(props.componentProps.username)
   } catch (error) {
     useNotify('Failed to expire the PreAuthKey', 'warning', 'negative')
   }
-}
-function submit(): void {
-  props.onDialogOK(_preAuthKeys.value)
 }
 </script>

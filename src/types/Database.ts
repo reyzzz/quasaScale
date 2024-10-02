@@ -12,8 +12,9 @@ export interface QuasascaleNode {
   IP_address_v6: string
   user?: User
   user_id: string
-  node_route: string
+  machine_key: string
   validTags: string[]
+  online: boolean
 }
 
 export interface Settings {

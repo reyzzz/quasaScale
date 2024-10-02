@@ -127,7 +127,8 @@
 <script setup lang="ts">
 import { date, QTableColumn, useQuasar } from 'quasar'
 import PreAuthKeyComponent from 'src/components/PreAuthKeyComponent.vue'
-import { PreAuthKeys, User } from 'src/types/Database'
+import PromptComponent from 'src/components/PromptComponent.vue'
+import { User } from 'src/types/Database'
 
 const { users } = storeToRefs(useUsersStore())
 const { getuserPreAuthKeys, removeUser, addNewUser, modifyUserName } =
@@ -241,21 +242,26 @@ function deleteUser(index: number): void {
 }
 
 async function managePreAuthKeys(user: User): Promise<void> {
-  if (user.pre_auth_keys.length === 0) await getuserPreAuthKeys(user)
+  const pre_auth_key = await getuserPreAuthKeys(user.name)
   useDialog()
     .show(PreAuthKeyComponent, {
-      pre_auth_keys: user.pre_auth_keys,
+      pre_auth_keys: pre_auth_key,
       username: user.name,
     })
-    .onOk((pre_auth_keys: PreAuthKeys[]) => {
-      user.pre_auth_keys = pre_auth_keys
+    .onOk(() => {
       useNotify('PreAuthsKeys updated successfully', 'check')
     })
 }
 
 function addUser(): void {
   useDialog()
-    .prompt('', 'Insert username', 'Add User', checkUsername)
+    .show(PromptComponent, {
+      title: 'Please enter username',
+      description: 'Input username',
+      label: 'save',
+      users: users.value,
+      username: '',
+    })
     .onOk(async (userName) => {
       try {
         const updatedUser = await addNewUser(userName)
@@ -267,7 +273,6 @@ function addUser(): void {
           id: '8',
           name: userName,
           createdAt: creationDate,
-          pre_auth_keys: [],
         }
         users.value.push(user)
         useNotify('User added successfully', 'check')

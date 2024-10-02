@@ -116,13 +116,14 @@
 </template>
 
 <script setup lang="ts">
-import { AxiosError } from 'axios'
 import { QTableColumn, useQuasar } from 'quasar'
-import { api } from 'src/boot/axios'
+
 import DNSConfiguration from 'src/components/DNSConfiguration.vue'
 import { DNSRecord } from 'src/types/Database'
 
 const $q = useQuasar()
+const { dnsRecords } = storeToRefs(useDomainsStore())
+const { getDomains, removeDomain, addDomain, updateDomain } = useDomainsStore()
 const { grid_view } = storeToRefs(useSettingsStore())
 const cols = ref<QTableColumn[]>([
   {
@@ -155,7 +156,6 @@ const cols = ref<QTableColumn[]>([
   },
 ])
 const filter = ref('')
-const dnsRecords = ref<DNSRecord[]>([])
 
 function editDNS(dnsRecord: DNSRecord, index: number): void {
   useDialog()
@@ -164,24 +164,7 @@ function editDNS(dnsRecord: DNSRecord, index: number): void {
       dnsRecords: dnsRecords.value,
     })
     .onOk(async (updatedDNS: DNSRecord) => {
-      try {
-        await api.patch('api/updateDomain', {
-          domain: updatedDNS,
-          index: index,
-        })
-        dnsRecords.value[index] = updatedDNS
-        useNotify('DNS updated successfully', 'check')
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          useNotify(error.response?.data, 'warning', 'negative')
-        } else {
-          useNotify(
-            'An error happen while updating this domain',
-            'warning',
-            'negative',
-          )
-        }
-      }
+      updateDomain(index, updatedDNS)
     })
 }
 
@@ -196,22 +179,8 @@ function addDNS(): void {
       dns: dnsRecord,
       dnsRecords: dnsRecords.value,
     })
-    .onOk(async (updatedDNS: DNSRecord) => {
-      try {
-        await api.post('api/addDomain', { domain: updatedDNS })
-        dnsRecords.value.push(updatedDNS)
-        useNotify('DNS added successfully', 'check')
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          useNotify(error.response?.data, 'warning', 'negative')
-        } else {
-          useNotify(
-            'An error happen while adding this domain',
-            'warning',
-            'negative',
-          )
-        }
-      }
+    .onOk(async (DNS: DNSRecord) => {
+      await addDomain(DNS)
     })
 }
 
@@ -219,38 +188,10 @@ function deleteDNS(index: number): void {
   useDialog()
     .del()
     .onOk(async () => {
-      try {
-        await api.post('api/deleteDomain', { index: index })
-        dnsRecords.value = dnsRecords.value.filter((_, ind) => index !== ind)
-        useNotify('DNS delete successfully', 'check')
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          useNotify(error.response?.data, 'warning', 'negative')
-        } else {
-          useNotify(
-            'An error happen while deleting this domain',
-            'warning',
-            'negative',
-          )
-        }
-      }
+      await removeDomain(index)
     })
 }
 onMounted(async () => {
-  try {
-    const data = await api.get('api/getDomains')
-    dnsRecords.value = data.data.yaml.map((data: DNSRecord) => {
-      return { ...data, active: false }
-    })
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      useNotify(error.response?.data, 'warning', 'negative')
-    } else {
-      useNotify('An error happen while fetching domains', 'warning', 'negative')
-    }
-  }
+  await getDomains()
 })
 </script>
-<!-- [ { name: 'google', type: 'A', value: '192.168.3.3', }, { name: 'facebook',
-type: 'A', value: '192.168.3.4', }, { name: 'instagram', type: 'A', value:
-'192.168.3.5', }, ] -->

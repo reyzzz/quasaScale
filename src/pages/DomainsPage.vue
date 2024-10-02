@@ -40,7 +40,14 @@
       </template>
       <template #body="props">
         <q-tr :props="props">
-          <q-td>{{ props.row.name }}</q-td>
+          <q-td>
+            <div
+              @click="copyString(props.row.name)"
+              class="hover:cursor-pointer"
+            >
+              {{ props.row.name }}
+            </div></q-td
+          >
           <q-td>{{ props.row.type }}</q-td>
           <q-td>{{ props.row.value }}</q-td>
           <q-td key="actions" :props="props">
@@ -73,7 +80,10 @@
         <q-card flat bordered class="rounded-xl">
           <q-card-section>
             <div class="row q-mb-sm justify-between">
-              <div class="text-h5 row items-center">
+              <div
+                class="text-h5 row hover:cursor-pointer"
+                @click="copyString(props.row.name)"
+              >
                 {{ props.row.name }}
               </div>
               <q-btn flat round dense icon="more_vert">
@@ -125,6 +135,7 @@ const $q = useQuasar()
 const { dnsRecords } = storeToRefs(useDomainsStore())
 const { getDomains, removeDomain, addDomain, updateDomain } = useDomainsStore()
 const { grid_view } = storeToRefs(useSettingsStore())
+const { copyString } = useUtils()
 const cols = ref<QTableColumn[]>([
   {
     name: 'name',

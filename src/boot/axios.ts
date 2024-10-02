@@ -15,27 +15,28 @@ declare module 'vue' {
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create()
-
-export default boot(({ app, store }) => {
+export default boot(async ({}) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
-
+  const { active_headscale } = storeToRefs(useHeadscaleInstancesStore())
+  const { getHeadscaleInstances } = useHeadscaleInstancesStore()
+  await getHeadscaleInstances()
   watch(
-    () => store.state.value.config,
+    active_headscale,
     (newConfig) => {
       if (newConfig) {
-        api.defaults.baseURL = newConfig.quasascale_backend_url || ''
         api.defaults.headers.common['Authorization'] =
           `Bearer ${newConfig.headscale_api_key || ''}`
+        api.defaults.baseURL = newConfig.quasascale_backend_url
       }
     },
     { immediate: true, deep: true },
   )
 
-  app.config.globalProperties.$axios = axios
+  //app.config.globalProperties.$axios = axios
   // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)
   //       so you won't necessarily have to import axios in each vue file
 
-  app.config.globalProperties.$api = api
+  //app.config.globalProperties.$api = api
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
   //       so you can easily perform requests against your app's API
 })

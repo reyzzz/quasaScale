@@ -152,23 +152,11 @@
 <script setup lang="ts">
 import { QTableColumn } from 'quasar'
 import NodeConfiguration from 'src/components/NodeConfiguration.vue'
-import { Node } from 'src/types/Database'
+import { HeadscaleNode } from 'src/types/Database'
 
 const filter = ref('')
 const { grid_view } = storeToRefs(useSettingsStore())
-const { users } = storeToRefs(useUsersStore())
-const nodes = ref<Node[]>([
-  {
-    id: 1,
-    name: 'device1',
-    node_last_seen: '2024-09-27 17:24',
-    IP_address_v4: '192.168.1.1',
-    IP_address_v6: '2001:db8:85a3::8a2e:370:7334',
-    assigned_user_id: 1,
-    node_route: 'r',
-    tags: ['test1', 'test2'],
-  },
-])
+const nodes = ref<HeadscaleNode[]>([])
 const cols = ref<QTableColumn[]>([
   {
     name: 'id',
@@ -234,12 +222,12 @@ const cols = ref<QTableColumn[]>([
   },
 ])
 
-function editNode(node: Node, index: number): void {
+function editNode(node: HeadscaleNode, index: number): void {
   useDialog()
     .show(NodeConfiguration, {
       node: node,
     })
-    .onOk((updatedNode: Node) => {
+    .onOk((updatedNode: HeadscaleNode) => {
       nodes.value[index] = updatedNode
       useNotify('Node updated successfully', 'check')
     })
@@ -256,7 +244,7 @@ function addNode(): void {
     .show(NodeConfiguration, {
       node: node,
     })
-    .onOk((updatedNode: Node) => {
+    .onOk((updatedNode: HeadscaleNode) => {
       nodes.value.push(updatedNode)
       useNotify('Node added successfully', 'check')
     })
@@ -270,16 +258,10 @@ function deleteNode(index: number): void {
       useNotify('Node delete successfully', 'check')
     })
 }
-onMounted(() => {
-  nodes.value = nodes.value.map((node) => {
-    const user = users.value.find((user) => {
-      return user.id === node.assigned_user_id
-    })
-    if (!user) return node
-    return {
-      ...node,
-      assigned_user_name: user.name,
-    }
-  })
+
+const { getNodes } = useNodesStore()
+
+onMounted(async () => {
+  nodes.value = await getNodes()
 })
 </script>

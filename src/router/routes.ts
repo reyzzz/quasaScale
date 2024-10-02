@@ -21,9 +21,9 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/DomainsPage.vue'),
       },
       {
-        path: '/settings',
-        name: 'settings',
-        component: () => import('pages/SettingsPage.vue'),
+        path: '/headscale-instances',
+        name: 'headscale-instances',
+        component: () => import('pages/HeadscaleInstancesPage.vue'),
       },
     ],
   },

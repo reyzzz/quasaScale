@@ -93,16 +93,16 @@
 
 <script setup lang="ts">
 import { extend } from 'quasar'
-import { Node } from 'src/types/Database'
+import { HeadscaleNode } from 'src/types/Database'
 defineOptions({ name: 'node-dialog' })
 const props = defineProps<{
-  onDialogOK: (payload: Node) => void
+  onDialogOK: (payload: HeadscaleNode) => void
   componentProps: {
-    node: Node
+    node: HeadscaleNode
   }
 }>()
 const { users } = storeToRefs(useUsersStore())
-const _node = ref<Node>(extend(true, {}, props.componentProps.node))
+const _node = ref<HeadscaleNode>(extend(true, {}, props.componentProps.node))
 
 function saveChanges(): void {
   const user = users.value.find((user) => {

@@ -3,9 +3,33 @@
     <q-header bordered class="bg-dark">
       <q-toolbar>
         <q-toolbar-title
-          class="text-weight-bold text-[#ff8700] opacity-[1!important] text-shadow-[rgb(255,135,0)_0px_0px_1px,rgba(249,82,0,0.6)_0px_0px_5px,rgba(249,15,0,0.4)_0px_5px_4px]"
-          >QuasaScale</q-toolbar-title
+          v-if="$q.screen.lt.sm"
+          class="row text-weight-bold text-[#ff8700] opacity-[1!important] text-shadow-[rgb(255,135,0)_0px_0px_1px,rgba(249,82,0,0.6)_0px_0px_5px,rgba(249,15,0,0.4)_0px_5px_4px]"
         >
+          QuasaScale
+          <div
+            class="q-ml-md row items-center gap-4px text-white text-subtitle1"
+          >
+            <span
+              class="relative flex h-3 w-3"
+              v-if="active_headscale !== undefined"
+            >
+              <span
+                class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-[#ade25d]"
+              ></span>
+              <span
+                class="relative inline-flex rounded-full h-3 w-3 bg-[#ade25d]"
+              ></span>
+            </span>
+            {{ active_headscale?.name }} selected
+          </div>
+        </q-toolbar-title>
+        <q-toolbar-title
+          v-else
+          class="text-weight-bold text-[#ff8700] opacity-[1!important] text-shadow-[rgb(255,135,0)_0px_0px_1px,rgba(249,82,0,0.6)_0px_0px_5px,rgba(249,15,0,0.4)_0px_5px_4px]"
+        >
+          QuasaScale
+        </q-toolbar-title>
         <q-btn
           color="primary"
           flat
@@ -36,7 +60,8 @@
           <q-item
             clickable
             :disable="
-              link.route === 'dns' && quasascale_backend_url.length === 0
+              link.route === 'dns' &&
+              active_headscale?.quasascale_backend_url === ''
             "
             :to="{ name: link.route }"
             exact
@@ -79,6 +104,26 @@
         />
       </q-tabs>
     </q-footer>
+    <q-footer bordered class="bg-dark" v-else>
+      <q-item>
+        <q-item-section avatar>
+          <div class="row items-center gap-4px">
+            <span
+              class="relative flex h-3 w-3"
+              v-if="active_headscale !== undefined"
+            >
+              <span
+                class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-[#ade25d]"
+              ></span>
+              <span
+                class="relative inline-flex rounded-full h-3 w-3 bg-[#ade25d]"
+              ></span>
+            </span>
+            {{ active_headscale?.name }} selected
+          </div>
+        </q-item-section>
+      </q-item>
+    </q-footer>
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -93,7 +138,8 @@ defineOptions({
 
 const $q = useQuasar()
 const drawer = ref(true)
-const { quasascale_backend_url } = storeToRefs(useConfigStore())
+const { active_headscale } = storeToRefs(useHeadscaleInstancesStore())
+const { getHeadscaleInstances } = useHeadscaleInstancesStore()
 const { grid_view } = storeToRefs(useSettingsStore())
 const linksList = ref([
   {
@@ -112,9 +158,15 @@ const linksList = ref([
     label: 'Domains',
   },
   {
-    icon: 'i-material-symbols:settings-rounded w-8 h-8',
-    route: 'settings',
-    label: 'Settings',
+    icon: 'i-simple-icons:tailscale w-7 h-7',
+    route: 'headscale-instances',
+    label: 'Headscale Instances',
   },
 ])
+const router = useRouter()
+onMounted(async () => {
+  await getHeadscaleInstances()
+  if (active_headscale.value === undefined)
+    router.replace({ name: 'headscale-instances' })
+})
 </script>

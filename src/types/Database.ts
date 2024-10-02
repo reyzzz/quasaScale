@@ -5,7 +5,7 @@ export interface User {
   pre_auth_keys: PreAuthKeys[]
 }
 
-export interface Node {
+export interface HeadscaleNode {
   id: number
   name: string
   node_last_seen: string
@@ -37,9 +37,9 @@ export interface DNSRecord {
 }
 
 export interface HeadscaleInstance {
-  id?: number
-  headscale_url: string
-  quasascale_backend_url?: string
+  id: number
+  name: string
+  quasascale_backend_url: string
   headscale_api_key: string
   active: boolean
 }

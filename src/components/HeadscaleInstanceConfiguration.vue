@@ -19,25 +19,28 @@
         <q-input
           outlined
           hide-bottom-space
-          v-model="headscale_instance.headscale_url"
-          label="Headscale URL"
+          v-model="headscale_instance.name"
+          label="Headscale Name"
+          :rules="[(val) => !!val || 'Field required']"
+        />
+
+        <q-input
+          outlined
+          hide-bottom-space
+          v-model="headscale_instance.quasascale_backend_url"
+          label="Quasascale Backend URL"
           :rules="[
             (val) => !!val || 'Field required',
             (val) => validateURL(val) || 'wrong format',
           ]"
         />
+
         <q-input
           outlined
           hide-bottom-space
           v-model="headscale_instance.headscale_api_key"
           label="Headscale API Key"
           :rules="[(val) => !!val || 'Field required']"
-        />
-        <q-input
-          outlined
-          hide-bottom-space
-          v-model="headscale_instance.quasascale_backend_url"
-          label="Quasascale Backend URL"
         />
       </q-card-section>
       <q-card-actions vertical>
@@ -69,10 +72,7 @@ const headscale_instance = ref<HeadscaleInstance>(
 )
 
 function validateURL(url: string) {
-  const urlRegex =
-    /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.[a-zA-Z]{2,})(\/[^\s]*)?$|^$/
-
-  return urlRegex.test(url)
+  return URL.canParse(url)
 }
 function saveChanges() {
   props.onDialogOK(headscale_instance.value)

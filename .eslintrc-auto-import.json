@@ -98,6 +98,10 @@
     "watchEffect": true,
     "watchPostEffect": true,
     "watchSyncEffect": true,
-    "useConfigStore": true
+    "useConfigStore": true,
+    "useHeadscaleInstancesStore": true,
+    "useNodesStore": true,
+    "useUtils": true,
+    "useDomainsStore": true
   }
 }

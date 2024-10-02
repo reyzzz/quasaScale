@@ -42,13 +42,20 @@
         <q-tr :props="props">
           <q-td>{{ props.row.id }}</q-td>
           <q-td>{{ props.row.name }}</q-td>
-          <q-td>{{ props.row.node_last_seen }}</q-td>
+          <q-td>{{ props.row.lastSeen }}</q-td>
           <q-td>{{ props.row.IP_address_v4 }}</q-td>
           <q-td>{{ props.row.IP_address_v6 }}</q-td>
-          <q-td>{{ props.row.assigned_user_name }}</q-td>
-          <q-td>{{ props.row.node_route }}</q-td>
+          <q-td>{{ props.row.user.name }}</q-td>
+          <q-td>
+            <div
+              class="hover:cursor-pointer"
+              @click="copyString(props.row.node_route)"
+            >
+              {{ chopString(props.row.node_route) }}
+            </div></q-td
+          >
           <q-td
-            ><template v-for="(tag, index) in props.row.tags" :key="index">
+            ><template v-for="(tag, index) in props.row.validTags" :key="index">
               <q-badge
                 outline
                 color="primary"
@@ -89,7 +96,10 @@
               <div class="text-h6 row items-center col-10 gap-5px">
                 {{ props.row.name }}
 
-                <template v-for="(tag, index) in props.row.tags" :key="index">
+                <template
+                  v-for="(tag, index) in props.row.validTags"
+                  :key="index"
+                >
                   <q-badge outline color="primary" :label="tag" />
                 </template>
               </div>
@@ -119,13 +129,11 @@
             <div class="row q-mb-sm">
               <div class="col-5">
                 <span class="text-weight-bold text-accent"> User: </span>
-                <span class="text-info"
-                  >{{ props.row.assigned_user_name }}
-                </span>
+                <span class="text-info">{{ props.row.user.name }} </span>
               </div>
               <div class="col-7">
-                <span class="text-weight-bold text-accent"> Last Seen: </span>
-                <span class="text-info">{{ props.row.node_last_seen }} </span>
+                <span class="text-weight-bold text-accent">Last Seen:</span>
+                <span class="text-info">{{ props.row.lastSeen }}</span>
               </div>
             </div>
             <div class="row q-mb-sm">
@@ -140,7 +148,11 @@
             </div>
             <div>
               <span class="text-weight-bold text-accent"> Route: </span>
-              <span class="text-info">{{ props.row.node_route }} </span>
+              <span
+                class="text-info hover:cursor-pointer"
+                @click="copyString(props.row.node_route)"
+                >{{ chopString(props.row.node_route) }}
+              </span>
             </div>
           </q-card-section>
         </q-card>
@@ -156,6 +168,10 @@ import { HeadscaleNode } from 'src/types/Database'
 
 const filter = ref('')
 const { grid_view } = storeToRefs(useSettingsStore())
+const { getNodes, renameNode, changeUser, updateTags, removeNode, createNode } =
+  useNodesStore()
+const { chopString, copyString, arraysEqual } = useUtils()
+
 const nodes = ref<HeadscaleNode[]>([])
 const cols = ref<QTableColumn[]>([
   {
@@ -173,7 +189,7 @@ const cols = ref<QTableColumn[]>([
     align: 'left',
   },
   {
-    name: 'node_last_seen',
+    name: 'lastSeen',
     required: true,
     label: 'Node Last Seen',
     field: 'node_last_seen',
@@ -194,11 +210,12 @@ const cols = ref<QTableColumn[]>([
     align: 'left',
   },
   {
-    name: 'assigned_user_name',
+    name: 'user',
     required: true,
     label: 'Assigned User',
-    field: 'assigned_user',
+    field: 'user',
     align: 'left',
+    format: (val) => val.name,
   },
   {
     name: 'node_route',
@@ -227,39 +244,69 @@ function editNode(node: HeadscaleNode, index: number): void {
     .show(NodeConfiguration, {
       node: node,
     })
-    .onOk((updatedNode: HeadscaleNode) => {
-      nodes.value[index] = updatedNode
-      useNotify('Node updated successfully', 'check')
+    .onOk(async (updatedNode: HeadscaleNode) => {
+      try {
+        if (node.name !== updatedNode.name) await renameNode(updatedNode)
+        if (!arraysEqual(node.validTags, updatedNode.validTags))
+          await updateTags(updatedNode)
+        if (node.user_id !== updatedNode.user_id) await changeUser(updatedNode)
+        nodes.value[index] = updatedNode
+        useNotify('Node updated successfully', 'check')
+      } catch (error) {
+        useNotify(
+          'An error has occcured while updating this node',
+          'warning',
+          'negative',
+        )
+      }
     })
 }
 function addNode(): void {
-  const node = {
-    node_last_seen: '2024-09-27 17:24',
-    IP_address: '',
-    assigned_user_id: 1,
+  const node: HeadscaleNode = {
+    name: '',
+    lastSeen: '2024-09-27 17:24',
+    IP_address_v4: '',
+    IP_address_v6: '',
+    user_id: '0',
     node_route: '',
-    tags: [],
+    validTags: [],
   }
   useDialog()
     .show(NodeConfiguration, {
       node: node,
     })
-    .onOk((updatedNode: HeadscaleNode) => {
-      nodes.value.push(updatedNode)
-      useNotify('Node added successfully', 'check')
+    .onOk(async (node: HeadscaleNode) => {
+      try {
+        await createNode(node)
+        nodes.value.push(node)
+        useNotify('Node added successfully', 'check')
+      } catch (error) {
+        useNotify(
+          'An error has occcured while adding the node',
+          'warning',
+          'negative',
+        )
+      }
     })
 }
 
 function deleteNode(index: number): void {
   useDialog()
     .del()
-    .onOk(() => {
-      nodes.value = nodes.value.filter((_, ind) => index !== ind)
-      useNotify('Node delete successfully', 'check')
+    .onOk(async () => {
+      try {
+        await removeNode(nodes.value[index])
+        nodes.value = nodes.value.filter((_, ind) => index !== ind)
+        useNotify('Node delete successfully', 'check')
+      } catch (error) {
+        useNotify(
+          'An error has occured while deleting this node',
+          'warning',
+          'negative',
+        )
+      }
     })
 }
-
-const { getNodes } = useNodesStore()
 
 onMounted(async () => {
   nodes.value = await getNodes()

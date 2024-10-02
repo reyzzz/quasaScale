@@ -10,9 +10,9 @@ export const useNodesStore = defineStore('nodes', () => {
     console.log(resp.data.nodes)
     return resp.data.nodes.map((node: HeadscaleNode) => {
       const user = node.user
-      const nodeKey = node.nodeKey
       return {
         ...node,
+        name: node.givenName,
         lastSeen: new Date(node.lastSeen).toLocaleString(),
         IP_address_v4: Array.isArray(node.ipAddresses)
           ? node.ipAddresses[0]
@@ -20,7 +20,6 @@ export const useNodesStore = defineStore('nodes', () => {
         IP_address_v6: Array.isArray(node.ipAddresses)
           ? node.ipAddresses[1]
           : '',
-        node_route: nodeKey.split(':')[1],
         user_id: user.id,
       }
     })
@@ -46,7 +45,7 @@ export const useNodesStore = defineStore('nodes', () => {
 
   async function createNode(node: QuasascaleNode): Promise<void> {
     const resp = await api.post(
-      `node/register?user=${node.user?.name}&key=nodekey:${node.node_route}`,
+      `node/register?user=${node.user?.name}&key=mkey:${node.machine_key}`,
     )
     node.id = resp.data.node.id
     await renameNode(node)

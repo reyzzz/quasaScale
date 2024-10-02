@@ -71,11 +71,29 @@
           hide-bottom-space
         />
         <q-input
+          v-if="!_node.id"
+          :rules="[
+            (val) =>
+              validateMachineKey(val) || 'Format have to be HEX, 64 char',
+          ]"
           outlined
           hide-bottom-space
-          v-model="_node.node_route"
-          label="Node Route"
-        />
+          v-model="_node.machine_key"
+          label="Machine Key"
+        >
+          <template #append>
+            <q-btn
+              label="Generate Key"
+              class="q-my-md q-ml-auto i-material-symbols:barcode"
+              flat
+              color="primary"
+              hide-bottom-space
+              @click="_node.machine_key = generateMachineKey()"
+            >
+              <q-tooltip>Generate Key</q-tooltip>
+            </q-btn>
+          </template>
+        </q-input>
       </q-card-section>
       <q-card-actions vertical>
         <q-btn
@@ -103,7 +121,7 @@ const props = defineProps<{
 }>()
 const { users } = storeToRefs(useUsersStore())
 const _node = ref<QuasascaleNode>(extend(true, {}, props.componentProps.node))
-
+const { generateMachineKey } = useUtils()
 function saveChanges(): void {
   const user = users.value.find((user) => {
     return user.id === _node.value.user_id
@@ -128,7 +146,10 @@ function validatedIPv6(IP: string): boolean {
 
   return ipRegex.test(IP)
 }
-
+function validateMachineKey(key: string) {
+  const regex = /^[a-fA-F0-9]{64}$/
+  return regex.test(key)
+}
 onMounted(() => {
   if (props.componentProps.node.user_id === '0')
     _node.value.user_id = users.value[0].id

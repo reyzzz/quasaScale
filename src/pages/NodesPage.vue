@@ -40,22 +40,28 @@
       </template>
       <template #body="props">
         <q-tr :props="props">
-          <q-td>{{ props.row.id }}</q-td>
+          <q-td
+            ><div class="row items-center gap-10px">
+              <span class="relative flex h-3 w-3">
+                <span
+                  class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+                  :class="props.row.online ? 'bg-[#ade25d]' : 'bg-[#c10015]'"
+                >
+                </span>
+                <span
+                  class="relative inline-flex rounded-full h-3 w-3"
+                  :class="props.row.online ? 'bg-[#ade25d]' : 'bg-[#c10015]'"
+                ></span> </span
+              >{{ props.row.id }}
+            </div>
+          </q-td>
           <q-td>{{ props.row.name }}</q-td>
           <q-td>{{ props.row.lastSeen }}</q-td>
           <q-td>{{ props.row.IP_address_v4 }}</q-td>
           <q-td>{{ props.row.IP_address_v6 }}</q-td>
           <q-td>{{ props.row.user.name }}</q-td>
-          <q-td>
-            <div
-              class="hover:cursor-pointer"
-              @click="copyString(props.row.node_route)"
-            >
-              {{ chopString(props.row.node_route) }}
-            </div></q-td
-          >
           <q-td
-            ><template v-for="(tag, index) in props.row.validTags" :key="index">
+            ><template v-for="tag in props.row.validTags" :key="tag">
               <q-badge
                 outline
                 color="primary"
@@ -94,12 +100,25 @@
           <q-card-section>
             <div class="row justify-between items-center q-mb-sm">
               <div class="text-h6 row items-center col-10 gap-5px">
-                {{ props.row.name }}
+                <div class="row items-center gap-4px">
+                  <span class="relative flex h-3 w-3">
+                    <span
+                      class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+                      :class="
+                        props.row.online ? 'bg-[#ade25d]' : 'bg-[#c10015]'
+                      "
+                    >
+                    </span>
+                    <span
+                      class="relative inline-flex rounded-full h-3 w-3"
+                      :class="
+                        props.row.online ? 'bg-[#ade25d]' : 'bg-[#c10015]'
+                      "
+                    ></span> </span
+                  >{{ props.row.name }}
+                </div>
 
-                <template
-                  v-for="(tag, index) in props.row.validTags"
-                  :key="index"
-                >
+                <template v-for="tag in props.row.validTags" :key="tag">
                   <q-badge outline color="primary" :label="tag" />
                 </template>
               </div>
@@ -146,14 +165,6 @@
                 <span class="text-info">{{ props.row.IP_address_v6 }} </span>
               </div>
             </div>
-            <div>
-              <span class="text-weight-bold text-accent"> Route: </span>
-              <span
-                class="text-info hover:cursor-pointer"
-                @click="copyString(props.row.node_route)"
-                >{{ chopString(props.row.node_route) }}
-              </span>
-            </div>
           </q-card-section>
         </q-card>
       </template>
@@ -170,7 +181,7 @@ const filter = ref('')
 const { grid_view } = storeToRefs(useSettingsStore())
 const { getNodes, renameNode, changeUser, updateTags, removeNode, createNode } =
   useNodesStore()
-const { chopString, copyString, arraysEqual } = useUtils()
+const { arraysEqual } = useUtils()
 
 const nodes = ref<QuasascaleNode[]>([])
 const cols = ref<QTableColumn[]>([
@@ -218,13 +229,6 @@ const cols = ref<QTableColumn[]>([
     format: (val) => val.name,
   },
   {
-    name: 'node_route',
-    required: true,
-    label: 'Node Route',
-    field: 'node_route',
-    align: 'left',
-  },
-  {
     name: 'tags',
     required: true,
     label: 'Tags',
@@ -264,11 +268,12 @@ function editNode(node: QuasascaleNode, index: number): void {
 function addNode(): void {
   const node: QuasascaleNode = {
     name: '',
+    online: false,
     lastSeen: '2024-09-27 17:24',
     IP_address_v4: '',
     IP_address_v6: '',
     user_id: '0',
-    node_route: '',
+    machine_key: '',
     validTags: [],
   }
   useDialog()

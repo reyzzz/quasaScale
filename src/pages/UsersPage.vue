@@ -42,10 +42,8 @@
         <q-tr :props="props">
           <q-td>{{ props.row.id }}</q-td>
           <q-td>{{ props.row.name }}</q-td>
-          <q-td>{{ props.row.creationDate }}</q-td>
-          <q-td key="preAuthKeys" :props="props">
-            {{ props.row.pre_auth_keys.length }}</q-td
-          >
+          <q-td>{{ props.row.createdAt }}</q-td>
+
           <q-td key="actions" :props="props">
             <q-btn
               icon="edit"
@@ -117,14 +115,7 @@
 
             <div>
               <span class="text-weight-bold text-accent"> Creation Date: </span>
-              <span class="text-info">{{ props.row.creationDate }} </span>
-            </div>
-
-            <div class="q-my-sm">
-              <span class="text-weight-bold text-accent"> PreAuthKeys: </span>
-              <span class="text-info"
-                >{{ props.row.pre_auth_keys.length }}
-              </span>
+              <span class="text-info">{{ props.row.createdAt }} </span>
             </div>
           </q-card-section>
         </q-card>
@@ -139,6 +130,8 @@ import PreAuthKeyComponent from 'src/components/PreAuthKeyComponent.vue'
 import { PreAuthKeys, User } from 'src/types/Database'
 
 const { users } = storeToRefs(useUsersStore())
+const { getuserPreAuthKeys, removeUser, addNewUser, modifyUserName } =
+  useUsersStore()
 const $q = useQuasar()
 const cols = ref<QTableColumn[]>([
   {
@@ -156,19 +149,13 @@ const cols = ref<QTableColumn[]>([
     align: 'left',
   },
   {
-    name: 'creationDate',
+    name: 'createdAt',
     required: true,
     label: 'Creation Date',
-    field: 'creationDate',
+    field: 'createdAt',
     align: 'left',
   },
-  {
-    name: 'preAuthKeys',
-    required: true,
-    label: 'Pre Auth Keys',
-    field: 'preAuthKeys',
-    align: 'left',
-  },
+
   {
     name: 'actions',
     label: 'Actions',
@@ -219,25 +206,46 @@ function renameUser(user: User): void {
     message: 'Insert username',
     persistent: true,
     title: 'Rename User',
-  }).onOk((username) => {
-    user.name = username
-    useNotify('Username updated successfully', 'check')
+  }).onOk(async (username) => {
+    try {
+      await modifyUserName(user.name, username)
+      user.name = username
+      useNotify('Username updated successfully', 'check')
+    } catch (error) {
+      useNotify(
+        'An error has occured while updating username',
+        'warning',
+        'negative',
+      )
+    }
   })
 }
 
 function deleteUser(index: number): void {
   useDialog()
     .del()
-    .onOk(() => {
-      users.value = users.value.filter((val, ind) => index !== ind)
-      useNotify('User delete successfully', 'check')
+    .onOk(async () => {
+      try {
+        const user = users.value[index]
+        await removeUser(user.name)
+        users.value = users.value.filter((val, ind) => index !== ind)
+        useNotify('User delete successfully', 'check')
+      } catch (error) {
+        useNotify(
+          'An error has occured while deleting this user',
+          'warning',
+          'negative',
+        )
+      }
     })
 }
 
-function managePreAuthKeys(user: User): void {
+async function managePreAuthKeys(user: User): Promise<void> {
+  if (user.pre_auth_keys.length === 0) await getuserPreAuthKeys(user)
   useDialog()
     .show(PreAuthKeyComponent, {
       pre_auth_keys: user.pre_auth_keys,
+      username: user.name,
     })
     .onOk((pre_auth_keys: PreAuthKeys[]) => {
       user.pre_auth_keys = pre_auth_keys
@@ -248,16 +256,24 @@ function managePreAuthKeys(user: User): void {
 function addUser(): void {
   useDialog()
     .prompt('', 'Insert username', 'Add User', checkUsername)
-    .onOk((userName) => {
-      const creationDate = date.formatDate(new Date(), 'YYYY-MM-DD HH:mm')
-      const user: User = {
-        id: users.value.length,
-        name: userName,
-        creationDate: creationDate,
-        pre_auth_keys: [],
+    .onOk(async (userName) => {
+      try {
+        const updatedUser = await addNewUser(userName)
+        const creationDate = date.formatDate(
+          updatedUser.createdAt,
+          'YYYY-MM-DD HH:mm',
+        )
+        const user: User = {
+          id: '8',
+          name: userName,
+          createdAt: creationDate,
+          pre_auth_keys: [],
+        }
+        users.value.push(user)
+        useNotify('User added successfully', 'check')
+      } catch (error) {
+        useNotify('An error has occured while adding this user', 'check')
       }
-      users.value.push(user)
-      useNotify('User added successfully', 'check')
     })
 }
 function checkUsername(name: string, org_name?: string): boolean | string {

@@ -116,27 +116,35 @@
         <template v-for="pre_auth_key in _preAuthKeys" :key="pre_auth_key.id">
           <q-card flat bordered class="rounded-xl q-mb-sm q-mr-xs">
             <q-card-section class="q-py-sm">
-              <div class="q-mb-sm">
-                <q-badge
-                  outline
-                  color="amber-8"
-                  label="Ephemeral"
-                  v-if="pre_auth_key.ephemeral"
-                  class="q-mr-sm"
-                />
-                <q-badge
-                  outline
-                  color="purple-13"
-                  label="Reusable"
-                  v-if="pre_auth_key.reusable"
-                  class="q-mr-sm"
-                />
-                <q-badge
-                  outline
-                  color="red-10"
-                  label="Used"
-                  v-if="pre_auth_key.used"
-                />
+              <div class="row justify-between">
+                <div class="q-mb-sm">
+                  <q-badge
+                    outline
+                    color="amber-8"
+                    label="Ephemeral"
+                    v-if="pre_auth_key.ephemeral"
+                    class="q-mr-sm"
+                  />
+                  <q-badge
+                    outline
+                    color="purple-13"
+                    label="Reusable"
+                    v-if="pre_auth_key.reusable"
+                    class="q-mr-sm"
+                  />
+                  <q-badge
+                    outline
+                    color="red-10"
+                    label="Used"
+                    v-if="pre_auth_key.used"
+                  />
+                </div>
+                <div
+                  class="text-negative hover:cursor-pointer"
+                  @click="expireKey(pre_auth_key.key)"
+                >
+                  EXPIRE
+                </div>
               </div>
 
               <div class="text-info">
@@ -170,12 +178,13 @@
 <script setup lang="ts">
 import { date, extend } from 'quasar'
 import { PreAuthKeys } from 'src/types/Database'
-
+const { addPreAuthKey, expirePreAuthKey } = useUsersStore()
 defineOptions({ name: 'preAuthKeys-dialog' })
 const props = defineProps<{
   onDialogOK: (payload: PreAuthKeys[]) => void
   componentProps: {
     pre_auth_keys: PreAuthKeys[]
+    username: string
   }
 }>()
 const addKeySection = ref(false)
@@ -186,19 +195,35 @@ const _preAuthKeys = ref<PreAuthKeys[]>(
   extend(true, [], props.componentProps.pre_auth_keys),
 )
 
-function addKey(): void {
-  const preAuthKey: PreAuthKeys = {
-    id: _preAuthKeys.value.length,
-    ephemeral: ephemeral.value,
-    reusable: reusable.value,
-    used: false,
-    key: 'ascasdcasdc',
-    expiration_date: expiration.value,
+async function addKey(): Promise<void> {
+  try {
+    const preAuthKey: PreAuthKeys = {
+      ephemeral: ephemeral.value,
+      reusable: reusable.value,
+      used: false,
+      key: '',
+      expiration_date: expiration.value,
+    }
+    const key = await addPreAuthKey(preAuthKey, props.componentProps.username)
+    preAuthKey.expiration_date = date.formatDate(
+      key.expiration,
+      'YYYY-MM-DD HH:mm',
+    )
+    preAuthKey.key = key.key
+    _preAuthKeys.value.push(preAuthKey)
+    addKeySection.value = false
+    ephemeral.value = false
+    reusable.value = false
+  } catch (error) {
+    useNotify('Failed to add this PreAuthKey', 'warning', 'negative')
   }
-  _preAuthKeys.value.push(preAuthKey)
-  addKeySection.value = false
-  ephemeral.value = false
-  reusable.value = false
+}
+async function expireKey(key: string) {
+  try {
+    await expirePreAuthKey(key, props.componentProps.username)
+  } catch (error) {
+    useNotify('Failed to expire the PreAuthKey', 'warning', 'negative')
+  }
 }
 function submit(): void {
   props.onDialogOK(_preAuthKeys.value)

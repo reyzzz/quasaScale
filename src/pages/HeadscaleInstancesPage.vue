@@ -55,7 +55,14 @@
             </div>
           </q-td>
           <q-td>{{ props.row.quasascale_backend_url }}</q-td>
-          <q-td>{{ chopAPIKey(props.row.headscale_api_key) }}</q-td>
+          <q-td>
+            <div
+              @click="copyString(props.row.headscale_api_key)"
+              class="hover:cursor:pointer"
+            >
+              {{ chopString(props.row.headscale_api_key) }}
+            </div></q-td
+          >
           <q-td key="actions" :props="props">
             <q-btn
               flat
@@ -148,8 +155,8 @@
               <span class="text-weight-bold text-accent"> API Key: </span>
               <span
                 class="text-info hover:cursor-pointer"
-                @click="copyAPIKey(props.row.headscale_api_key)"
-                >{{ chopAPIKey(props.row.headscale_api_key) }}
+                @click="copyString(props.row.headscale_api_key)"
+                >{{ chopString(props.row.headscale_api_key) }}
               </span>
             </div>
           </q-card-section>
@@ -165,7 +172,8 @@ import { HeadscaleInstance } from 'src/types/Database'
 
 const { grid_view } = storeToRefs(useSettingsStore())
 const { instances } = storeToRefs(useHeadscaleInstancesStore())
-console.log(instances.value)
+const { chopString, copyString } = useUtils()
+
 const {
   addHeadscaleInstance,
   updateHeadscaleInstance,
@@ -269,17 +277,5 @@ async function update(headscale_instance: HeadscaleInstance) {
         )
       }
     })
-}
-
-function chopAPIKey(api_key: string) {
-  return (
-    api_key.substring(0, 6) +
-    '...' +
-    api_key.substring(api_key.length - 4, api_key.length)
-  )
-}
-function copyAPIKey(api_key: string) {
-  navigator.clipboard.writeText(api_key)
-  useNotify('API Key copied to clipboard', 'check')
 }
 </script>

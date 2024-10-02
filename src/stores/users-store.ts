@@ -1,84 +1,86 @@
 import { defineStore } from 'pinia'
-import { User } from 'src/types/Database'
+import { date } from 'quasar'
+import { api } from 'src/boot/axios'
+import { PreAuthKeys, User } from 'src/types/Database'
 import { ref } from 'vue'
 
 export const useUsersStore = defineStore('users', () => {
-  const users = ref<User[]>([
-    {
-      id: 1,
-      name: 'test',
-      creationDate: '01/3/2024 14:28:31',
-      pre_auth_keys: [],
-    },
-    {
-      id: 2,
-      name: 'test2',
-      creationDate: '01/3/2024 14:28:31',
-      pre_auth_keys: [],
-    },
-    {
-      id: 3,
-      name: 'test3',
-      creationDate: '01/3/2024 14:28:31',
-      pre_auth_keys: [],
-    },
-    {
-      id: 4,
-      name: 'test4',
-      creationDate: '01/3/2024 14:28:31',
-      pre_auth_keys: [],
-    },
-    {
-      id: 5,
-      name: 'test5',
-      creationDate: '01/3/2024 14:28:31',
-      pre_auth_keys: [],
-    },
-    {
-      id: 6,
-      name: 'test6',
-      creationDate: '01/3/2024 14:28:31',
-      pre_auth_keys: [],
-    },
-    {
-      id: 7,
-      name: 'test7',
-      creationDate: '01/3/2024 14:28:31',
-      pre_auth_keys: [
-        {
-          id: 1,
-          key: 'scasdcaddsc-sdcsdca',
-          reusable: true,
-          ephemeral: true,
-          used: true,
-          expiration_date: '01/3/2024 14:28:31',
-        },
-        {
-          id: 2,
-          key: 'scasdcaddsc-sdcsdca',
-          reusable: false,
-          ephemeral: true,
-          used: true,
-          expiration_date: '01/3/2024 14:28:31',
-        },
-        {
-          id: 3,
-          key: 'scasdcaddsc-sdcsdca',
-          reusable: true,
-          ephemeral: false,
-          used: true,
-          expiration_date: '01/3/2024 14:28:31',
-        },
-        {
-          id: 4,
-          key: 'scasdcaddsc-sdcsdca-ascadscasca-scac-asdcadsc',
-          reusable: true,
-          ephemeral: true,
-          used: false,
-          expiration_date: '01/3/2024 14:28:31',
-        },
-      ],
-    },
-  ])
-  return { users }
+  const users = ref<User[]>([])
+  async function getUsers(): Promise<void> {
+    const resp = await api.get('/user')
+
+    users.value = await Promise.all(
+      resp.data.users.map(async (user: Record<string, string>) => {
+        return {
+          ...user,
+          createdAt: date.formatDate(user.createdAt, 'YYYY-MM-DD HH:mm:ss'),
+          pre_auth_keys: [],
+        }
+      }),
+    )
+  }
+
+  async function getuserPreAuthKeys(user: User): Promise<void> {
+    const resp = await api.get(`/preauthkey?user=${user.name}`)
+    const preauthkeys = resp.data.preAuthKeys.map(
+      (preAthKey: Record<string, string>) => {
+        return {
+          ...preAthKey,
+          expiration_date: date.formatDate(
+            preAthKey.expiration,
+            'YYYY-MM-DD HH:mm:ss',
+          ),
+        }
+      },
+    )
+    user.pre_auth_keys = preauthkeys
+  }
+
+  async function removeUser(name: string): Promise<void> {
+    await api.delete(`/user/${name}`)
+  }
+  async function modifyUserName(
+    oldName: string,
+    newName: string,
+  ): Promise<void> {
+    await api.post(`/user/${oldName}/rename/${newName}`)
+  }
+
+  async function expirePreAuthKey(key: string, user: string) {
+    await api.post('preauthkey/expire', {
+      user: user,
+      key: key,
+    })
+  }
+
+  async function addPreAuthKey(preauthkey: PreAuthKeys, user: string) {
+    const expiration = new Date(
+      preauthkey.expiration_date.replace(' ', 'T') + 'Z',
+    )
+    const resp = await api.post('preauthkey', {
+      user: user,
+      reusable: preauthkey.reusable,
+      ephemeral: preauthkey.ephemeral,
+      expiration: expiration.toISOString(),
+      aclTags: [],
+    })
+    return resp.data.preAuthKey
+  }
+
+  async function addNewUser(name: User) {
+    const resp = await api.post('/user', {
+      name: name,
+    })
+    return resp.data.user
+  }
+  return {
+    users,
+    getUsers,
+    getuserPreAuthKeys,
+    removeUser,
+    addNewUser,
+    modifyUserName,
+    expirePreAuthKey,
+    addPreAuthKey,
+  }
 })

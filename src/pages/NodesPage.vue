@@ -82,6 +82,16 @@
               <q-tooltip> Edit Node </q-tooltip>
             </q-btn>
             <q-btn
+              class="i-material-symbols-light:route-outline-sharp q-ml-md"
+              flat
+              round
+              color="green"
+              dense
+              @click="manageRoutes(props.row)"
+            >
+              <q-tooltip> Manage Routes </q-tooltip>
+            </q-btn>
+            <q-btn
               icon="delete"
               flat
               round
@@ -125,6 +135,11 @@
               <q-btn flat round dense icon="more_vert">
                 <q-menu auto-close>
                   <q-list class="w-max">
+                    <q-item clickable @click="manageRoutes(props.row)">
+                      <q-item-section class="text-primary">
+                        Manage Routes
+                      </q-item-section>
+                    </q-item>
                     <q-item
                       clickable
                       @click="editNode(props.row, props.rowIndex)"
@@ -175,12 +190,20 @@
 <script setup lang="ts">
 import { QTableColumn } from 'quasar'
 import NodeConfiguration from 'src/components/NodeConfiguration.vue'
+import RouteConfigurationComponent from 'src/components/RouteConfigurationComponent.vue'
 import { QuasascaleNode } from 'src/types/Database'
 
 const filter = ref('')
-const { grid_view } = storeToRefs(useSettingsStore())
-const { getNodes, renameNode, changeUser, updateTags, removeNode, createNode } =
-  useNodesStore()
+const { grid_view, is_loading } = storeToRefs(useSettingsStore())
+const {
+  getNodes,
+  renameNode,
+  changeUser,
+  updateTags,
+  removeNode,
+  createNode,
+  getNodeRoutes,
+} = useNodesStore()
 const { arraysEqual } = useUtils()
 
 const nodes = ref<QuasascaleNode[]>([])
@@ -313,6 +336,21 @@ function deleteNode(index: number): void {
     })
 }
 
+async function manageRoutes(node: QuasascaleNode): Promise<void> {
+  try {
+    is_loading.value = true
+    const routes = await getNodeRoutes(node.id as string)
+    is_loading.value = false
+
+    useDialog().show(RouteConfigurationComponent, {
+      routes: routes,
+      nodeId: node.id,
+    })
+  } catch (error) {
+  } finally {
+    is_loading.value = false
+  }
+}
 onMounted(async () => {
   nodes.value = await getNodes()
 })

@@ -146,12 +146,13 @@
                 </div>
               </div>
               <q-btn
-                class="absolute top-0 right-3"
+                class="absolute top-1 right-3"
                 @click="expireKey(pre_auth_key.key)"
                 label="Expire"
                 dense
-                round
+                icon="timer_off"
                 color="negative"
+                size="md"
                 flat
               />
 
@@ -224,8 +225,13 @@ async function addKey(): Promise<void> {
 }
 async function expireKey(key: string) {
   try {
-    await expirePreAuthKey(key, props.componentProps.username)
-    await getuserPreAuthKeys(props.componentProps.username)
+    useDialog()
+      .del('Are you sure you want to expire this PreAuthKey?')
+      .onOk(async () => {
+        await expirePreAuthKey(key, props.componentProps.username)
+        await getuserPreAuthKeys(props.componentProps.username)
+        useNotify('PreAuthKey expired successfully', 'check')
+      })
   } catch (error) {
     useNotify('Failed to expire the PreAuthKey', 'warning', 'negative')
   }

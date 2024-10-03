@@ -22,5 +22,24 @@ export function useUtils() {
       .map((b) => b.toString(16).padStart(2, '0'))
       .join('')
   }
-  return { chopString, copyString, arraysEqual, generateMachineKey }
+  function validatedIPv4(IP: string): boolean {
+    const ipRegex =
+      /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}$/
+    return ipRegex.test(IP)
+  }
+  function validatedIPv6(IP: string): boolean {
+    //Full IPv6 | compressed | mixed
+    const ipRegex =
+      /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,7}:|(?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}$/
+
+    return ipRegex.test(IP)
+  }
+  return {
+    chopString,
+    copyString,
+    arraysEqual,
+    generateMachineKey,
+    validatedIPv4,
+    validatedIPv6,
+  }
 }

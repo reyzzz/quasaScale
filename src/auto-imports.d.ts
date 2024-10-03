@@ -71,6 +71,7 @@ declare global {
   const useCssVars: typeof import('vue')['useCssVars']
   const useDialog: typeof import('./composables/useDialog')['useDialog']
   const useDialogPluginComponent: typeof import('quasar')['useDialogPluginComponent']
+  const useDomainSettingsStore: typeof import('./stores/domain-settings-store')['useDomainSettingsStore']
   const useDomainsStore: typeof import('./stores/domains-store')['useDomainsStore']
   const useFormChild: typeof import('quasar')['useFormChild']
   const useHeadscaleInstancesStore: typeof import('./stores/headscale-instances-store')['useHeadscaleInstancesStore']

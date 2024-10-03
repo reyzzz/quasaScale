@@ -119,6 +119,7 @@ const props = defineProps<{
     node: QuasascaleNode
   }
 }>()
+const { validatedIPv4, validatedIPv6 } = useUtils()
 const { users } = storeToRefs(useUsersStore())
 const _node = ref<QuasascaleNode>(extend(true, {}, props.componentProps.node))
 const { generateMachineKey } = useUtils()
@@ -134,18 +135,6 @@ function saveChanges(): void {
   props.onDialogOK(_node.value)
 }
 
-function validatedIPv4(IP: string): boolean {
-  const ipRegex =
-    /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}$/
-  return ipRegex.test(IP)
-}
-function validatedIPv6(IP: string): boolean {
-  //Full IPv6 | compressed | mixed
-  const ipRegex =
-    /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,7}:|(?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}$/
-
-  return ipRegex.test(IP)
-}
 function validateMachineKey(key: string) {
   const regex = /^[a-fA-F0-9]{64}$/
   return regex.test(key)

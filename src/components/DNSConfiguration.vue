@@ -43,7 +43,7 @@
             (val) => !!val || 'Field required',
             (val) =>
               _dns.type === 'A'
-                ? validatedIp(val) || 'Wrong IPv4 format'
+                ? validatedIPv4(val) || 'Wrong IPv4 format'
                 : validatedIPv6(val) || 'Wrong IPv6 format',
           ]"
         />
@@ -74,6 +74,7 @@ const props = defineProps<{
     dnsRecords: DNSRecord[]
   }
 }>()
+const { validatedIPv4, validatedIPv6 } = useUtils()
 const dnsTypes = ['A', 'AAAA']
 const _dns = ref<DNSRecord>(extend(true, {}, props.componentProps.dns))
 
@@ -102,17 +103,5 @@ function saveChanges(): void {
     }
   }
   props.onDialogOK(_dns.value)
-}
-function validatedIp(IP: string): boolean {
-  const ipRegex =
-    /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}$/
-  return ipRegex.test(IP)
-}
-function validatedIPv6(IP: string): boolean {
-  //Full IPv6 | compressed | mixed
-  const ipRegex =
-    /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,7}:|(?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}$/
-
-  return ipRegex.test(IP)
 }
 </script>

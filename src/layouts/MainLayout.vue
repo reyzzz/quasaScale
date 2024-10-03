@@ -159,6 +159,11 @@ const linksList = ref([
     label: 'Domains',
   },
   {
+    icon: 'i-material-symbols-light:domain w-8 h-8',
+    route: 'dns-settings',
+    label: 'Domain Settings',
+  },
+  {
     icon: 'i-simple-icons:tailscale w-6 h-6',
     route: 'headscale-instances',
     label: 'Headscale Instances',

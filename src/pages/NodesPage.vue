@@ -194,7 +194,7 @@ import RouteConfigurationComponent from 'src/components/RouteConfigurationCompon
 import { QuasascaleNode } from 'src/types/Database'
 
 const filter = ref('')
-const { grid_view, is_loading } = storeToRefs(useSettingsStore())
+const { grid_view } = storeToRefs(useSettingsStore())
 const {
   getNodes,
   renameNode,
@@ -337,19 +337,12 @@ function deleteNode(index: number): void {
 }
 
 async function manageRoutes(node: QuasascaleNode): Promise<void> {
-  try {
-    is_loading.value = true
-    const routes = await getNodeRoutes(node.id as string)
-    is_loading.value = false
+  const routes = await getNodeRoutes(node.id as string)
 
-    useDialog().show(RouteConfigurationComponent, {
-      routes: routes,
-      nodeId: node.id,
-    })
-  } catch (error) {
-  } finally {
-    is_loading.value = false
-  }
+  useDialog().show(RouteConfigurationComponent, {
+    routes: routes,
+    nodeId: node.id,
+  })
 }
 onMounted(async () => {
   nodes.value = await getNodes()

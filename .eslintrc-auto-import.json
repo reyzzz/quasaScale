@@ -102,6 +102,7 @@
     "useHeadscaleInstancesStore": true,
     "useNodesStore": true,
     "useUtils": true,
-    "useDomainsStore": true
+    "useDomainsStore": true,
+    "useDomainSettingsStore": true
   }
 }

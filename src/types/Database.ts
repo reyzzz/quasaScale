@@ -17,6 +17,13 @@ export interface QuasascaleNode {
   online: boolean
 }
 
+export interface QuasascaleRoute {
+  id: string
+  prefix: string
+  enabled: boolean
+  type: 'Subnet' | 'Exit node'
+  format: 'IPv4' | 'IPv6'
+}
 export interface Settings {
   headscale_url: string
   headscale_api_key: string

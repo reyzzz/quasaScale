@@ -17,3 +17,15 @@ export interface HeadscaleNode {
   givenName: string
   online: boolean
 }
+
+export interface HeadscaleRoute {
+  id: string
+  node: HeadscaleNode
+  prefix: string
+  advertised: boolean
+  enabled: boolean
+  isPrimary: boolean
+  createdAt: string
+  updatedAt: string
+  deletedAt: string
+}

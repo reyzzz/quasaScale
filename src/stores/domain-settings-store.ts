@@ -71,7 +71,7 @@ export const useDomainSettingsStore = defineStore('domain-settings', () => {
     override_local_dns.value = dns_settings.override_local_dns
   }
   async function updateServers() {
-    await api.patch('/servername', {
+    await api.patch('/nameservers', {
       servers: servers.value.map((server) => server.name),
     })
     useNotify('Nameservers updated successfully', 'check')

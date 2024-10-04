@@ -27,6 +27,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/DnsSettingsPage.vue'),
       },
       {
+        path: '/acl',
+        name: 'acl',
+        component: () => import('pages/AclsPage.vue'),
+      },
+      {
         path: '/headscale-instances',
         name: 'headscale-instances',
         component: () => import('pages/HeadscaleInstancesPage.vue'),

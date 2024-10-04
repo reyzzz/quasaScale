@@ -55,3 +55,18 @@ export interface NamedResource {
   name: string
   old: boolean
 }
+
+export interface Group {
+  name: string
+  users: User[]
+}
+
+export interface Host {
+  name: string
+  IP_address: string
+}
+
+export interface TagOwner {
+  name: string
+  groups: Group[]
+}

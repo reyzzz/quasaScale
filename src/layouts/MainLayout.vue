@@ -197,6 +197,12 @@ const linksList = ref([
     mobile_label: 'DNS',
   },
   {
+    icon: 'app_registration',
+    route: 'acl',
+    label: 'ACL',
+    mobile_label: 'ACL',
+  },
+  {
     icon: 'simple-icons:tailscale',
     route: 'headscale-instances',
     label: 'Headscale Instances',

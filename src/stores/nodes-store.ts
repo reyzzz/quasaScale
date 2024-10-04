@@ -51,6 +51,19 @@ export const useNodesStore = defineStore('nodes', () => {
     await updateTags(node)
   }
 
+  async function updateIP(node: QuasascaleNode) {
+    try {
+      const resp = await api.patch(`/ip/${node.id}`, {
+        IPv4: node.IP_address_v4,
+        IPv6: node.IP_address_v6,
+      })
+      if (resp.data === 'IP updated successfully') useNotify(resp.data, 'check')
+      else useNotify(resp.data, 'warning', 'negative')
+    } catch (error) {
+      useNotify('An error has occured while updating IP', 'warning', 'negative')
+    }
+  }
+
   async function getNodeRoutes(node_id: string): Promise<QuasascaleRoute[]> {
     const resp = await api.get(`/node/${node_id}/routes`)
     const routes = resp.data.routes as HeadscaleRoute[]
@@ -92,5 +105,6 @@ export const useNodesStore = defineStore('nodes', () => {
     disableRoute,
     enableRoute,
     removeRoute,
+    updateIP,
   }
 })

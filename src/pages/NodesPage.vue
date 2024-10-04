@@ -206,6 +206,7 @@ const {
   removeNode,
   createNode,
   getNodeRoutes,
+  updateIP,
 } = useNodesStore()
 const { arraysEqual } = useUtils()
 
@@ -280,6 +281,11 @@ function editNode(node: QuasascaleNode, index: number): void {
         if (!arraysEqual(node.validTags, updatedNode.validTags))
           await updateTags(updatedNode)
         if (node.user_id !== updatedNode.user_id) await changeUser(updatedNode)
+        if (
+          node.IP_address_v4 !== updatedNode.IP_address_v4 ||
+          node.IP_address_v6 !== updatedNode.IP_address_v6
+        )
+          await updateIP(updatedNode)
         nodes.value[index] = updatedNode
         useNotify('Node updated successfully', 'check')
       } catch (error) {

@@ -216,6 +216,7 @@ async function restartHeadscale() {
   try {
     restarting.value = true
     await api.post('/restart')
+    has_config_changed.value = false
   } catch (ex) {
     useNotify('Failed to restart headscale', 'warning', 'negative')
   } finally {

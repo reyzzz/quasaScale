@@ -128,7 +128,7 @@
 <script setup lang="ts">
 import { QTableColumn, useQuasar } from 'quasar'
 
-import DNSConfiguration from 'src/components/DNSConfiguration.vue'
+import DNSConfiguration from 'src/components/dns/DNSConfiguration.vue'
 import { DNSRecord } from 'src/types/Database'
 
 const $q = useQuasar()

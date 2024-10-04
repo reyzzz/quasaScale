@@ -59,9 +59,10 @@
         <q-select
           label="Tags"
           outlined
-          v-model="_node.validTags"
+          v-model="displayTags"
           use-input
           use-chips
+          @new-value="addNewTag"
           multiple
           hide-dropdown-icon
           input-debounce="0"
@@ -70,6 +71,7 @@
           hide-hint
           hide-bottom-space
         />
+
         <q-input
           v-if="!_node.id"
           :rules="[
@@ -124,6 +126,12 @@ const { validatedIPv4, validatedIPv6 } = useUtils()
 const { users } = storeToRefs(useUsersStore())
 const _node = ref<QuasascaleNode>(extend(true, {}, props.componentProps.node))
 const { generateMachineKey } = useUtils()
+
+const displayTags = computed(() => {
+  return _node.value.validTags.map((tag) => {
+    return tag.replace('tag:', '')
+  })
+})
 function saveChanges(): void {
   const user = users.value.find((user) => {
     return user.id === _node.value.user_id
@@ -135,7 +143,9 @@ function saveChanges(): void {
 
   props.onDialogOK(_node.value)
 }
-
+function addNewTag(tag: string) {
+  _node.value.validTags.push('tag:' + tag)
+}
 function validateMachineKey(key: string) {
   const regex = /^[a-fA-F0-9]{64}$/
   return regex.test(key)

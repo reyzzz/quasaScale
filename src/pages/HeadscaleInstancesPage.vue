@@ -43,14 +43,7 @@
           <q-td>{{ props.row.id }}</q-td>
           <q-td>
             <div class="row items-center gap-4px">
-              <span class="relative flex h-3 w-3" v-if="props.row.active">
-                <span
-                  class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-[#ade25d]"
-                ></span>
-                <span
-                  class="relative inline-flex rounded-full h-3 w-3 bg-[#ade25d]"
-                ></span>
-              </span>
+              <AnimatedCircle v-if="props.row.active" />
               {{ props.row.name }}
             </div>
           </q-td>
@@ -106,15 +99,7 @@
           <q-card-section>
             <div class="row q-mb-sm justify-between">
               <div class="text-h5 row items-center gap-5px">
-                <span class="relative flex h-3 w-3" v-if="props.row.active">
-                  <span
-                    class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-[#ade25d]"
-                  >
-                  </span>
-                  <span
-                    class="relative inline-flex rounded-full h-3 w-3 bg-[#ade25d]"
-                  ></span>
-                </span>
+                <AnimatedCircle v-if="props.row.active" />
                 {{ props.row.name }}
               </div>
               <q-btn flat round dense icon="more_vert">
@@ -169,7 +154,9 @@
 </template>
 <script lang="ts" setup>
 import { QTableColumn } from 'quasar'
-import HeadscaleInstanceConfiguration from 'src/components/HeadscaleInstanceConfiguration.vue'
+import AnimatedCircle from 'src/components/AnimatedCircle.vue'
+
+import HeadscaleInstanceConfiguration from 'src/components/headscale-instances/HeadscaleInstanceConfiguration.vue'
 import { QuasascaleInstance } from 'src/types/Database'
 
 const { grid_view } = storeToRefs(useSettingsStore())

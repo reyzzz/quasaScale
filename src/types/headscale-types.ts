@@ -14,6 +14,7 @@ export interface HeadscaleNode {
   registerMethod: string
   invalidTags: string[]
   validTags: string[]
+  forcedTags: string[]
   givenName: string
   online: boolean
 }

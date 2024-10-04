@@ -4,7 +4,7 @@ import { DNSRecord } from 'src/types/Database'
 
 export const useDomainsStore = defineStore('domains', () => {
   const dnsRecords = ref<DNSRecord[]>([])
-
+  const { has_config_changed } = storeToRefs(useSettingsStore())
   async function getDomains() {
     try {
       const data = await api.get('/domains')
@@ -24,6 +24,7 @@ export const useDomainsStore = defineStore('domains', () => {
   async function removeDomain(index: number) {
     try {
       await api.delete(`/domain/${index}`)
+      has_config_changed.value = true
       dnsRecords.value = dnsRecords.value.filter((_, ind) => index !== ind)
       useNotify('DNS delete successfully', 'check')
     } catch (error) {
@@ -42,6 +43,7 @@ export const useDomainsStore = defineStore('domains', () => {
   async function addDomain(DNS: DNSRecord) {
     try {
       await api.post('/domain', { domain: DNS })
+      has_config_changed.value = true
       dnsRecords.value.push(DNS)
       useNotify('DNS added successfully', 'check')
     } catch (error) {
@@ -62,6 +64,7 @@ export const useDomainsStore = defineStore('domains', () => {
       await api.patch(`/domain/${index}`, {
         domain: updatedDNS,
       })
+      has_config_changed.value = true
       dnsRecords.value[index] = updatedDNS
       useNotify('DNS updated successfully', 'check')
     } catch (error) {

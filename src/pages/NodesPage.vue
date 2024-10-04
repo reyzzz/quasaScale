@@ -42,17 +42,7 @@
         <q-tr :props="props">
           <q-td>
             <div class="row no-wrap items-center gap-10px">
-              <span class="relative flex h-3 w-3">
-                <span
-                  class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-                  :class="props.row.online ? 'bg-[#ade25d]' : 'bg-[#c10015]'"
-                >
-                </span>
-                <span
-                  class="relative inline-flex rounded-full h-3 w-3"
-                  :class="props.row.online ? 'bg-[#ade25d]' : 'bg-[#c10015]'"
-                ></span>
-              </span>
+              <AnimatedCircle :is_positive="props.row.online" />
               {{ props.row.id }}
             </div>
           </q-td>
@@ -66,7 +56,7 @@
               <q-badge
                 outline
                 color="primary"
-                :label="tag"
+                :label="formatTag(tag)"
                 class="q-mr-sm"
               /> </template
           ></q-td>
@@ -112,27 +102,17 @@
             <div class="row justify-between items-center q-mb-sm">
               <div class="text-h6 col-10 row items-center">
                 <div class="row items-center gap-6px">
-                  <span class="relative flex h-3 w-3">
-                    <span
-                      class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-                      :class="
-                        props.row.online ? 'bg-[#ade25d]' : 'bg-[#c10015]'
-                      "
-                    >
-                    </span>
-                    <span
-                      class="relative inline-flex rounded-full h-3 w-3"
-                      :class="
-                        props.row.online ? 'bg-[#ade25d]' : 'bg-[#c10015]'
-                      "
-                    >
-                    </span>
-                  </span>
+                  <AnimatedCircle :is_positive="props.row.online" />
                   {{ props.row.name }}
                 </div>
 
                 <template v-for="tag in props.row.validTags" :key="tag">
-                  <q-badge outline color="primary" :label="tag" />
+                  <q-badge
+                    outline
+                    color="primary"
+                    :label="formatTag(tag)"
+                    class="q-ml-xs"
+                  />
                 </template>
               </div>
               <q-btn flat round dense icon="more_vert">
@@ -192,8 +172,9 @@
 
 <script setup lang="ts">
 import { QTableColumn } from 'quasar'
-import NodeConfiguration from 'src/components/NodeConfiguration.vue'
-import RouteConfigurationComponent from 'src/components/RouteConfigurationComponent.vue'
+import AnimatedCircle from 'src/components/AnimatedCircle.vue'
+import NodeConfiguration from 'src/components/nodes/NodeConfiguration.vue'
+import RouteConfigurationComponent from 'src/components/nodes/RouteConfigurationComponent.vue'
 import { QuasascaleNode } from 'src/types/Database'
 
 const filter = ref('')
@@ -356,6 +337,10 @@ async function manageRoutes(node: QuasascaleNode): Promise<void> {
   } catch (error) {
   } finally {
   }
+}
+
+function formatTag(tag: string) {
+  return tag.replace('tag:', '')
 }
 onMounted(async () => {
   nodes.value = await getNodes()

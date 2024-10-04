@@ -58,7 +58,7 @@
 </template>
 <script setup lang="ts">
 import { extend } from 'quasar'
-import { QuasascaleInstance } from 'src/types/Database'
+import { QuasascaleInstance } from 'src/types/Database.ts'
 
 const props = defineProps<{
   onDialogOK: (payload: QuasascaleInstance) => void

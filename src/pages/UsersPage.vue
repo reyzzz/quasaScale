@@ -126,7 +126,7 @@
 
 <script setup lang="ts">
 import { date, QTableColumn, useQuasar } from 'quasar'
-import PreAuthKeyComponent from 'src/components/PreAuthKeyComponent.vue'
+import PreAuthKeyComponent from 'src/components/users/PreAuthKeyComponent.vue'
 import PromptComponent from 'src/components/PromptComponent.vue'
 import { User } from 'src/types/Database'
 

@@ -22,17 +22,9 @@
           <q-card-section class="q-py-sm">
             <div class="row justify-between items-center">
               <div class="row items-center gap-4px">
-                <span class="relative flex h-3 w-3">
-                  <span
-                    class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-                    :class="route.enabled ? 'bg-[#ade25d]' : 'bg-[#c10015]'"
-                  >
-                  </span>
-                  <span
-                    class="relative inline-flex rounded-full h-3 w-3"
-                    :class="route.enabled ? 'bg-[#ade25d]' : 'bg-[#c10015]'"
-                  ></span> </span
-                >{{ route.prefix }}
+                <AnimatedCircle :is_positive="route.enabled" />{{
+                  route.prefix
+                }}
               </div>
 
               <q-btn flat round dense icon="more_vert">
@@ -92,17 +84,9 @@
             <q-card-section class="q-py-sm">
               <div class="row justify-between items-center">
                 <div class="row items-center gap-4px">
-                  <span class="relative flex h-3 w-3">
-                    <span
-                      class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-                      :class="route.enabled ? 'bg-[#ade25d]' : 'bg-[#c10015]'"
-                    >
-                    </span>
-                    <span
-                      class="relative inline-flex rounded-full h-3 w-3"
-                      :class="route.enabled ? 'bg-[#ade25d]' : 'bg-[#c10015]'"
-                    ></span> </span
-                  >{{ route.prefix }}
+                  <AnimatedCircle :is_positive="route.enabled" />{{
+                    route.prefix
+                  }}
                 </div>
 
                 <q-btn flat round dense icon="more_vert">
@@ -148,6 +132,8 @@
 
 <script setup lang="ts">
 import { QuasascaleRoute } from 'src/types/Database'
+import AnimatedCircle from '../AnimatedCircle.vue'
+
 const { enableRoute, disableRoute, removeRoute, getNodeRoutes } =
   useNodesStore()
 const props = defineProps<{

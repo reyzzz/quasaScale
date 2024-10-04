@@ -3,6 +3,7 @@ import { api } from 'src/boot/axios'
 import { NamedResource } from 'src/types/Database'
 
 export const useDnsSettingsStore = defineStore('dns-settings', () => {
+  const { has_config_changed } = storeToRefs(useSettingsStore())
   const tailnetName = ref()
   const is_edditing = ref(false)
   const is_magic_dns = ref(true)
@@ -80,6 +81,7 @@ export const useDnsSettingsStore = defineStore('dns-settings', () => {
       const resp = await api.patch('/nameservers', {
         servers: servers.value.map((server) => server.name),
       })
+      has_config_changed.value = true
       useNotify(resp.data.message, 'check')
       await getDNSSettings()
     } catch (error) {
@@ -95,6 +97,7 @@ export const useDnsSettingsStore = defineStore('dns-settings', () => {
       const resp = await api.patch('/search-domains', {
         domains: domains.value.map((domain) => domain.name),
       })
+      has_config_changed.value = true
       useNotify(resp.data.message, 'check')
       await getDNSSettings()
     } catch (error) {
@@ -111,6 +114,7 @@ export const useDnsSettingsStore = defineStore('dns-settings', () => {
       const resp = await api.patch('/tailnet-name', {
         name: tailnetName.value,
       })
+      has_config_changed.value = true
       useNotify(resp.data.message, 'check')
     } catch (error) {
       useNotify(
@@ -126,6 +130,7 @@ export const useDnsSettingsStore = defineStore('dns-settings', () => {
       const resp = await api.patch('/magic-dns', {
         magic_dns: is_magic_dns.value,
       })
+      has_config_changed.value = true
       useNotify(resp.data.message, 'check')
     } catch (error) {
       useNotify(
@@ -141,6 +146,7 @@ export const useDnsSettingsStore = defineStore('dns-settings', () => {
       const resp = await api.patch('/override-local-dns', {
         override_local_dns: override_local_dns.value,
       })
+      has_config_changed.value = true
       useNotify(resp.data.message, 'check')
     } catch (error) {
       useNotify(

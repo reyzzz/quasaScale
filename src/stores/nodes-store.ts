@@ -51,11 +51,13 @@ export const useNodesStore = defineStore('nodes', () => {
     await updateTags(node)
   }
 
-  async function updateIP(node: QuasascaleNode) {
+  async function updateIP(
+    nodeId: string,
+    body: { IP_address_v4?: string; IP_address_v6?: string },
+  ) {
     try {
-      const resp = await api.patch(`/ip/${node.id}`, {
-        IPv4: node.IP_address_v4,
-        IPv6: node.IP_address_v6,
+      const resp = await api.patch(`/ip/${nodeId}`, {
+        body,
       })
       if (resp.data === 'IP updated successfully') useNotify(resp.data, 'check')
       else useNotify(resp.data, 'warning', 'negative')

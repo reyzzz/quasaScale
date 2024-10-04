@@ -262,11 +262,13 @@ function editNode(node: QuasascaleNode, index: number): void {
         if (!arraysEqual(node.validTags, updatedNode.validTags))
           await updateTags(updatedNode)
         if (node.user_id !== updatedNode.user_id) await changeUser(updatedNode)
-        if (
-          node.IP_address_v4 !== updatedNode.IP_address_v4 ||
-          node.IP_address_v6 !== updatedNode.IP_address_v6
-        )
-          await updateIP(updatedNode)
+        const body: { IP_address_v4?: string; IP_address_v6?: string } = {}
+        if (node.IP_address_v4 !== updatedNode.IP_address_v4)
+          body.IP_address_v4 = updatedNode.IP_address_v4
+
+        if (node.IP_address_v6 !== updatedNode.IP_address_v6)
+          body.IP_address_v6 = updatedNode.IP_address_v6
+        await updateIP(updatedNode.id as string, body)
         nodes.value[index] = updatedNode
         useNotify('Node updated successfully', 'check')
       } catch (error) {

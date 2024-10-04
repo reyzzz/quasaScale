@@ -21,7 +21,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/DomainsPage.vue'),
       },
       {
-        path: '/dns-seetings',
+        path: '/dns-settings',
         name: 'dns-settings',
         component: () => import('pages/DomainSettingsPage.vue'),
       },

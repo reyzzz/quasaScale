@@ -1,4 +1,4 @@
-import { extend } from 'quasar'
+import { extend, is } from 'quasar'
 import { api } from 'src/boot/axios'
 
 export const useDomainSettingsStore = defineStore('domain-settings', () => {
@@ -6,11 +6,19 @@ export const useDomainSettingsStore = defineStore('domain-settings', () => {
   const is_edditing = ref(false)
   const is_magic_dns = ref(true)
   const override_local_dns = ref(false)
-  const showServersSave = ref(false)
+
   const org_servers = ref<{ name: string; old: boolean }[]>([])
   const servers = ref<{ name: string; old: boolean }[]>([])
   const org_domains = ref<{ name: string; old: boolean }[]>([])
   const domains = ref<{ name: string; old: boolean }[]>([])
+
+  const showServersSave = computed(() => {
+    return !is.deepEqual(servers.value, org_servers.value)
+  })
+
+  const showDomainsSave = computed(() => {
+    return !is.deepEqual(domains.value, org_domains.value)
+  })
   async function handleTailnetName() {
     if (is_edditing.value) {
       await updatedTailnetName()
@@ -66,12 +74,14 @@ export const useDomainSettingsStore = defineStore('domain-settings', () => {
     await api.patch('/servername', {
       servers: servers.value.map((server) => server.name),
     })
+    useNotify('Nameservers updated successfully', 'check')
     await getDNSSettings()
   }
   async function updateDomains() {
     await api.patch('/search-domains', {
       domains: domains.value.map((domain) => domain.name),
     })
+    useNotify('Search Domains updated successfully', 'check')
     await getDNSSettings()
   }
 
@@ -92,6 +102,13 @@ export const useDomainSettingsStore = defineStore('domain-settings', () => {
       override_local_dns: override_local_dns.value,
     })
   }
+  function undoServersChanges() {
+    servers.value = extend(true, [], org_servers.value)
+  }
+
+  function undoDomainsChanges() {
+    domains.value = extend(true, [], org_domains.value)
+  }
   return {
     tailnetName,
     is_edditing,
@@ -102,6 +119,7 @@ export const useDomainSettingsStore = defineStore('domain-settings', () => {
     org_servers,
     org_domains,
     showServersSave,
+    showDomainsSave,
     updateOverrideLocalDNS,
     updatedMagicDNS,
     updatedTailnetName,
@@ -113,5 +131,7 @@ export const useDomainSettingsStore = defineStore('domain-settings', () => {
     addDomain,
     removeDomain,
     getDNSSettings,
+    undoDomainsChanges,
+    undoServersChanges,
   }
 })

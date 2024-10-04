@@ -50,3 +50,8 @@ export interface QuasascaleInstance {
   headscale_api_key: string
   active: boolean
 }
+
+export interface NamedResource {
+  name: string
+  old: boolean
+}

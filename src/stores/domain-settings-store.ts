@@ -1,5 +1,6 @@
 import { extend, is } from 'quasar'
 import { api } from 'src/boot/axios'
+import { NamedResource } from 'src/types/Database'
 
 export const useDomainSettingsStore = defineStore('domain-settings', () => {
   const tailnetName = ref()
@@ -7,10 +8,10 @@ export const useDomainSettingsStore = defineStore('domain-settings', () => {
   const is_magic_dns = ref(true)
   const override_local_dns = ref(false)
 
-  const org_servers = ref<{ name: string; old: boolean }[]>([])
-  const servers = ref<{ name: string; old: boolean }[]>([])
-  const org_domains = ref<{ name: string; old: boolean }[]>([])
-  const domains = ref<{ name: string; old: boolean }[]>([])
+  const org_servers = ref<NamedResource[]>([])
+  const servers = ref<NamedResource[]>([])
+  const org_domains = ref<NamedResource[]>([])
+  const domains = ref<NamedResource[]>([])
 
   const showServersSave = computed(() => {
     return !is.deepEqual(servers.value, org_servers.value)

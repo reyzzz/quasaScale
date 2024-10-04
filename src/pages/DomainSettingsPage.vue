@@ -47,7 +47,7 @@
               dense
               class="q-mb-sm"
               size="md"
-              @update:model-value="updatedMagicDNS"
+              @update:model-value="updateMagicDNS"
             />
           </div>
           <div class="text-info">
@@ -273,7 +273,7 @@ const {
   updateDomains,
   removeDomain,
   getDNSSettings,
-  updatedMagicDNS,
+  updateMagicDNS,
   updateOverrideLocalDNS,
   undoDomainsChanges,
   undoServersChanges,

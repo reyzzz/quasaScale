@@ -2,11 +2,15 @@
   <q-layout view="hHh Lpr fFf">
     <q-header bordered class="bg-dark">
       <q-toolbar>
-        <q-toolbar-title
+        <div
           v-if="$q.screen.lt.sm"
-          class="row text-weight-bold text-[#ff8700] opacity-[1!important] text-shadow-[rgb(255,135,0)_0px_0px_1px,rgba(249,82,0,0.6)_0px_0px_5px,rgba(249,15,0,0.4)_0px_5px_4px]"
+          class="row items-center justify-between full-width"
         >
-          QuasaScale
+          <div
+            class="text-h6 text-weight-bold opacity-[1!important] title-text"
+          >
+            QuasaScale
+          </div>
           <div
             class="q-ml-md row items-center gap-4px text-white text-subtitle1"
           >
@@ -16,20 +20,45 @@
             >
               <span
                 class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-[#ade25d]"
-              ></span>
+              >
+              </span>
               <span
                 class="relative inline-flex rounded-full h-3 w-3 bg-[#ade25d]"
-              ></span>
+              >
+              </span>
             </span>
-            {{ active_headscale?.name }} selected
+            <span v-if="active_headscale !== undefined">
+              {{ active_headscale.name }} selected
+            </span>
+            <q-btn
+              icon="check"
+              color="primary"
+              class="q-ml-md"
+              round
+              flat
+              @click="restartHeadscale"
+              :loading="restarting"
+              v-if="has_config_changed"
+            ></q-btn>
           </div>
-        </q-toolbar-title>
+        </div>
         <q-toolbar-title
           v-else
           class="text-weight-bold text-[#ff8700] opacity-[1!important] text-shadow-[rgb(255,135,0)_0px_0px_1px,rgba(249,82,0,0.6)_0px_0px_5px,rgba(249,15,0,0.4)_0px_5px_4px]"
         >
           QuasaScale
         </q-toolbar-title>
+        <q-btn
+          color="primary"
+          label="Apply changes"
+          class="q-mr-md"
+          icon="check"
+          dense
+          flat
+          :loading="restarting"
+          @click="restartHeadscale"
+          v-if="$q.screen.gt.sm && has_config_changed"
+        />
         <q-btn
           color="primary"
           flat
@@ -59,21 +88,17 @@
         <template v-for="link in linksList" :key="link.label">
           <q-item
             clickable
-            :disable="
-              link.route === 'dns' &&
-              active_headscale?.quasascale_backend_url === ''
-            "
             :to="{ name: link.route }"
             exact
             active-class="text-[#f6ae2d]"
             class="hover:rounded-lg"
           >
             <q-item-section avatar>
-              <span :class="link.icon">
+              <q-icon :name="link.icon" size="md">
                 <q-tooltip anchor="center right" self="center left">
                   {{ link.label }}
                 </q-tooltip>
-              </span>
+              </q-icon>
             </q-item-section>
           </q-item>
         </template>
@@ -97,8 +122,8 @@
           v-for="link in linksList"
           :key="link.label"
           :to="{ name: link.route }"
-          :class="link.icon"
-          :label="link.label"
+          :icon="link.icon"
+          :label="link.mobile_label"
           active-class="text-primary"
           :ripple="false"
         />
@@ -132,43 +157,53 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
+import { api } from 'boot/axios'
+import { symOutlinedDevices } from '@quasar/extras/material-symbols-outlined'
 defineOptions({
   name: 'MainLayout',
 })
-
+const restarting = ref(false)
 const $q = useQuasar()
 const drawer = ref(true)
 const { active_headscale } = storeToRefs(useHeadscaleInstancesStore())
 const { getHeadscaleInstances } = useHeadscaleInstancesStore()
 const { getUsers } = useUsersStore()
-const { grid_view } = storeToRefs(useSettingsStore())
+const { grid_view, has_config_changed } = storeToRefs(useSettingsStore())
+useIcons()
+
 const linksList = ref([
   {
-    icon: 'i-material-symbols:devices-outline-rounded w-8 h-8',
+    icon: symOutlinedDevices,
     route: 'nodes',
     label: 'Nodes',
+    mobile_label: 'Nodes',
   },
   {
-    icon: 'i-material-symbols:person w-8 h-8',
+    icon: 'person',
     route: 'users',
     label: 'Users',
+    mobile_label: 'Users',
   },
   {
-    icon: 'i-carbon:server-dns w-8 h-8',
+    icon: 'carbon:server',
     route: 'dns',
     label: 'Domains',
+    mobile_label: 'Domains',
   },
   {
-    icon: 'i-material-symbols-light:domain w-8 h-8',
+    icon: 'eos-icons:dns',
     route: 'dns-settings',
-    label: 'Domain Settings',
+    label: 'DNS',
+    mobile_label: 'DNS',
   },
   {
-    icon: 'i-simple-icons:tailscale w-6 h-6',
+    icon: 'simple-icons:tailscale',
     route: 'headscale-instances',
     label: 'Headscale Instances',
+    mobile_label: 'Instances',
   },
 ])
+
 const router = useRouter()
 onMounted(async () => {
   await getHeadscaleInstances()
@@ -176,4 +211,15 @@ onMounted(async () => {
   if (active_headscale.value === undefined)
     router.replace({ name: 'headscale-instances' })
 })
+
+async function restartHeadscale() {
+  try {
+    restarting.value = true
+    await api.post('/restart')
+  } catch (ex) {
+    useNotify('Failed to restart headscale', 'warning', 'negative')
+  } finally {
+    restarting.value = false
+  }
+}
 </script>

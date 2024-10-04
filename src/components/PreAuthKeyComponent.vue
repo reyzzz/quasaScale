@@ -36,9 +36,9 @@
           class="rounded-xl q-mb-sm q-mr-xs"
           v-if="addKeySection"
         >
-          <q-card-section class="q-py-sm">
+          <q-card-section>
             <div class="row justify-between items-center">
-              <div class="q-mb-sm">
+              <div>
                 <q-checkbox
                   v-model="ephemeral"
                   label="Ephemeral"
@@ -60,7 +60,7 @@
               />
             </div>
 
-            <div style="max-width: 300px" class="q-mt-md">
+            <div class="max-w-300px q-mt-md">
               <q-input filled v-model="expiration" label="Expiration Date">
                 <template v-slot:prepend>
                   <q-icon name="event" class="cursor-pointer">
@@ -113,7 +113,7 @@
         </q-card>
         <template v-for="pre_auth_key in _preAuthKeys" :key="pre_auth_key.id">
           <q-card flat bordered class="rounded-xl q-mb-sm q-mr-xs">
-            <q-card-section class="q-py-sm">
+            <q-card-section>
               <div class="row justify-between">
                 <div class="q-mb-sm">
                   <q-badge
@@ -126,14 +126,14 @@
                   <q-badge
                     outline
                     color="purple-13"
-                    label="Reusable"
+                    label="reusable"
                     v-if="pre_auth_key.reusable"
                     class="q-mr-sm"
                   />
                   <q-badge
                     outline
                     color="secondary"
-                    label="Used"
+                    label="used"
                     v-if="pre_auth_key.used"
                   />
                   <q-badge
@@ -146,16 +146,16 @@
                 </div>
               </div>
               <q-btn
-                class="absolute top-1 right-3"
+                class="absolute top-2 right-3"
                 @click="expireKey(pre_auth_key.key)"
-                label="Expire"
                 dense
+                round
                 icon="timer_off"
                 color="negative"
-                size="md"
                 flat
-              />
-
+              >
+                <q-tooltip>Expire</q-tooltip>
+              </q-btn>
               <div class="text-info">
                 <span
                   class="text-weight-bold text-accent q-mr-xs hover:cursor-pointer"
@@ -226,7 +226,7 @@ async function addKey(): Promise<void> {
 async function expireKey(key: string) {
   try {
     useDialog()
-      .del('Are you sure you want to expire this PreAuthKey?')
+      .del('Are you sure you want to expire this PreAuthKey?', 'Expire')
       .onOk(async () => {
         await expirePreAuthKey(key, props.componentProps.username)
         await getuserPreAuthKeys(props.componentProps.username)

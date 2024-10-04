@@ -2,7 +2,7 @@ import { Dialog } from 'quasar'
 import { Component } from 'vue'
 import DialogComponent from 'src/components/DialogComponent.vue'
 export function useDialog() {
-  function del(msg?: string) {
+  function del(msg?: string, ok_label?: string) {
     return Dialog.create({
       cancel: {
         label: 'Cancel',
@@ -11,7 +11,7 @@ export function useDialog() {
         color: 'primary',
       },
       ok: {
-        label: 'Delete',
+        label: ok_label || 'Delete',
         color: 'negative',
         'no-caps': true,
         flat: true,

@@ -83,11 +83,12 @@
         >
           <template #append>
             <q-btn
-              label="Generate Key"
-              class="q-my-md q-ml-auto i-material-symbols:barcode"
+              class="q-my-md q-ml-auto"
+              icon="lock_reset"
+              dense
               flat
+              round
               color="primary"
-              hide-bottom-space
               @click="_node.machine_key = generateMachineKey()"
             >
               <q-tooltip>Generate Key</q-tooltip>

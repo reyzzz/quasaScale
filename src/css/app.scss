@@ -9,6 +9,6 @@ body {
 
 .q-table__grid-content {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr));
-  gap: 5px;
+  grid-template-columns: repeat(auto-fit, minmax(min(395px, 100%), 1fr));
+  gap: 8px;
 }

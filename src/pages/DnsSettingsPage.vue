@@ -3,11 +3,7 @@
     <div class="col-sm-12 col-md-5 column gap-8px">
       <q-card flat bordered class="rounded-xl">
         <q-card-section>
-          <div
-            class="text-h6 q-mb-sm text-[#e59c21] text-shadow-[rgb(255,153,0)_0px_0px_1px,rgba(249,164,0,0.6)_0px_0px_5px,rgba(249,164,0,0.4)_0px_5px_4px]"
-          >
-            Tailnet Name
-          </div>
+          <div class="text-h6 q-mb-sm title-text">Tailnet Name</div>
           <div class="text-info">
             This is the base domain name of your Tailnet. Nodes are accessible
             at
@@ -27,7 +23,7 @@
             <q-btn
               flat
               round
-              @click="handleTailnetName()"
+              @click="handleTailnetName"
               :icon="is_edditing ? 'check' : 'edit'"
               :color="is_edditing ? 'positive' : 'primary'"
             />
@@ -37,16 +33,11 @@
       <q-card flat bordered class="rounded-xl">
         <q-card-section>
           <div class="row justify-between">
-            <div
-              class="text-h6 q-mb-sm text-[#e59c21] text-shadow-[rgb(255,153,0)_0px_0px_1px,rgba(249,164,0,0.6)_0px_0px_5px,rgba(249,164,0,0.4)_0px_5px_4px]"
-            >
-              Magic DNS
-            </div>
+            <div class="text-h6 q-mb-sm title-text">Magic DNS</div>
             <q-toggle
               v-model="is_magic_dns"
               dense
               class="q-mb-sm"
-              size="md"
               @update:model-value="updateMagicDNS"
             />
           </div>
@@ -60,20 +51,18 @@
       </q-card>
 
       <q-card flat bordered class="rounded-xl">
-        <q-form @submit="updateServers">
+        <q-form @submit="updateNameservers">
           <q-card-section>
             <div class="row justify-between">
-              <div
-                class="text-h6 q-mb-sm text-[#e59c21] text-shadow-[rgb(255,153,0)_0px_0px_1px,rgba(249,164,0,0.6)_0px_0px_5px,rgba(249,164,0,0.4)_0px_5px_4px]"
-              >
-                Nameservers
-              </div>
+              <div class="text-h6 q-mb-sm title-text">Nameservers</div>
 
               <div>
                 <q-btn
                   icon="undo"
                   flat
                   round
+                  dense
+                  class="q-mr-md"
                   color="secondary"
                   v-if="showServersSave"
                   @click="undoServersChanges"
@@ -81,6 +70,7 @@
                 <q-btn
                   icon="save"
                   flat
+                  dense
                   round
                   color="positive"
                   v-if="showServersSave"
@@ -104,7 +94,6 @@
                   >
                   <q-toggle
                     dense
-                    size="md"
                     flat
                     class="q-mb-xs"
                     v-model="override_local_dns"
@@ -139,24 +128,17 @@
                     color="negative"
                     dense
                     class="absolute top-2 right-3"
-                    size="md"
                     flat
                     icon="delete"
                     round
-                    @click="deleteServer(index)"
+                    @click="servers.splice(index, 1)"
                   />
                 </q-item>
               </template>
             </q-list>
 
-            <div class="row q-mt-xs">
-              <q-btn
-                flat
-                icon="add"
-                class="q-ml-auto q-mr-sm"
-                round
-                @click="addServer"
-              >
+            <div class="row justify-end px-12px pt-8px">
+              <q-btn flat icon="add" dense round @click="addServer">
                 <q-tooltip>Add Server</q-tooltip>
               </q-btn>
             </div>
@@ -168,15 +150,13 @@
         <q-form @submit="updateDomains">
           <q-card-section>
             <div class="row justify-between">
-              <div
-                class="text-h6 q-mb-sm text-[#e59c21] text-shadow-[rgb(255,153,0)_0px_0px_1px,rgba(249,164,0,0.6)_0px_0px_5px,rgba(249,164,0,0.4)_0px_5px_4px]"
-              >
-                Search Domains
-              </div>
+              <div class="text-h6 q-mb-sm title-text">Search Domains</div>
               <div>
                 <q-btn
                   flat
                   round
+                  dense
+                  class="q-mr-md"
                   color="secondary"
                   v-if="showDomainsSave"
                   @click="undoDomainsChanges"
@@ -185,6 +165,7 @@
                 <q-btn
                   flat
                   round
+                  dense
                   color="positive"
                   v-if="showDomainsSave"
                   type="submit"
@@ -232,19 +213,13 @@
                     flat
                     icon="delete"
                     round
-                    @click="removeDomain(index)"
+                    @click="domains.splice(index, 1)"
                   />
                 </q-item>
               </template>
             </q-list>
-            <div class="row">
-              <q-btn
-                flat
-                round
-                class="q-ml-auto q-mr-sm"
-                icon="add"
-                @click="addDomain"
-              />
+            <div class="row px-12px pt-8px justify-end">
+              <q-btn flat round dense icon="add" @click="addDomain" />
             </div>
           </q-card-section>
         </q-form>
@@ -263,21 +238,19 @@ const {
   domains,
   showDomainsSave,
   showServersSave,
-} = storeToRefs(useDomainSettingsStore())
+} = storeToRefs(useDnsSettingsStore())
 const {
   handleTailnetName,
-  deleteServer,
   addServer,
   addDomain,
-  updateServers,
+  updateNameservers,
   updateDomains,
-  removeDomain,
   getDNSSettings,
   updateMagicDNS,
   updateOverrideLocalDNS,
   undoDomainsChanges,
   undoServersChanges,
-} = useDomainSettingsStore()
+} = useDnsSettingsStore()
 
 onMounted(async () => {
   try {

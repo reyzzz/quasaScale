@@ -2,10 +2,10 @@
   <q-page padding>
     <q-table
       :grid="grid_view || $q.screen.lt.sm"
-      title="Headscale Instances"
+      :title="$q.screen.lt.sm ? 'H. Inst.' : 'Headscale Instances'"
       class="rounded-xl"
       table-header-class="text-[#929289] font-bold"
-      title-class="text-[#e59c21] text-shadow-[rgb(255,153,0)_0px_0px_1px,rgba(249,164,0,0.6)_0px_0px_5px,rgba(249,164,0,0.4)_0px_5px_4px]"
+      title-class="title-text"
       :rows="instances"
       :columns="cols"
       row-key="name"
@@ -120,11 +120,6 @@
               <q-btn flat round dense icon="more_vert">
                 <q-menu auto-close>
                   <q-list style="width: max-content">
-                    <q-item clickable @click="activateHeadscale(props.row)">
-                      <q-item-section class="text-positive">
-                        Activate Instance
-                      </q-item-section>
-                    </q-item>
                     <q-item clickable @click="update(props.row)">
                       <q-item-section class="text-primary">
                         Edit Instance
@@ -143,9 +138,7 @@
             </div>
 
             <div class="q-my-sm">
-              <span class="text-weight-bold text-accent">
-                Quasacale Backend URL:
-              </span>
+              <span class="text-weight-bold text-accent"> URL: </span>
               <span class="text-info"
                 >{{ props.row.quasascale_backend_url }}
               </span>
@@ -159,6 +152,15 @@
                 >{{ chopString(props.row.headscale_api_key) }}
               </span>
             </div>
+
+            <q-btn
+              class="absolute-bottom-right i-majesticons:rocket-3-start-line right-16px bottom-12px"
+              color="positive"
+              @click="activateHeadscale(props.row)"
+              :disable="props.row.active"
+            >
+              <q-tooltip> Activate Instance </q-tooltip>
+            </q-btn>
           </q-card-section>
         </q-card>
       </template>

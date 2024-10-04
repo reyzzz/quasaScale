@@ -14,10 +14,7 @@
       </div>
     </q-card-section>
     <q-card-section>
-      <div
-        class="text-[#e59c21] text-h6 text-shadow-[rgb(255,153,0)_0px_0px_1px,rgba(249,164,0,0.6)_0px_0px_5px,rgba(249,164,0,0.4)_0px_5px_4px] ml-3 mb-2"
-        v-if="exitRoutes.length > 0"
-      >
+      <div class="title-text text-h6 ml-1 mb-2" v-if="exitRoutes.length > 0">
         Exit Nodes
       </div>
       <template v-for="route in exitRoutes" :key="route.id">
@@ -76,7 +73,7 @@
       </template>
       <div
         v-if="subNetRoutes.length > 0"
-        class="text-[#e59c21] text-h6 text-shadow-[rgb(255,153,0)_0px_0px_1px,rgba(249,164,0,0.6)_0px_0px_5px,rgba(249,164,0,0.4)_0px_5px_4px] mt-6 ml-3 mb-2"
+        class="title-text text-h6 ml-1 mb-2 mt-4"
       >
         Sub Nets
       </div>

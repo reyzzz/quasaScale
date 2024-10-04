@@ -4,7 +4,7 @@
       :grid="grid_view || $q.screen.lt.sm"
       class="rounded-xl"
       table-header-class="text-[#929289] font-bold"
-      title-class="text-[#e59c21] text-shadow-[rgb(255,153,0)_0px_0px_1px,rgba(249,164,0,0.6)_0px_0px_5px,rgba(249,164,0,0.4)_0px_5px_4px]"
+      title-class="title-text"
       :rows="users"
       :columns="cols"
       row-key="name"
@@ -168,58 +168,31 @@ const filter = ref('')
 
 const { grid_view } = storeToRefs(useSettingsStore())
 function renameUser(user: User): void {
-  $q.dialog({
-    cancel: {
-      label: 'Cancel',
-      'no-caps': true,
-      flat: true,
-      color: 'negative',
-    },
-    ok: {
-      label: 'Confirm',
-      color: 'primary',
-      'no-caps': true,
-      flat: true,
-    },
-    style:
-      ' box-shadow: none; border: 1.5px solid #5c5c5c;border-radius: 12px ',
-
-    prompt: {
-      model: user.name,
-      type: 'text',
-      isValid(value) {
-        if (value.length === 0) return false
-        const result = checkUsername(value, user.name)
-
-        return result === true
-      },
-      rules: [
-        (val) => !!val || 'Field is required',
-
-        (val: string) => {
-          const result = checkUsername(val, user.name)
-          return result === true || result
-        },
-      ],
-    },
-    color: 'secondary',
-    html: true,
-    message: 'Insert username',
-    persistent: true,
-    title: 'Rename User',
-  }).onOk(async (username) => {
-    try {
-      await modifyUserName(user.name, username)
-      user.name = username
-      useNotify('Username updated successfully', 'check')
-    } catch (error) {
-      useNotify(
-        'An error has occured while updating username',
-        'warning',
-        'negative',
-      )
-    }
-  })
+  useDialog()
+    .show(PromptComponent, {
+      title: 'Rename User',
+      description: `Old username ${user.name}, Input new username`,
+      label: 'save',
+      input_label: 'Username',
+      btn_label: 'rename',
+    })
+    .onOk(async (username) => {
+      try {
+        if (isUserExist(username)) {
+          useNotify('Username already exist', 'warning', 'negative')
+          return
+        }
+        await modifyUserName(user.name, username)
+        user.name = username
+        useNotify('Username updated successfully', 'check')
+      } catch (error) {
+        useNotify(
+          'An error has occured while updating username',
+          'warning',
+          'negative',
+        )
+      }
+    })
 }
 
 function deleteUser(index: number): void {
@@ -229,7 +202,7 @@ function deleteUser(index: number): void {
       try {
         const user = users.value[index]
         await removeUser(user.name)
-        users.value = users.value.filter((val, ind) => index !== ind)
+        users.value.splice(index, 1)
         useNotify('User delete successfully', 'check')
       } catch (error) {
         useNotify(
@@ -256,14 +229,17 @@ async function managePreAuthKeys(user: User): Promise<void> {
 function addUser(): void {
   useDialog()
     .show(PromptComponent, {
-      title: 'Please enter username',
+      title: 'Add User',
       description: 'Input username',
       label: 'save',
-      users: users.value,
-      username: '',
+      input_label: 'Username',
     })
     .onOk(async (userName) => {
       try {
+        if (isUserExist(userName)) {
+          useNotify('Username already exist', 'warning', 'negative')
+          return
+        }
         const updatedUser = await addNewUser(userName)
         const creationDate = date.formatDate(
           updatedUser.createdAt,
@@ -281,11 +257,11 @@ function addUser(): void {
       }
     })
 }
-function checkUsername(name: string, org_name?: string): boolean | string {
+function isUserExist(name: string, org_name?: string): boolean {
   if (org_name) {
     if (name === org_name) return true
   }
   const user = users.value.find((user) => user.name === name)
-  return user ? 'UserName already exist' : true
+  return user ? true : false
 }
 </script>

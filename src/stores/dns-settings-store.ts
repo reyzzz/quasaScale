@@ -2,7 +2,7 @@ import { extend, is } from 'quasar'
 import { api } from 'src/boot/axios'
 import { NamedResource } from 'src/types/Database'
 
-export const useDomainSettingsStore = defineStore('domain-settings', () => {
+export const useDnsSettingsStore = defineStore('dns-settings', () => {
   const tailnetName = ref()
   const is_edditing = ref(false)
   const is_magic_dns = ref(true)
@@ -33,18 +33,12 @@ export const useDomainSettingsStore = defineStore('domain-settings', () => {
       old: false,
     })
   }
-  function deleteServer(index: number): void {
-    servers.value.splice(index, 1)
-  }
 
   function addDomain(): void {
     domains.value.push({
       name: '',
       old: false,
     })
-  }
-  function removeDomain(index: number): void {
-    domains.value.splice(index, 1)
   }
 
   async function getDNSSettings(): Promise<void> {
@@ -81,12 +75,12 @@ export const useDomainSettingsStore = defineStore('domain-settings', () => {
       )
     }
   }
-  async function updateServers(): Promise<void> {
+  async function updateNameservers(): Promise<void> {
     try {
-      await api.patch('/nameservers', {
+      const resp = await api.patch('/nameservers', {
         servers: servers.value.map((server) => server.name),
       })
-      useNotify('Nameservers updated successfully', 'check')
+      useNotify(resp.data.message, 'check')
       await getDNSSettings()
     } catch (error) {
       useNotify(
@@ -98,10 +92,10 @@ export const useDomainSettingsStore = defineStore('domain-settings', () => {
   }
   async function updateDomains(): Promise<void> {
     try {
-      await api.patch('/search-domains', {
+      const resp = await api.patch('/search-domains', {
         domains: domains.value.map((domain) => domain.name),
       })
-      useNotify('Search Domains updated successfully', 'check')
+      useNotify(resp.data.message, 'check')
       await getDNSSettings()
     } catch (error) {
       useNotify(
@@ -114,9 +108,10 @@ export const useDomainSettingsStore = defineStore('domain-settings', () => {
 
   async function updateTailnetName(): Promise<void> {
     try {
-      await api.patch('/tailname', {
+      const resp = await api.patch('/tailnet-name', {
         name: tailnetName.value,
       })
+      useNotify(resp.data.message, 'check')
     } catch (error) {
       useNotify(
         'An error has occured while updating Tailname',
@@ -128,9 +123,10 @@ export const useDomainSettingsStore = defineStore('domain-settings', () => {
 
   async function updateMagicDNS(): Promise<void> {
     try {
-      await api.patch('/magic-dns', {
+      const resp = await api.patch('/magic-dns', {
         magic_dns: is_magic_dns.value,
       })
+      useNotify(resp.data.message, 'check')
     } catch (error) {
       useNotify(
         'An error has occured while updating Magic DNS',
@@ -142,9 +138,10 @@ export const useDomainSettingsStore = defineStore('domain-settings', () => {
 
   async function updateOverrideLocalDNS(): Promise<void> {
     try {
-      await api.patch('/override-local-dns', {
+      const resp = await api.patch('/override-local-dns', {
         override_local_dns: override_local_dns.value,
       })
+      useNotify(resp.data.message, 'check')
     } catch (error) {
       useNotify(
         'An error has occured while updated override local dns',
@@ -175,12 +172,12 @@ export const useDomainSettingsStore = defineStore('domain-settings', () => {
     updateMagicDNS,
     updateTailnetName,
     updateDomains,
-    updateServers,
+    updateNameservers,
     handleTailnetName,
     addServer,
-    deleteServer,
+
     addDomain,
-    removeDomain,
+
     getDNSSettings,
     undoDomainsChanges,
     undoServersChanges,

@@ -5,7 +5,7 @@
       title="Nodes"
       class="rounded-xl"
       table-header-class="text-[#929289] font-bold"
-      title-class="text-[#e59c21] text-shadow-[rgb(255,153,0)_0px_0px_1px,rgba(249,164,0,0.6)_0px_0px_5px,rgba(249,164,0,0.4)_0px_5px_4px]"
+      title-class="title-text"
       :rows="nodes"
       :columns="cols"
       row-key="name"
@@ -40,8 +40,8 @@
       </template>
       <template #body="props">
         <q-tr :props="props">
-          <q-td
-            ><div class="row items-center gap-10px">
+          <q-td>
+            <div class="row no-wrap items-center gap-10px">
               <span class="relative flex h-3 w-3">
                 <span
                   class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
@@ -51,8 +51,9 @@
                 <span
                   class="relative inline-flex rounded-full h-3 w-3"
                   :class="props.row.online ? 'bg-[#ade25d]' : 'bg-[#c10015]'"
-                ></span> </span
-              >{{ props.row.id }}
+                ></span>
+              </span>
+              {{ props.row.id }}
             </div>
           </q-td>
           <q-td>{{ props.row.name }}</q-td>
@@ -109,8 +110,8 @@
         <q-card flat bordered class="rounded-xl">
           <q-card-section>
             <div class="row justify-between items-center q-mb-sm">
-              <div class="text-h6 row items-center col-10 gap-5px">
-                <div class="row items-center gap-4px">
+              <div class="text-h6 col-10 row items-center">
+                <div class="row items-center gap-6px">
                   <span class="relative flex h-3 w-3">
                     <span
                       class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
@@ -124,8 +125,10 @@
                       :class="
                         props.row.online ? 'bg-[#ade25d]' : 'bg-[#c10015]'
                       "
-                    ></span> </span
-                  >{{ props.row.name }}
+                    >
+                    </span>
+                  </span>
+                  {{ props.row.name }}
                 </div>
 
                 <template v-for="tag in props.row.validTags" :key="tag">
@@ -151,9 +154,9 @@
 
                     <q-separator />
                     <q-item clickable @click="deleteNode(props.rowIndex)">
-                      <q-item-section class="text-negative"
-                        >Delete Node</q-item-section
-                      >
+                      <q-item-section class="text-negative">
+                        Delete Node
+                      </q-item-section>
                     </q-item>
                   </q-list>
                 </q-menu>
@@ -166,13 +169,13 @@
                 <span class="text-info">{{ props.row.user.name }} </span>
               </div>
               <div class="col-7">
-                <span class="text-weight-bold text-accent">Last Seen:</span>
+                <span class="text-weight-bold text-accent">Last Seen: </span>
                 <span class="text-info">{{ props.row.lastSeen }}</span>
               </div>
             </div>
             <div class="row q-mb-sm">
               <div class="col-5">
-                <span class="text-weight-bold text-accent"> IPv4:</span>
+                <span class="text-weight-bold text-accent"> IPv4: </span>
                 <span class="text-info">{{ props.row.IP_address_v4 }} </span>
               </div>
               <div class="col-7">
@@ -337,12 +340,16 @@ function deleteNode(index: number): void {
 }
 
 async function manageRoutes(node: QuasascaleNode): Promise<void> {
-  const routes = await getNodeRoutes(node.id as string)
+  try {
+    const routes = await getNodeRoutes(node.id as string)
 
-  useDialog().show(RouteConfigurationComponent, {
-    routes: routes,
-    nodeId: node.id,
-  })
+    useDialog().show(RouteConfigurationComponent, {
+      routes: routes,
+      nodeId: node.id,
+    })
+  } catch (error) {
+  } finally {
+  }
 }
 onMounted(async () => {
   nodes.value = await getNodes()

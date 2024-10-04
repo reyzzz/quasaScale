@@ -2,10 +2,10 @@
   <q-page padding>
     <q-table
       :grid="grid_view || $q.screen.lt.sm"
-      :title="$q.screen.lt.sm ? 'DNS' : 'DNS Records'"
+      title="Domains"
       class="rounded-xl"
       table-header-class="text-[#929289] font-bold"
-      title-class="text-[#e59c21] text-shadow-[rgb(255,153,0)_0px_0px_1px,rgba(249,164,0,0.6)_0px_0px_5px,rgba(249,164,0,0.4)_0px_5px_4px]"
+      title-class="title-text"
       :rows="dnsRecords"
       :columns="cols"
       row-key="name"
@@ -32,7 +32,7 @@
         <q-btn
           @click="addDNS"
           icon="add"
-          :label="$q.screen.gt.sm ? 'New DNS' : ''"
+          :label="$q.screen.gt.xs ? 'New Domain' : ''"
           color="primary"
           outline
           :dense="$q.screen.lt.sm"

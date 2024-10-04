@@ -1,8 +1,6 @@
-//create pinia store called useLogsStore
 import { defineStore } from 'pinia'
 import { db } from 'src/boot/db'
 import { QuasascaleInstance } from 'src/types/Database'
-import { ref } from 'vue'
 
 export const useHeadscaleInstancesStore = defineStore(
   'headscale-instances',
@@ -19,6 +17,9 @@ export const useHeadscaleInstancesStore = defineStore(
     async function addHeadscaleInstance(headscale: QuasascaleInstance) {
       await db.headscale_instances.add({ ...headscale })
       await getHeadscaleInstances()
+      if (instances.value.length === 1) {
+        activateHeadscale(headscale)
+      }
     }
 
     async function deleteHeadscaleInstance(id: number) {
@@ -32,14 +33,32 @@ export const useHeadscaleInstancesStore = defineStore(
     }
 
     async function activateHeadscale(headscale: QuasascaleInstance) {
-      if (active_headscale.value !== undefined)
-        await db.headscale_instances.update(active_headscale.value.id, {
-          active: false,
+      try {
+        const resp = await fetch(
+          `${headscale.quasascale_backend_url}/version`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${headscale.headscale_api_key}`,
+            },
+          },
+        )
+        if (resp.status !== 200) {
+          useNotify('Headscale instance not reachable', 'warning', 'negative')
+          return
+        }
+
+        if (active_headscale.value !== undefined)
+          await db.headscale_instances.update(active_headscale.value.id, {
+            active: false,
+          })
+        await db.headscale_instances.update(headscale.id, {
+          active: true,
         })
-      await db.headscale_instances.update(headscale.id, {
-        active: true,
-      })
-      await getHeadscaleInstances()
+        await getHeadscaleInstances()
+      } catch (error) {
+        useNotify('Headscale instance not reachable', 'warning', 'negative')
+      }
     }
 
     return {

@@ -13,6 +13,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/nodes',
         name: 'nodes',
+        alias: '/',
         component: () => import('pages/NodesPage.vue'),
       },
       {
@@ -23,7 +24,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/dns-settings',
         name: 'dns-settings',
-        component: () => import('pages/DomainSettingsPage.vue'),
+        component: () => import('pages/DnsSettingsPage.vue'),
       },
       {
         path: '/headscale-instances',

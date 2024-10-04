@@ -14,6 +14,7 @@
             <q-input
               v-model="tailnetName"
               outlined
+              dense
               class="q-mr-sm col-6"
               v-if="is_edditing"
             />
@@ -23,6 +24,7 @@
             <q-btn
               flat
               round
+              dense
               @click="handleTailnetName"
               :icon="is_edditing ? 'check' : 'edit'"
               :color="is_edditing ? 'positive' : 'primary'"

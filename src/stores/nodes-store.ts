@@ -1,68 +1,113 @@
 //create pinia store called useLogsStore
 import { defineStore } from 'pinia'
-import { QuasascaleNode, QuasascaleRoute } from 'src/types/Database'
+import { IP, QuasascaleNode, QuasascaleRoute } from 'src/types/Database'
 import { api } from 'boot/axios'
 import { HeadscaleNode, HeadscaleRoute } from 'src/types/headscale-types'
+import { AxiosError } from 'axios'
+const { validateIPv4, validateIPv6 } = useUtils()
 
 export const useNodesStore = defineStore('nodes', () => {
+  const { has_config_changed } = storeToRefs(useSettingsStore())
+
   async function getNodes(): Promise<QuasascaleNode[]> {
     const resp = await api.get('/node')
     return resp.data.nodes.map((node: HeadscaleNode) => {
-      const user = node.user
       return {
-        ...node,
         name: node.givenName,
-        lastSeen: new Date(node.lastSeen).toLocaleString(),
-        IP_address_v4: Array.isArray(node.ipAddresses)
-          ? node.ipAddresses[0]
-          : '',
-        IP_address_v6: Array.isArray(node.ipAddresses)
-          ? node.ipAddresses[1]
-          : '',
-        user_id: user.id,
-      }
+        last_seen: new Date(node.lastSeen).toLocaleString(),
+        ipv4:
+          Array.isArray(node.ipAddresses) && validateIPv4(node.ipAddresses[0])
+            ? node.ipAddresses[0]
+            : '',
+        ipv6:
+          Array.isArray(node.ipAddresses) && validateIPv6(node.ipAddresses[1])
+            ? node.ipAddresses[1]
+            : '',
+        online: node.online,
+        machine_key: node.machineKey,
+        forced_tags: node.forcedTags,
+        id: node.id,
+        user: node.user,
+      } satisfies QuasascaleNode
     })
   }
 
   async function renameNode(node: QuasascaleNode): Promise<void> {
-    await api.post(`/node/${node.id}/rename/${node.name}`)
+    try {
+      await api.post(`/node/${node.id}/rename/${node.name}`)
+    } catch (ex: unknown) {
+      if (ex instanceof AxiosError) {
+        useNotify(ex.response?.data.message, 'warning', 'negative')
+        throw ex
+      }
+    }
   }
 
   async function updateTags(node: QuasascaleNode): Promise<void> {
-    await api.post(`/node/${node.id}/tags`, {
-      tags: node.validTags,
-    })
+    try {
+      await api.post(`/node/${node.id}/tags`, {
+        tags: node.forced_tags,
+      })
+      useNotify('Tags updated successfully', 'check')
+    } catch (ex: unknown) {
+      if (ex instanceof AxiosError) {
+        useNotify(ex.response?.data.message, 'warning', 'negative')
+        throw ex
+      }
+    }
   }
 
   async function changeUser(node: QuasascaleNode): Promise<void> {
-    await api.post(`/node/${node.id}/user?user=${node.user?.name}`)
+    try {
+      await api.post(`/node/${node.id}/user?user=${node.user?.name}`)
+    } catch (ex: unknown) {
+      if (ex instanceof AxiosError) {
+        useNotify(ex.response?.data.message, 'warning', 'negative')
+        throw ex
+      }
+    }
   }
 
   async function removeNode(node: QuasascaleNode): Promise<void> {
-    await api.delete(`/node/${node.id}`)
+    try {
+      await api.delete(`/node/${node.id}`)
+    } catch (ex: unknown) {
+      if (ex instanceof AxiosError) {
+        useNotify(ex.response?.data.message, 'warning', 'negative')
+        throw ex
+      }
+    }
   }
 
   async function createNode(node: QuasascaleNode): Promise<void> {
-    const resp = await api.post(
-      `/node/register?user=${node.user?.name}&key=mkey:${node.machine_key}`,
-    )
-    node.id = resp.data.node.id
-    await renameNode(node)
-    await updateTags(node)
+    try {
+      const resp = await api.post(
+        `/node/register?user=${node.user?.name}&key=mkey:${node.machine_key}`,
+      )
+      node.id = resp.data.node.id
+      await renameNode(node)
+      await updateTags(node)
+      useNotify('Node created successfully', 'check')
+    } catch (ex: unknown) {
+      if (ex instanceof AxiosError) {
+        useNotify(ex.response?.data.message, 'warning', 'negative')
+        throw ex
+      }
+    }
   }
 
-  async function updateIP(
-    nodeId: string,
-    body: { IP_address_v4?: string; IP_address_v6?: string },
-  ) {
+  async function updateIP(nodeId: string, ips: IP) {
     try {
       const resp = await api.patch(`/ip/${nodeId}`, {
-        body,
+        ...ips,
       })
-      if (resp.data === 'IP updated successfully') useNotify(resp.data, 'check')
-      else useNotify(resp.data, 'warning', 'negative')
-    } catch (error) {
-      useNotify('An error has occured while updating IP', 'warning', 'negative')
+      has_config_changed.value = true
+      useNotify(resp.data.message, 'check')
+    } catch (ex: unknown) {
+      if (ex instanceof AxiosError) {
+        useNotify(ex.response?.data.message, 'warning', 'negative')
+        throw ex
+      }
     }
   }
 
@@ -86,15 +131,36 @@ export const useNodesStore = defineStore('nodes', () => {
   }
 
   async function disableRoute(route_id: string): Promise<void> {
-    await api.post(`/routes/${route_id}/disable`)
+    try {
+      await api.post(`/routes/${route_id}/disable`)
+    } catch (ex: unknown) {
+      if (ex instanceof AxiosError) {
+        useNotify(ex.response?.data.message, 'warning', 'negative')
+        throw ex
+      }
+    }
   }
 
   async function enableRoute(route_id: string): Promise<void> {
-    await api.post(`/routes/${route_id}/enable`)
+    try {
+      await api.post(`/routes/${route_id}/enable`)
+    } catch (ex: unknown) {
+      if (ex instanceof AxiosError) {
+        useNotify(ex.response?.data.message, 'warning', 'negative')
+        throw ex
+      }
+    }
   }
 
   async function removeRoute(route_id: string): Promise<void> {
-    await api.delete(`/routes/${route_id}`)
+    try {
+      await api.delete(`/routes/${route_id}`)
+    } catch (ex: unknown) {
+      if (ex instanceof AxiosError) {
+        useNotify(ex.response?.data.message, 'warning', 'negative')
+        throw ex
+      }
+    }
   }
   return {
     getNodes,

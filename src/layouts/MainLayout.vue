@@ -14,19 +14,7 @@
           <div
             class="q-ml-md row items-center gap-4px text-white text-subtitle1"
           >
-            <span
-              class="relative flex h-3 w-3"
-              v-if="active_headscale !== undefined"
-            >
-              <span
-                class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-[#ade25d]"
-              >
-              </span>
-              <span
-                class="relative inline-flex rounded-full h-3 w-3 bg-[#ade25d]"
-              >
-              </span>
-            </span>
+            <animated-circle v-if="active_headscale !== undefined" />
             <span v-if="active_headscale !== undefined">
               {{ active_headscale.name }} selected
             </span>
@@ -58,7 +46,12 @@
           :loading="restarting"
           @click="restartHeadscale"
           v-if="$q.screen.gt.sm && has_config_changed"
-        />
+        >
+          <q-tooltip
+            >For some changes to take effect, we need to restart headscale
+            service</q-tooltip
+          >
+        </q-btn>
         <q-btn
           color="primary"
           flat
@@ -133,17 +126,7 @@
       <q-item>
         <q-item-section avatar>
           <div class="row items-center gap-4px">
-            <span
-              class="relative flex h-3 w-3"
-              v-if="active_headscale !== undefined"
-            >
-              <span
-                class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-[#ade25d]"
-              ></span>
-              <span
-                class="relative inline-flex rounded-full h-3 w-3 bg-[#ade25d]"
-              ></span>
-            </span>
+            <animated-circle v-if="active_headscale !== undefined" />
             {{ active_headscale?.name }} selected
           </div>
         </q-item-section>
@@ -159,6 +142,7 @@
 import { useQuasar } from 'quasar'
 import { api } from 'boot/axios'
 import { symOutlinedDevices } from '@quasar/extras/material-symbols-outlined'
+
 defineOptions({
   name: 'MainLayout',
 })
@@ -185,14 +169,8 @@ const linksList = ref([
     mobile_label: 'Users',
   },
   {
-    icon: 'carbon:server',
-    route: 'dns',
-    label: 'Domains',
-    mobile_label: 'Domains',
-  },
-  {
     icon: 'eos-icons:dns',
-    route: 'dns-settings',
+    route: 'dns',
     label: 'DNS',
     mobile_label: 'DNS',
   },
@@ -220,9 +198,21 @@ onMounted(async () => {
 
 async function restartHeadscale() {
   try {
-    restarting.value = true
-    await api.post('/restart')
-    has_config_changed.value = false
+    useDialog()
+      .del(
+        'Are you sure you want to restart headscale?<br>This might have a <b>downtime</b> up to <b>30s</b>',
+        {
+          ok_label: 'Restart',
+          ok_color: 'primary',
+          cancel_color: 'secondary',
+          class: 'dialog-restart',
+        },
+      )
+      .onOk(async () => {
+        restarting.value = true
+        await api.post('/restart')
+        has_config_changed.value = false
+      })
   } catch (ex) {
     useNotify('Failed to restart headscale', 'warning', 'negative')
   } finally {

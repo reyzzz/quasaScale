@@ -51,11 +51,11 @@
             /> </template
         ></q-td>
         <q-td key="actions" :props="props">
-          <q-btn flat round color="secondary" icon="edit"
-            ><q-tooltip>Edit Tag</q-tooltip>
+          <q-btn flat round color="secondary" icon="edit" dense>
+            <q-tooltip>Edit Tag</q-tooltip>
           </q-btn>
-          <q-btn flat round color="negative" icon="delete"
-            ><q-tooltip>Delete Tag</q-tooltip>
+          <q-btn flat round color="negative" icon="delete" dense>
+            <q-tooltip>Delete Tag</q-tooltip>
           </q-btn>
         </q-td>
       </q-tr>
@@ -69,10 +69,10 @@
               {{ props.row.name }}
             </div>
             <div>
-              <q-btn icon="edit" color="secondary" round flat>
+              <q-btn icon="edit" color="secondary" round flat dense>
                 <q-tooltip>Edit Tag</q-tooltip>
               </q-btn>
-              <q-btn icon="delete" color="negative" round flat>
+              <q-btn icon="delete" color="negative" round flat dense>
                 <q-tooltip>Delete Tag</q-tooltip>
               </q-btn>
             </div>

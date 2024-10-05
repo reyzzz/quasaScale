@@ -43,7 +43,7 @@
           <q-td>{{ props.row.id }}</q-td>
           <q-td>
             <div class="row items-center gap-4px">
-              <AnimatedCircle v-if="props.row.active" />
+              <animated-circle v-if="props.row.active" />
               {{ props.row.name }}
             </div>
           </q-td>
@@ -60,14 +60,14 @@
             <q-btn
               flat
               round
-              size="sm"
               color="positive"
               dense
-              class="q-ml-md i-majesticons:rocket-3-start-line"
+              icon="majesticons:rocket-3-start-line"
+              class="q-ml-md"
               :disable="props.row.active"
               @click="activateHeadscale(props.row)"
             >
-              <q-tooltip> Activate Headcale </q-tooltip>
+              <q-tooltip> Activate Instance </q-tooltip>
             </q-btn>
             <q-btn
               icon="edit"
@@ -99,7 +99,7 @@
           <q-card-section>
             <div class="row q-mb-sm justify-between">
               <div class="text-h5 row items-center gap-5px">
-                <AnimatedCircle v-if="props.row.active" />
+                <animated-circle v-if="props.row.active" />
                 {{ props.row.name }}
               </div>
               <q-btn flat round dense icon="more_vert">
@@ -113,9 +113,9 @@
 
                     <q-separator />
                     <q-item clickable @click="remove(props.row.id)">
-                      <q-item-section class="text-negative"
-                        >Delete Instance</q-item-section
-                      >
+                      <q-item-section class="text-negative">
+                        Delete Instance
+                      </q-item-section>
                     </q-item>
                   </q-list>
                 </q-menu>
@@ -139,8 +139,12 @@
             </div>
 
             <q-btn
-              class="absolute-bottom-right i-majesticons:rocket-3-start-line right-16px bottom-12px"
+              class="absolute-bottom-right right-16px bottom-12px"
+              round
+              dense
+              flat
               color="positive"
+              icon="majesticons:rocket-3-start-line"
               @click="activateHeadscale(props.row)"
               :disable="props.row.active"
             >
@@ -154,8 +158,6 @@
 </template>
 <script lang="ts" setup>
 import { QTableColumn } from 'quasar'
-import AnimatedCircle from 'src/components/AnimatedCircle.vue'
-
 import HeadscaleInstanceConfiguration from 'src/components/headscale-instances/HeadscaleInstanceConfiguration.vue'
 import { QuasascaleInstance } from 'src/types/Database'
 

@@ -25,7 +25,7 @@
         />
         <q-select
           outlined
-          v-model="_node.user_id"
+          v-model="_node.user!.id"
           :options="users"
           placeholder="select a user"
           label="User"
@@ -39,34 +39,33 @@
         <q-input
           outlined
           hide-bottom-space
-          v-model="_node.IP_address_v4"
+          v-model="_node.ipv4"
           label="IPv4"
           :rules="[
             (val) => !!val || 'Field required',
-            (val) => validatedIPv4(val) || 'Wrong ip format',
+            (val) => validateIPv4(val) || 'Wrong ip format',
           ]"
         />
         <q-input
           outlined
           hide-bottom-space
-          v-model="_node.IP_address_v6"
+          v-model="_node.ipv6"
           label="IPv6"
           :rules="[
             (val) => !!val || 'Field required',
-            (val) => validatedIPv6(val) || 'wrong ip format',
+            (val) => validateIPv6(val) || 'wrong ip format',
           ]"
         />
         <q-select
           label="Tags"
           outlined
-          v-model="displayTags"
+          v-model="forced_tags"
           use-input
           use-chips
           @new-value="addNewTag"
           multiple
           hide-dropdown-icon
           input-debounce="0"
-          new-value-mode="add-unique"
           hint="Enter the tag and press enter"
           hide-hint
           hide-bottom-space
@@ -122,36 +121,49 @@ const props = defineProps<{
     node: QuasascaleNode
   }
 }>()
-const { validatedIPv4, validatedIPv6 } = useUtils()
+const { validateIPv4, validateIPv6 } = useUtils()
 const { users } = storeToRefs(useUsersStore())
 const _node = ref<QuasascaleNode>(extend(true, {}, props.componentProps.node))
 const { generateMachineKey } = useUtils()
 
-const displayTags = computed(() => {
-  return _node.value.validTags.map((tag) => {
+const forced_tags = ref(
+  _node.value.forced_tags.map((tag) => {
     return tag.replace('tag:', '')
-  })
-})
+  }),
+)
 function saveChanges(): void {
   const user = users.value.find((user) => {
-    return user.id === _node.value.user_id
+    return user.id === _node.value.user?.id
   })
 
   if (user) {
     _node.value.user = user
   }
 
+  _node.value.forced_tags = forced_tags.value.map((tag) => 'tag:' + tag)
+
   props.onDialogOK(_node.value)
 }
-function addNewTag(tag: string) {
-  _node.value.validTags.push('tag:' + tag)
+
+function addNewTag(
+  tag: string,
+  done: (
+    item?: string,
+    mode?: 'toggle' | 'add' | 'add-unique' | undefined,
+  ) => void,
+) {
+  if (tag === '' || forced_tags.value.includes(tag)) {
+    done()
+    return
+  }
+  done(tag, 'add-unique')
 }
 function validateMachineKey(key: string) {
   const regex = /^[a-fA-F0-9]{64}$/
   return regex.test(key)
 }
 onMounted(() => {
-  if (props.componentProps.node.user_id === '0')
-    _node.value.user_id = users.value[0].id
+  if (props.componentProps.node.user?.id === '0')
+    _node.value.user = users.value[0]
 })
 </script>

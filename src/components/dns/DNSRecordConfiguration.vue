@@ -43,8 +43,8 @@
             (val) => !!val || 'Field required',
             (val) =>
               _dns.type === 'A'
-                ? validatedIPv4(val) || 'Wrong IPv4 format'
-                : validatedIPv6(val) || 'Wrong IPv6 format',
+                ? validateIPv4(val) || 'Wrong IPv4 format'
+                : validateIPv6(val) || 'Wrong IPv6 format',
           ]"
         />
       </q-card-section>
@@ -74,7 +74,7 @@ const props = defineProps<{
     dnsRecords: DNSRecord[]
   }
 }>()
-const { validatedIPv4, validatedIPv6 } = useUtils()
+const { validateIPv4, validateIPv6 } = useUtils()
 const dnsTypes = ['A', 'AAAA']
 const _dns = ref<DNSRecord>(extend(true, {}, props.componentProps.dns))
 

@@ -1,5 +1,6 @@
 import { boot } from 'quasar/wrappers'
 import axios, { AxiosInstance } from 'axios'
+import AnimatedCircle from 'src/components/AnimatedCircle.vue'
 import 'uno.css'
 declare module 'vue' {
   interface ComponentCustomProperties {
@@ -15,7 +16,7 @@ declare module 'vue' {
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create()
-export default boot(async ({}) => {
+export default boot(async ({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
   const { active_headscale } = storeToRefs(useHeadscaleInstancesStore())
   const { getHeadscaleInstances } = useHeadscaleInstancesStore()
@@ -31,7 +32,7 @@ export default boot(async ({}) => {
     },
     { immediate: true, deep: true },
   )
-
+  app.component('animated-circle', AnimatedCircle)
   //app.config.globalProperties.$axios = axios
   // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)
   //       so you won't necessarily have to import axios in each vue file

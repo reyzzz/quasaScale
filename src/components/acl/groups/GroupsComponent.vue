@@ -53,12 +53,13 @@
             icon="edit"
             color="secondary"
             round
+            dense
             flat
             @click="editGroup(props.row, props.rowIndex)"
           >
             <q-tooltip>Edit Group</q-tooltip>
           </q-btn>
-          <q-btn icon="delete" color="negative" round flat>
+          <q-btn icon="delete" color="negative" round flat dense>
             <q-tooltip>Delete Group</q-tooltip>
           </q-btn>
         </q-td>
@@ -77,11 +78,12 @@
                 color="secondary"
                 round
                 flat
+                dense
                 @click="editGroup(props.row, props.rowIndex)"
               >
                 <q-tooltip>Edit Group</q-tooltip>
               </q-btn>
-              <q-btn icon="delete" color="negative" round flat>
+              <q-btn icon="delete" color="negative" round flat dense>
                 <q-tooltip>Delete Group</q-tooltip>
               </q-btn>
             </div>

@@ -6,6 +6,6 @@ export function useNotify(msg: string, icon: string, color = 'positive') {
     color: color,
     position: 'top-right',
     icon: icon,
-    timeout: 1000,
+    timeout: 5000,
   })
 }

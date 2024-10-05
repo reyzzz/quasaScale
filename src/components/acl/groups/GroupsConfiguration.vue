@@ -40,7 +40,14 @@
         />
       </q-card-section>
       <q-card-actions vertical>
-        <q-btn color="primary" label="save" type="submit" icon="save" />
+        <q-btn
+          color="primary"
+          label="save"
+          type="submit"
+          icon="save"
+          rounded
+          outline
+        />
       </q-card-actions>
     </q-form>
   </q-card>

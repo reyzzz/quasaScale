@@ -7,13 +7,12 @@ export interface User {
 export interface QuasascaleNode {
   id?: string
   name: string
-  lastSeen: string
-  IP_address_v4: string
-  IP_address_v6: string
+  last_seen: string
+  ipv4: string
+  ipv6: string
   user?: User
-  user_id: string
   machine_key: string
-  validTags: string[]
+  forced_tags: string[]
   online: boolean
 }
 
@@ -69,4 +68,9 @@ export interface Host {
 export interface TagOwner {
   name: string
   groups: Group[]
+}
+
+export interface IP {
+  IPv4?: string
+  IPv6?: string
 }

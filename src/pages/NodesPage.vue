@@ -42,17 +42,17 @@
         <q-tr :props="props">
           <q-td>
             <div class="row no-wrap items-center gap-10px">
-              <AnimatedCircle :is_positive="props.row.online" />
+              <animated-circle :is_positive="props.row.online" />
               {{ props.row.id }}
             </div>
           </q-td>
           <q-td>{{ props.row.name }}</q-td>
-          <q-td>{{ props.row.lastSeen }}</q-td>
-          <q-td>{{ props.row.IP_address_v4 }}</q-td>
-          <q-td>{{ props.row.IP_address_v6 }}</q-td>
+          <q-td>{{ props.row.last_seen }}</q-td>
+          <q-td>{{ props.row.ipv4 }}</q-td>
+          <q-td>{{ props.row.ipv6 }}</q-td>
           <q-td>{{ props.row.user.name }}</q-td>
           <q-td
-            ><template v-for="tag in props.row.validTags" :key="tag">
+            ><template v-for="tag in props.row.forced_tags" :key="tag">
               <q-badge
                 outline
                 color="primary"
@@ -73,7 +73,8 @@
               <q-tooltip> Edit Node </q-tooltip>
             </q-btn>
             <q-btn
-              class="i-material-symbols-light:route-outline-sharp q-ml-md"
+              class="q-ml-md"
+              icon="route"
               flat
               round
               color="green"
@@ -102,11 +103,11 @@
             <div class="row justify-between items-center q-mb-sm">
               <div class="text-h6 col-10 row items-center">
                 <div class="row items-center gap-6px">
-                  <AnimatedCircle :is_positive="props.row.online" />
+                  <animated-circle :is_positive="props.row.online" />
                   {{ props.row.name }}
                 </div>
 
-                <template v-for="tag in props.row.validTags" :key="tag">
+                <template v-for="tag in props.row.forced_tags" :key="tag">
                   <q-badge
                     outline
                     color="primary"
@@ -150,17 +151,17 @@
               </div>
               <div class="col-7">
                 <span class="text-weight-bold text-accent">Last Seen: </span>
-                <span class="text-info">{{ props.row.lastSeen }}</span>
+                <span class="text-info">{{ props.row.last_seen }}</span>
               </div>
             </div>
             <div class="row q-mb-sm">
               <div class="col-5">
                 <span class="text-weight-bold text-accent"> IPv4: </span>
-                <span class="text-info">{{ props.row.IP_address_v4 }} </span>
+                <span class="text-info">{{ props.row.ipv4 }} </span>
               </div>
               <div class="col-7">
                 <span class="text-weight-bold text-accent"> IPv6: </span>
-                <span class="text-info">{{ props.row.IP_address_v6 }} </span>
+                <span class="text-info">{{ props.row.ipv6 }} </span>
               </div>
             </div>
           </q-card-section>
@@ -172,11 +173,10 @@
 
 <script setup lang="ts">
 import { QTableColumn } from 'quasar'
-import AnimatedCircle from 'src/components/AnimatedCircle.vue'
 import NodeConfiguration from 'src/components/nodes/NodeConfiguration.vue'
 import RouteConfigurationComponent from 'src/components/nodes/RouteConfigurationComponent.vue'
 import { QuasascaleNode } from 'src/types/Database'
-
+import { is } from 'quasar'
 const filter = ref('')
 const { grid_view } = storeToRefs(useSettingsStore())
 const {
@@ -189,7 +189,6 @@ const {
   getNodeRoutes,
   updateIP,
 } = useNodesStore()
-const { arraysEqual } = useUtils()
 
 const nodes = ref<QuasascaleNode[]>([])
 const cols = ref<QTableColumn[]>([
@@ -259,37 +258,33 @@ function editNode(node: QuasascaleNode, index: number): void {
     .onOk(async (updatedNode: QuasascaleNode) => {
       try {
         if (node.name !== updatedNode.name) await renameNode(updatedNode)
-        if (!arraysEqual(node.validTags, updatedNode.validTags))
+        if (!is.deepEqual(node.forced_tags, updatedNode.forced_tags))
           await updateTags(updatedNode)
-        if (node.user_id !== updatedNode.user_id) await changeUser(updatedNode)
-        const body: { IP_address_v4?: string; IP_address_v6?: string } = {}
-        if (node.IP_address_v4 !== updatedNode.IP_address_v4)
-          body.IP_address_v4 = updatedNode.IP_address_v4
-
-        if (node.IP_address_v6 !== updatedNode.IP_address_v6)
-          body.IP_address_v6 = updatedNode.IP_address_v6
-        await updateIP(updatedNode.id as string, body)
+        if (node.user?.id !== updatedNode.user?.id)
+          await changeUser(updatedNode)
+        if (node.ipv4 !== updatedNode.ipv4 && node.ipv6 !== updatedNode.ipv6)
+          await updateIP(updatedNode.id as string, {
+            IPv4: updatedNode.ipv4,
+            IPv6: updatedNode.ipv6,
+          })
+        else if (node.ipv4 !== updatedNode.ipv4)
+          await updateIP(updatedNode.id as string, { IPv4: updatedNode.ipv4 })
+        else if (node.ipv6 !== updatedNode.ipv6)
+          await updateIP(updatedNode.id as string, { IPv6: updatedNode.ipv6 })
         nodes.value[index] = updatedNode
-        useNotify('Node updated successfully', 'check')
-      } catch (error) {
-        useNotify(
-          'An error has occcured while updating this node',
-          'warning',
-          'negative',
-        )
-      }
+      } catch {}
     })
 }
 function addNode(): void {
   const node: QuasascaleNode = {
     name: '',
     online: false,
-    lastSeen: '2024-09-27 17:24',
-    IP_address_v4: '',
-    IP_address_v6: '',
-    user_id: '0',
+    last_seen: new Date().toISOString(),
+    ipv4: '',
+    ipv6: '',
     machine_key: '',
-    validTags: [],
+    forced_tags: [],
+    user: { id: '0', name: '', createdAt: '' },
   }
   useDialog()
     .show(NodeConfiguration, {
@@ -331,7 +326,10 @@ function deleteNode(index: number): void {
 async function manageRoutes(node: QuasascaleNode): Promise<void> {
   try {
     const routes = await getNodeRoutes(node.id as string)
-
+    if (routes.length === 0) {
+      useNotify('Node has no routes', 'directions_off', 'negative')
+      return
+    }
     useDialog().show(RouteConfigurationComponent, {
       routes: routes,
       nodeId: node.id,

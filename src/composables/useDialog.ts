@@ -2,24 +2,27 @@ import { Dialog } from 'quasar'
 import { Component } from 'vue'
 import DialogComponent from 'src/components/DialogComponent.vue'
 export function useDialog() {
-  function del(msg?: string, ok_label?: string) {
+  function del(msg?: string, options?: Record<string, unknown>) {
     return Dialog.create({
       cancel: {
         label: 'Cancel',
         'no-caps': true,
         flat: true,
-        color: 'primary',
+        color: options?.cancel_color || 'primary',
       },
       ok: {
-        label: ok_label || 'Delete',
-        color: 'negative',
+        label: options?.ok_label || 'Delete',
+        color: options?.ok_color || 'negative',
         'no-caps': true,
         flat: true,
       },
       html: true,
+      class: options?.class || '',
+      transitionShow: 'slide-up',
+      transitionHide: 'slide-down',
       message: msg || 'Are you sure you want to delete this item?',
       persistent: true,
-      title: 'Confirm',
+      title: (options?.title as string) || 'Confirm',
     })
   }
   function prompt(

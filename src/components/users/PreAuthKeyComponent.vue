@@ -226,7 +226,9 @@ async function addKey(): Promise<void> {
 async function expireKey(key: string) {
   try {
     useDialog()
-      .del('Are you sure you want to expire this PreAuthKey?', 'Expire')
+      .del('Are you sure you want to expire this PreAuthKey?', {
+        ok_label: 'Expire',
+      })
       .onOk(async () => {
         await expirePreAuthKey(key, props.componentProps.username)
         await getuserPreAuthKeys(props.componentProps.username)

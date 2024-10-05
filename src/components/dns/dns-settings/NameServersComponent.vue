@@ -4,8 +4,7 @@
       <q-card-section>
         <div class="row justify-between">
           <div class="text-h6 q-mb-sm title-text">Nameservers</div>
-
-          <div>
+          <div v-if="showServersSave">
             <q-btn
               icon="undo"
               flat
@@ -13,7 +12,6 @@
               dense
               class="q-mr-md"
               color="secondary"
-              v-if="showServersSave"
               @click="undoServersChanges"
             />
             <q-btn
@@ -22,7 +20,6 @@
               dense
               round
               color="positive"
-              v-if="showServersSave"
               type="submit"
             />
           </div>
@@ -32,25 +29,7 @@
           Set the nameservers used by the nodes on the Tailnet to resolve DNS
           queries
         </div>
-        <div class="row justify-between items-center">
-          <div class="text-[#d2d2d2] text-bold">Global NameSevers</div>
-          <div>
-            <label>
-              <span
-                class="text-body2 q-mr-sm"
-                :class="{ 'text-primary': override_local_dns }"
-                >Override Local DNS</span
-              >
-              <q-toggle
-                dense
-                flat
-                class="q-mb-xs"
-                v-model="override_local_dns"
-                @update:model-value="updateOverrideLocalDNS"
-              />
-            </label>
-          </div>
-        </div>
+
         <q-list bordered separator class="rounded-xl q-mt-xs">
           <template v-for="(server, index) in servers" :key="index">
             <q-item>
@@ -65,7 +44,7 @@
                   placeholder="Enter nameserver here"
                   :rules="[
                     (val) => !!val || 'Field required',
-                    (val) => validatedIPv4(val) || 'wrong IPv4 format',
+                    (val) => validateIPv4(val) || 'wrong IPv4 format',
                   ]"
                 />
                 <span v-else>
@@ -97,14 +76,8 @@
 </template>
 
 <script lang="ts" setup>
-const {
-  addServer,
-  updateOverrideLocalDNS,
-  undoServersChanges,
-  updateNameservers,
-} = useDnsSettingsStore()
-const { servers, override_local_dns, showServersSave } = storeToRefs(
-  useDnsSettingsStore(),
-)
-const { validatedIPv4 } = useUtils()
+const { addServer, undoServersChanges, updateNameservers } =
+  useDnsSettingsStore()
+const { servers, showServersSave } = storeToRefs(useDnsSettingsStore())
+const { validateIPv4 } = useUtils()
 </script>

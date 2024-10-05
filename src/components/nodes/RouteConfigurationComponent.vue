@@ -22,7 +22,7 @@
           <q-card-section class="q-py-sm">
             <div class="row justify-between items-center">
               <div class="row items-center gap-4px">
-                <AnimatedCircle :is_positive="route.enabled" />{{
+                <animated-circle :is_positive="route.enabled" />{{
                   route.prefix
                 }}
               </div>
@@ -84,9 +84,8 @@
             <q-card-section class="q-py-sm">
               <div class="row justify-between items-center">
                 <div class="row items-center gap-4px">
-                  <AnimatedCircle :is_positive="route.enabled" />{{
-                    route.prefix
-                  }}
+                  <animated-circle :is_positive="route.enabled" />
+                  {{ route.prefix }}
                 </div>
 
                 <q-btn flat round dense icon="more_vert">
@@ -132,12 +131,10 @@
 
 <script setup lang="ts">
 import { QuasascaleRoute } from 'src/types/Database'
-import AnimatedCircle from '../AnimatedCircle.vue'
 
 const { enableRoute, disableRoute, removeRoute, getNodeRoutes } =
   useNodesStore()
 const props = defineProps<{
-  onDialogOk: () => void
   componentProps: {
     routes: QuasascaleRoute[]
     nodeId: string
@@ -157,18 +154,10 @@ async function handleRoute(route: QuasascaleRoute) {
       route.enabled = true
     }
     useNotify(
-      'Route ' + route.enabled ? 'enabled' : 'disabled' + 'successfully',
+      `Route ${route.enabled ? 'enabled' : 'disabled'}  successfully`,
       'check',
     )
-  } catch (error) {
-    useNotify(
-      'An error has occured while ' + route.enabled
-        ? 'disabling'
-        : 'enabling' + 'the route',
-      'warning',
-      'negative',
-    )
-  }
+  } catch {}
 }
 
 async function deleteRoute(routeId: string) {

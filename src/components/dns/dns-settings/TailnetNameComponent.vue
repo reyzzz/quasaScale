@@ -4,7 +4,7 @@
       <div class="text-h6 q-mb-sm title-text">Tailnet Name</div>
       <div class="text-info">
         This is the base domain name of your Tailnet. Nodes are accessible at
-        <span class="text-primary text-bold">[node].[user].ts.net</span>
+        <span class="text-primary text-bold">[node].ts.net</span>
         when Magic DNS is enabled
       </div>
       <div class="row items-center q-mt-sm gap-3px justify-between">

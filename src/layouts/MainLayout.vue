@@ -16,7 +16,7 @@
           >
             <animated-circle v-if="active_headscale !== undefined" />
             <span v-if="active_headscale !== undefined">
-              {{ active_headscale.name }} selected
+              {{ active_headscale.name }} {{ headscale_version }}
             </span>
             <q-btn
               icon="check"
@@ -127,7 +127,7 @@
         <q-item-section avatar>
           <div class="row items-center gap-4px">
             <animated-circle v-if="active_headscale !== undefined" />
-            {{ active_headscale?.name }} selected
+            {{ active_headscale?.name }} {{ headscale_version }}
           </div>
         </q-item-section>
       </q-item>
@@ -142,6 +142,7 @@
 import { useQuasar } from 'quasar'
 import { api } from 'boot/axios'
 import { symOutlinedDevices } from '@quasar/extras/material-symbols-outlined'
+import { AxiosError } from 'axios'
 
 defineOptions({
   name: 'MainLayout',
@@ -152,7 +153,8 @@ const drawer = ref(true)
 const { active_headscale } = storeToRefs(useHeadscaleInstancesStore())
 const { getHeadscaleInstances } = useHeadscaleInstancesStore()
 const { getUsers } = useUsersStore()
-const { grid_view, has_config_changed } = storeToRefs(useSettingsStore())
+const { grid_view, has_config_changed, headscale_version } =
+  storeToRefs(useSettingsStore())
 useIcons()
 
 const linksList = ref([
@@ -197,26 +199,27 @@ onMounted(async () => {
 })
 
 async function restartHeadscale() {
-  try {
-    useDialog()
-      .del(
-        'Are you sure you want to restart headscale?<br>This might have a <b>downtime</b> up to <b>30s</b>',
-        {
-          ok_label: 'Restart',
-          ok_color: 'primary',
-          cancel_color: 'secondary',
-          class: 'dialog-restart',
-        },
-      )
-      .onOk(async () => {
+  useDialog()
+    .del(
+      'Are you sure you want to restart headscale?<br>This might have a <b>downtime</b> up to <b>30s</b>',
+      {
+        ok_label: 'Restart',
+        ok_color: 'primary',
+        cancel_color: 'secondary',
+        class: 'dialog-restart',
+      },
+    )
+    .onOk(async () => {
+      try {
         restarting.value = true
         await api.post('/restart')
         has_config_changed.value = false
-      })
-  } catch (ex) {
-    useNotify('Failed to restart headscale', 'warning', 'negative')
-  } finally {
-    restarting.value = false
-  }
+      } catch (ex) {
+        if (ex instanceof AxiosError)
+          useNotify(ex.response?.data.message, 'warning', 'negative')
+      } finally {
+        restarting.value = false
+      }
+    })
 }
 </script>

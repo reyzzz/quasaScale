@@ -22,13 +22,13 @@
           outlined
           hide-bottom-space
           v-model="_dns.name"
-          label="DNS Name"
+          label="Name"
           :rules="[(val) => !!val || 'Field required']"
         />
         <q-select
           v-model="_dns.type"
           :options="dnsTypes"
-          label="DNS Type"
+          label="Type"
           outlined
           map-options
           emit-value
@@ -38,7 +38,7 @@
           outlined
           hide-bottom-space
           v-model="_dns.value"
-          label="DNS Value"
+          label="Value"
           :rules="[
             (val) => !!val || 'Field required',
             (val) =>

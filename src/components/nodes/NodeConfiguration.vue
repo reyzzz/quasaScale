@@ -57,7 +57,7 @@
           ]"
         />
         <q-select
-          label="Tags"
+          label="Forced Tags"
           outlined
           v-model="forced_tags"
           use-input

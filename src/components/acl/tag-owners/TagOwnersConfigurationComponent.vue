@@ -24,20 +24,28 @@
           outlined
           hide-bottom-space
           v-model="_tag_owner.name"
-          label="Tag Name"
-          :rules="[(val) => !!val || 'Field required']"
+          label="Tag"
+          :rules="[
+            (val) => val.length > 4 || 'You need to enter a tag',
+            (val) => val.startsWith('tag:') || 'Tag must start with tag:',
+          ]"
         />
-        <q-list separator bordered class="rounded-xl q-mt-sm">
-          <template v-for="value in _tag_owner.value" :key="value">
+        <div class="px-8px py-4px text-subtitle1">Owners:</div>
+        <q-list separator bordered class="rounded-xl">
+          <template v-for="(value, index) in _tag_owner.value" :key="value">
             <q-item>
               <q-item-section>
                 <span class="text-body1 text-info">{{ value }}</span>
               </q-item-section>
               <q-item-section avatar>
-                <div class="row">
-                  <q-btn color="secondary" flat round dense icon="edit" />
-                  <q-btn color="negative" flat round dense icon="delete" />
-                </div>
+                <q-btn
+                  color="negative"
+                  flat
+                  round
+                  dense
+                  icon="delete"
+                  @click="_tag_owner.value.splice(index, 1)"
+                />
               </q-item-section>
             </q-item>
           </template>
@@ -51,17 +59,17 @@
             :options="options"
             v-if="show_add_card"
           />
-          <div class="row px-12px pt-8px justify-end">
-            <q-btn
-              flat
-              round
-              dense
-              class="q-mr-xs q-mb-sm"
-              :icon="!show_add_card ? 'add' : 'remove'"
-              @click="show_add_card = !show_add_card"
-            />
-          </div>
         </q-list>
+        <div class="row px-12px pt-8px justify-end">
+          <q-btn
+            flat
+            round
+            dense
+            class="q-mr-xs q-mb-sm"
+            :icon="!show_add_card ? 'add' : 'remove'"
+            @click="show_add_card = !show_add_card"
+          />
+        </div>
       </q-card-section>
       <q-card-actions vertical>
         <q-btn
@@ -107,6 +115,10 @@ function handleEmitValue(role: string) {
 }
 
 function save() {
+  if (_tag_owner.value.value.length === 0) {
+    useNotify('Please select at least one group or user', 'warning', 'negative')
+    return
+  }
   props.onDialogOK(_tag_owner.value)
 }
 </script>

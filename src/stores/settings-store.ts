@@ -7,7 +7,8 @@ export const useSettingsStore = defineStore(
   () => {
     const grid_view = ref(false)
     const has_config_changed = ref(false)
-    return { grid_view, has_config_changed }
+    const headscale_version = ref('')
+    return { grid_view, has_config_changed, headscale_version }
   },
   { persist: true },
 )

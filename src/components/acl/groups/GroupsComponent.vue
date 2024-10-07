@@ -4,7 +4,7 @@
     class="rounded-xl"
     table-header-class="text-[#929289] font-bold"
     title-class="title-text"
-    :rows="groups"
+    :rows="groupsArray"
     :columns="cols"
     row-key="name"
     :filter="filter"
@@ -34,6 +34,7 @@
         color="primary"
         outline
         :dense="$q.screen.lt.sm"
+        @click="addGroup()"
       />
     </template>
     <template #body="props">
@@ -44,7 +45,7 @@
             <q-badge
               outline
               color="primary"
-              :label="user.name"
+              :label="user"
               class="q-mr-sm"
             /> </template
         ></q-td>
@@ -55,11 +56,18 @@
             round
             dense
             flat
-            @click="editGroup(props.row, props.rowIndex)"
+            @click="editGroup(props.row)"
           >
             <q-tooltip>Edit Group</q-tooltip>
           </q-btn>
-          <q-btn icon="delete" color="negative" round flat dense>
+          <q-btn
+            icon="delete"
+            color="negative"
+            round
+            flat
+            dense
+            @click="deleteGroup(props.row)"
+          >
             <q-tooltip>Delete Group</q-tooltip>
           </q-btn>
         </q-td>
@@ -79,11 +87,18 @@
                 round
                 flat
                 dense
-                @click="editGroup(props.row, props.rowIndex)"
+                @click="editGroup(props.row)"
               >
                 <q-tooltip>Edit Group</q-tooltip>
               </q-btn>
-              <q-btn icon="delete" color="negative" round flat dense>
+              <q-btn
+                icon="delete"
+                color="negative"
+                round
+                flat
+                dense
+                @click="deleteGroup(props.row)"
+              >
                 <q-tooltip>Delete Group</q-tooltip>
               </q-btn>
             </div>
@@ -91,12 +106,7 @@
 
           <div>
             <template v-for="user in props.row.users" :key="user.id">
-              <q-badge
-                outline
-                color="primary"
-                :label="user.name"
-                class="q-mr-sm"
-              />
+              <q-badge outline color="primary" :label="user" class="q-mr-sm" />
             </template>
           </div>
         </q-card-section>
@@ -107,11 +117,12 @@
 
 <script setup lang="ts">
 import { QTableColumn } from 'quasar'
-import { Group } from 'src/types/Database'
 import GroupsConfiguration from './GroupsConfiguration.vue'
+import { RowGroup } from 'src/types/Database'
 
 const { grid_view } = storeToRefs(useSettingsStore())
 const { groups } = storeToRefs(useAclsStore())
+const { updateACLs } = useAclsStore()
 const filter = ref('')
 const cols = ref<QTableColumn[]>([
   {
@@ -137,14 +148,43 @@ const cols = ref<QTableColumn[]>([
     align: 'right',
   },
 ])
+const groupsArray = computed(() => {
+  return Object.entries(groups.value).map(([key, group]) => {
+    return { name: key, users: group }
+  })
+})
 
-function editGroup(group: Group, index: number) {
+function editGroup(group: RowGroup) {
   useDialog()
     .show(GroupsConfiguration, {
       group: group,
+      all_groups: groupsArray.value,
     })
-    .onOk((updatedGroup: Group) => {
-      groups.value[index] = updatedGroup
+    .onOk(async (updatedGroup: RowGroup) => {
+      delete groups.value[group.name]
+      groups.value[updatedGroup.name] = updatedGroup.users
+      await updateACLs({ groups: groups.value })
+    })
+}
+
+function addGroup() {
+  useDialog()
+    .show(GroupsConfiguration, {
+      group: { name: 'group:', users: [] } satisfies RowGroup,
+      all_groups: groupsArray.value,
+    })
+    .onOk(async (group: RowGroup) => {
+      groups.value[group.name] = group.users
+      await updateACLs({ groups: groups.value })
+    })
+}
+
+function deleteGroup(group: RowGroup) {
+  useDialog()
+    .del()
+    .onOk(async () => {
+      delete groups.value[group.name]
+      await updateACLs({ groups: groups.value })
     })
 }
 </script>

@@ -8,7 +8,11 @@
       <q-card-section class="q-py-sm">
         <div class="row justify-between items-center">
           <div class="items-center text-h6">
-            {{ _group.name !== '' ? 'Edit Group' : 'Add Group' }}
+            {{
+              componentProps.group.name === 'group:'
+                ? 'Add Group'
+                : 'Edit Group'
+            }}
           </div>
           <div>
             <q-btn flat round icon="close" v-close-popup />
@@ -21,19 +25,20 @@
           hide-bottom-space
           v-model="_group.name"
           label="Group Name"
-          :rules="[(val) => !!val || 'Field required']"
+          :rules="[
+            (val) => !!val || 'Field required',
+            (val: string) =>
+              val.startsWith('group:') || 'Name must start with group:',
+            () => checkGroupName() || 'Group name already used',
+          ]"
         />
         <q-select
           label="Users"
           outlined
           use-chips
-          option-label="name"
-          option-value="id"
-          new-value-mode="add-unique"
           multiple
-          @new-value="addUser"
           use-input
-          input-debounce="1000"
+          input-debounce="300"
           @filter="filterUsers"
           v-model="_group.users"
           :options="options"
@@ -55,35 +60,36 @@
 
 <script setup lang="ts">
 import { extend } from 'quasar'
-import { Group, User } from 'src/types/Database'
+import { RowGroup } from 'src/types/Database'
 const { users } = storeToRefs(useUsersStore())
 
 const props = defineProps<{
-  onDialogOK: (group: Group) => void
+  onDialogOK: (group: RowGroup) => void
   componentProps: {
-    group: Group
+    group: RowGroup
+    all_groups: RowGroup[]
   }
 }>()
-const options = ref<User[]>(extend(true, [], users.value))
-const _group = ref<Group>(extend(true, {}, props.componentProps.group))
-const inputValue = ref('sc')
+const user_names = users.value.map((u) => u.name)
+const options = ref<string[]>(extend(true, [], user_names))
+const _group = ref<RowGroup>(extend(true, {}, props.componentProps.group))
+
 function filterUsers(val: string, update: (callbackFn: () => void) => void) {
   update(() => {
-    if (!val) options.value = users.value
-    options.value = users.value.filter((user) =>
-      user.name.toLowerCase().includes(val.toLowerCase()),
-    ) // Filter based on inclusion
+    if (!val) options.value = user_names
+    options.value = user_names.filter((user) =>
+      user.toLowerCase().includes(val.toLowerCase()),
+    )
   })
 }
-
-function addUser(id: string) {
-  inputValue.value = ''
-  const user = users.value.find((user) => {
-    return user.id === id
-  })
-  if (user) _group.value.users.push(user)
+function checkGroupName() {
+  const group = props.componentProps.all_groups.find(
+    (group) => group.name === _group.value.name,
+  )
+  if (group && props.componentProps.group.name !== _group.value.name)
+    return false
+  return true
 }
-
 function saveChanges() {
   props.onDialogOK(_group.value)
 }

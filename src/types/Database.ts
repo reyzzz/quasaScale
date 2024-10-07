@@ -55,19 +55,68 @@ export interface NamedResource {
   old: boolean
 }
 
-export interface Group {
+export interface RowGroup {
+  name: WithPrefix<'group:'>
+  users: string[]
+}
+
+export interface RowHost {
   name: string
-  users: User[]
+  value: string
+}
+
+export interface RowTagOwner {
+  name: WithPrefix<'tag:'>
+  value: Array<string | Groups>
+}
+
+type WithPrefix<T extends string> = `${T}${string}`
+
+export interface Groups {
+  [key: WithPrefix<'group:'>]: string[]
+}
+
+export interface TagOwners {
+  [key: WithPrefix<'tag:'>]: string[]
+}
+
+export interface Hosts {
+  [key: string]: string
 }
 
 export interface Host {
-  name: string
-  IP_address: string
+  [
+    key:
+      | WithPrefix<'group:'>
+      | WithPrefix<'tag:'>
+      | WithPrefix<'autogroup:'>
+      | string
+  ]: string
+}
+export interface ACL {
+  action: 'accept'
+  proto:
+    | 'igmp'
+    | 'ipv4'
+    | 'ip-in-ip'
+    | 'tcp'
+    | 'egp'
+    | 'igp'
+    | 'udp'
+    | 'gre'
+    | 'esp'
+    | 'ah'
+    | 'sctp'
+    | (string & {})
+  src: Host[]
+  dst: Host[]
 }
 
-export interface TagOwner {
-  name: string
-  groups: Group[]
+export interface ACLConfig {
+  groups: Groups
+  tagOwners: TagOwners
+  Hosts: Hosts
+  acls: ACL[]
 }
 
 export interface IP {

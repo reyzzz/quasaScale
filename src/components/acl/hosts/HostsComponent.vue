@@ -4,7 +4,7 @@
     class="rounded-xl"
     table-header-class="text-[#929289] font-bold"
     title-class="title-text"
-    :rows="hosts"
+    :rows="hostsArray"
     :columns="cols"
     row-key="name"
     :filter="filter"
@@ -34,6 +34,7 @@
         color="primary"
         outline
         :dense="$q.screen.lt.sm"
+        @click="addHost"
       />
     </template>
     <template #body="props">
@@ -42,13 +43,27 @@
           {{ props.row.name }}
         </q-td>
         <q-td>
-          {{ props.row.IP_address }}
+          {{ props.row.value }}
         </q-td>
         <q-td key="actions" :props="props">
-          <q-btn flat round color="secondary" icon="edit" dense>
+          <q-btn
+            flat
+            round
+            color="secondary"
+            icon="edit"
+            dense
+            @click="editHost(props.row)"
+          >
             <q-tooltip>Edit Host</q-tooltip>
           </q-btn>
-          <q-btn flat round color="negative" icon="delete" dense>
+          <q-btn
+            flat
+            round
+            color="negative"
+            icon="delete"
+            dense
+            @click="deleteHost(props.row)"
+          >
             <q-tooltip>Delete Host</q-tooltip>
           </q-btn>
         </q-td>
@@ -63,10 +78,24 @@
               {{ props.row.name }}
             </div>
             <div>
-              <q-btn icon="edit" color="secondary" round flat dense>
+              <q-btn
+                icon="edit"
+                color="secondary"
+                round
+                flat
+                dense
+                @click="editHost(props.row)"
+              >
                 <q-tooltip>Edit Host</q-tooltip>
               </q-btn>
-              <q-btn icon="delete" color="negative" round flat dense>
+              <q-btn
+                icon="delete"
+                color="negative"
+                round
+                flat
+                dense
+                @click="deleteHost(props.row)"
+              >
                 <q-tooltip>Delete Host</q-tooltip>
               </q-btn>
             </div>
@@ -74,7 +103,7 @@
 
           <div>
             <span class="text-weight-bold text-accent">IP Address: </span>
-            <span class="text-info">{{ props.row.IP_address }}</span>
+            <span class="text-info">{{ props.row.value }}</span>
           </div>
         </q-card-section>
       </q-card>
@@ -84,9 +113,22 @@
 
 <script setup lang="ts">
 import { QTableColumn } from 'quasar'
+import HostsConfigurationComponent from './HostsConfigurationComponent.vue'
+import { Host, RowHost } from 'src/types/Database'
 
 const { grid_view } = storeToRefs(useSettingsStore())
 const { hosts } = storeToRefs(useAclsStore())
+const { updateACLs } = useAclsStore()
+
+const hostsArray = computed(() => {
+  return Object.entries(hosts.value).map(([key, host]) => {
+    return {
+      name: key,
+      value: host,
+    }
+  })
+})
+
 const cols = ref<QTableColumn[]>([
   {
     name: 'name',
@@ -111,4 +153,36 @@ const cols = ref<QTableColumn[]>([
   },
 ])
 const filter = ref('')
+
+function addHost() {
+  useDialog()
+    .show(HostsConfigurationComponent, {
+      host: { name: '', IP_address: '' },
+    })
+    .onOk((host: RowHost) => {
+      hosts.value[host.name] = host.value
+      updateACLs({ Hosts: hosts.value })
+    })
+}
+
+function editHost(host: Host) {
+  useDialog()
+    .show(HostsConfigurationComponent, {
+      host: host,
+    })
+    .onOk((updatedHost: RowHost) => {
+      delete hosts.value[host.name]
+      hosts.value[updatedHost.name] = updatedHost.value
+      updateACLs({ Hosts: hosts.value })
+    })
+}
+
+function deleteHost(host: RowHost) {
+  useDialog()
+    .del()
+    .onOk(async () => {
+      delete hosts.value[host.name]
+      await updateACLs({ Hosts: hosts.value })
+    })
+}
 </script>

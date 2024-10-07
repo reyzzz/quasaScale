@@ -10,12 +10,6 @@ export function useUtils() {
     navigator.clipboard.writeText(message)
     useNotify('Value copied to clipboard', 'check')
   }
-  function arraysEqual(arr1: string[], arr2: string[]): boolean {
-    if (arr1.length !== arr2.length) return false
-    const sortedArr1 = arr1.slice().sort()
-    const sortedArr2 = arr2.slice().sort()
-    return sortedArr1.every((value, index) => value === sortedArr2[index])
-  }
 
   function generateMachineKey() {
     return Array.from(crypto.getRandomValues(new Uint8Array(32)))
@@ -24,7 +18,7 @@ export function useUtils() {
   }
   function validateIPv4(IP: string): boolean {
     const ipRegex =
-      /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+      /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(?:\/(?:[0-9]|[1-2][0-9]|3[0-2]))?$/
     return ipRegex.test(IP)
   }
   function validateIPv6(IP: string): boolean {
@@ -37,7 +31,6 @@ export function useUtils() {
   return {
     chopString,
     copyString,
-    arraysEqual,
     generateMachineKey,
     validateIPv4,
     validateIPv6,

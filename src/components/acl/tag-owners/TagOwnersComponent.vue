@@ -4,7 +4,7 @@
     class="rounded-xl"
     table-header-class="text-[#929289] font-bold"
     title-class="title-text"
-    :rows="tag_owners"
+    :rows="tag_owners_array"
     :columns="cols"
     row-key="name"
     :filter="filter"
@@ -34,6 +34,7 @@
         color="primary"
         outline
         :dense="$q.screen.lt.sm"
+        @click="addTagOwner"
       />
     </template>
     <template #body="props">
@@ -42,19 +43,33 @@
           {{ props.row.name }}
         </q-td>
         <q-td
-          ><template v-for="group in props.row.groups" :key="group.name">
+          ><template v-for="value in props.row.value" :key="value">
             <q-badge
               outline
               color="primary"
-              :label="group.name"
+              :label="value"
               class="q-mr-sm"
             /> </template
         ></q-td>
         <q-td key="actions" :props="props">
-          <q-btn flat round color="secondary" icon="edit" dense>
+          <q-btn
+            flat
+            round
+            color="secondary"
+            icon="edit"
+            dense
+            @click="editTag(props.row)"
+          >
             <q-tooltip>Edit Tag</q-tooltip>
           </q-btn>
-          <q-btn flat round color="negative" icon="delete" dense>
+          <q-btn
+            flat
+            round
+            color="negative"
+            icon="delete"
+            dense
+            @click="deleteTag(props.row)"
+          >
             <q-tooltip>Delete Tag</q-tooltip>
           </q-btn>
         </q-td>
@@ -69,23 +84,32 @@
               {{ props.row.name }}
             </div>
             <div>
-              <q-btn icon="edit" color="secondary" round flat dense>
+              <q-btn
+                icon="edit"
+                color="secondary"
+                round
+                flat
+                dense
+                @click="editTag(props.row)"
+              >
                 <q-tooltip>Edit Tag</q-tooltip>
               </q-btn>
-              <q-btn icon="delete" color="negative" round flat dense>
+              <q-btn
+                icon="delete"
+                color="negative"
+                round
+                flat
+                dense
+                @click="deleteTag(props.row)"
+              >
                 <q-tooltip>Delete Tag</q-tooltip>
               </q-btn>
             </div>
           </div>
 
           <div>
-            <template v-for="group in props.row.groups" :key="group.name">
-              <q-badge
-                outline
-                color="primary"
-                :label="group.name"
-                class="q-mr-sm"
-              />
+            <template v-for="value in props.row.value" :key="value">
+              <q-badge outline color="primary" :label="value" class="q-mr-sm" />
             </template>
           </div>
         </q-card-section>
@@ -95,10 +119,21 @@
 </template>
 <script lang="ts" setup>
 import { QTableColumn } from 'quasar'
+import { RowTagOwner } from 'src/types/Database'
+import TagOwnersConfigurationComponent from './TagOwnersConfigurationComponent.vue'
 
 const { grid_view } = storeToRefs(useSettingsStore())
 const filter = ref('')
 const { tag_owners } = storeToRefs(useAclsStore())
+const { updateACLs } = useAclsStore()
+const tag_owners_array = computed(() => {
+  return Object.entries(tag_owners.value).map(([key, tag_owner]) => {
+    return {
+      name: key,
+      value: tag_owner,
+    }
+  })
+})
 const cols = ref<QTableColumn[]>([
   {
     name: 'name',
@@ -123,4 +158,37 @@ const cols = ref<QTableColumn[]>([
     align: 'right',
   },
 ])
+
+function editTag(tag_owner: RowTagOwner) {
+  useDialog()
+    .show(TagOwnersConfigurationComponent, {
+      tag_owner: tag_owner,
+    })
+    .onOk(async (updated_tag_owner: RowTagOwner) => {
+      delete tag_owners.value[tag_owner.name]
+      tag_owners.value[updated_tag_owner.name] =
+        updated_tag_owner.value as string[]
+      await updateACLs({ tagOwners: tag_owners.value })
+    })
+}
+
+function addTagOwner() {
+  useDialog()
+    .show(TagOwnersConfigurationComponent, {
+      tag_owner: { name: 'tag:', value: [] } satisfies RowTagOwner,
+    })
+    .onOk(async (tag_owner: RowTagOwner) => {
+      tag_owners.value[tag_owner.name] = tag_owner.value as string[]
+      await updateACLs({ tagOwners: tag_owners.value })
+    })
+}
+
+function deleteTag(tag_owner: RowTagOwner) {
+  useDialog()
+    .del()
+    .onOk(async () => {
+      delete tag_owners.value[tag_owner.name]
+      await updateACLs({ tagOwners: tag_owners.value })
+    })
+}
 </script>

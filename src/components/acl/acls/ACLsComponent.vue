@@ -34,12 +34,12 @@
         color="primary"
         outline
         :dense="$q.screen.lt.sm"
+        @click="addACL"
       />
     </template>
 
     <template #body="props">
       <q-tr :props="props">
-        <q-td>{{ props.row.action }}</q-td>
         <q-td>{{ props.row.proto }}</q-td>
         <q-td>
           <template v-for="src in props.row.src" :key="src">
@@ -70,7 +70,7 @@
             flat
             color="negative"
             icon="delete"
-            @click="deleteACL(props.row, props.rowIndex)"
+            @click="deleteACL(props.rowIndex)"
           >
             <q-tooltip>Delete ACL</q-tooltip>
           </q-btn>
@@ -81,8 +81,10 @@
       <q-card flat bordered class="rounded-xl">
         <q-card-section>
           <div class="row q-mb-sm justify-between">
-            <div class="text-h5 text-positive">
-              {{ props.row.action }}
+            <div>
+              <span class="text-h6">{{
+                props.row.proto ? props.row.proto : 'No Protocol'
+              }}</span>
             </div>
             <div>
               <q-btn
@@ -101,16 +103,13 @@
                 round
                 flat
                 dense
-                @click="deleteACL(props.row, props.rowIndex)"
+                @click="deleteACL(props.rowIndex)"
               >
                 <q-tooltip>Delete ACL</q-tooltip>
               </q-btn>
             </div>
           </div>
-          <div class="q-mb-xs">
-            <span class="text-body1 text-accent q-mr-sm">Protocol:</span>
-            <span class="text-info">{{ props.row.proto }}</span>
-          </div>
+
           <div class="q-mb-xs">
             <span class="text-body1 text-accent q-mr-sm">Source:</span>
             <template v-for="src in props.row.src" :key="src">
@@ -132,17 +131,10 @@
 import { QTableColumn } from 'quasar'
 import { ACL } from 'src/types/Database'
 import ACLsConfiguration from './ACLsConfiguration.vue'
-
+const { updateACLs } = useAclsStore()
 const { grid_view } = storeToRefs(useSettingsStore())
 const { acls } = storeToRefs(useAclsStore())
 const cols = ref<QTableColumn[]>([
-  {
-    name: 'action',
-    required: true,
-    label: 'Action',
-    field: 'action',
-    align: 'left',
-  },
   {
     name: 'proto',
     required: true,
@@ -174,11 +166,37 @@ const cols = ref<QTableColumn[]>([
 ])
 const filter = ref('')
 
-async function editACL(acl: ACL, index: number) {
-  useDialog().show(ACLsConfiguration, {
-    acl: acl,
-  })
+async function addACL() {
+  useDialog()
+    .show(ACLsConfiguration, {
+      acl: { proto: '', action: 'accept', src: [], dst: [] } satisfies ACL,
+    })
+    .onOk(async (ACL: ACL) => {
+      if (ACL.proto === '') delete ACL.proto
+      acls.value.push(ACL)
+      updateACLs({ acls: acls.value })
+    })
 }
 
-async function deleteACL(acl: ACL, index: number) {}
+async function editACL(acl: ACL, index: number) {
+  useDialog()
+    .show(ACLsConfiguration, {
+      acl: acl,
+    })
+    .onOk(async (updatedAcl: ACL) => {
+      if (updatedAcl.proto === '') delete updatedAcl.proto
+      acls.value[index] = updatedAcl
+
+      updateACLs({ acls: acls.value })
+    })
+}
+
+async function deleteACL(index: number) {
+  useDialog()
+    .del()
+    .onOk(async () => {
+      acls.value.splice(index, 1)
+      updateACLs({ acls: acls.value })
+    })
+}
 </script>

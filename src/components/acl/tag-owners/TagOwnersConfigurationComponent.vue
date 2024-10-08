@@ -20,6 +20,25 @@
         </div>
       </q-card-section>
       <q-card-section>
+        <p class="text-body2">
+          <code>tagOwners</code> in Tailscale is an association between a TAG
+          and the people allowed to set this TAG on a server. This is documented
+          <a
+            href="https://tailscale.com/kb/1068/acl-tags#defining-a-tag"
+            target="_blank"
+            class="text-primary"
+          >
+            here
+          </a>
+          and explained
+          <a
+            href="https://tailscale.com/blog/rbac-like-it-was-meant-to-be/"
+            target="_blank"
+            class="text-primary"
+          >
+            here </a
+          >.
+        </p>
         <q-input
           outlined
           hide-bottom-space
@@ -88,7 +107,7 @@
 <script lang="ts" setup>
 import { extend } from 'quasar'
 import { RowTagOwner } from 'src/types/Database'
-import RoleSelectorComponent from '../RoleSelectorComponent.vue'
+import RoleSelectorComponent from './RoleSelectorComponent.vue'
 
 const props = defineProps<{
   onDialogOK: (tag_owner: RowTagOwner) => void

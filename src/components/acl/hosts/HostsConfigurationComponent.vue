@@ -18,6 +18,20 @@
         </div>
       </q-card-section>
       <q-card-section class="q-gutter-y-sm">
+        <p class="text-body2">
+          Hosts should be defined using their IP addresses along with a subnet
+          mask. To define a single host, use a <strong>/32</strong> mask. Avoid
+          using DNS entries, as they are prone to hijacking by replacing IP
+          addresses. For more information, see
+          <a
+            href="https://github.com/tailscale/tailscale/issues/3800"
+            target="_blank"
+            class="text-primary"
+          >
+            this link </a
+          >.
+        </p>
+
         <q-input
           outlined
           hide-bottom-space
@@ -52,16 +66,16 @@
 
 <script lang="ts" setup>
 import { extend } from 'quasar'
-import { Host } from 'src/types/Database'
+import { Hosts } from 'src/types/Database'
 const { validateIPv4 } = useUtils()
 const props = defineProps<{
-  onDialogOK: (host: Host) => void
+  onDialogOK: (host: Hosts) => void
   componentProps: {
-    host: Host
+    host: Hosts
   }
 }>()
 
-const _host = ref<Host>(extend(true, {}, props.componentProps.host))
+const _host = ref<Hosts>(extend(true, {}, props.componentProps.host))
 
 function save() {
   props.onDialogOK(_host.value)

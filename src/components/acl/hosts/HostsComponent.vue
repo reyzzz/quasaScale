@@ -114,7 +114,7 @@
 <script setup lang="ts">
 import { QTableColumn } from 'quasar'
 import HostsConfigurationComponent from './HostsConfigurationComponent.vue'
-import { Host, RowHost } from 'src/types/Database'
+import { Hosts, RowHost } from 'src/types/Database'
 
 const { grid_view } = storeToRefs(useSettingsStore())
 const { hosts } = storeToRefs(useAclsStore())
@@ -165,7 +165,7 @@ function addHost() {
     })
 }
 
-function editHost(host: Host) {
+function editHost(host: Hosts) {
   useDialog()
     .show(HostsConfigurationComponent, {
       host: host,

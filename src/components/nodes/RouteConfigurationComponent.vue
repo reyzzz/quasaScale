@@ -14,55 +14,54 @@
       </div>
     </q-card-section>
     <q-card-section>
-      <div class="title-text text-h6 ml-1 mb-2" v-if="exitRoutes.length > 0">
+      <div
+        class="title-text text-h6 ml-1 mb-2"
+        v-if="exitRoutes.IP_v4 !== undefined && exitRoutes.IP_v6 !== undefined"
+      >
         Exit Nodes
       </div>
-      <template v-for="route in exitRoutes" :key="route.id">
-        <q-card flat bordered class="rounded-xl q-mb-sm q-mr-xs">
-          <q-card-section class="q-py-sm">
-            <div class="row justify-between items-center">
-              <div class="row items-center gap-4px">
-                <animated-circle :is_positive="route.enabled" />{{
-                  route.prefix
-                }}
-              </div>
-
-              <q-btn flat round dense icon="more_vert">
-                <q-menu auto-close>
-                  <q-list style="width: max-content">
-                    <q-item clickable @click="handleRoute(route)">
-                      <q-item-section
-                        :class="
-                          route.enabled ? 'text-warning' : 'text-positive'
-                        "
-                      >
-                        {{ route.enabled ? 'Disable Route' : 'Enable Route' }}
-                      </q-item-section>
-                    </q-item>
-
-                    <q-separator />
-                    <q-item clickable @click="deleteRoute(route.id)">
-                      <q-item-section class="text-negative"
-                        >Delete Route</q-item-section
-                      >
-                    </q-item>
-                  </q-list>
-                </q-menu>
+      <q-list
+        separator
+        bordered
+        class="rounded-xl"
+        v-if="exitRoutes.IP_v4 !== undefined && exitRoutes.IP_v6 !== undefined"
+      >
+        <q-item>
+          <q-item-section side>
+            <animated-circle :is_positive="exitRoutes.IP_v4.enabled" />
+          </q-item-section>
+          <q-item-section>
+            <div>{{ exitRoutes.IP_v4.prefix }}</div>
+            <div>{{ exitRoutes.IP_v6.prefix }}</div>
+          </q-item-section>
+          <q-item-section side>
+            <div class="row items-center">
+              <q-btn
+                :color="exitRoutes.IP_v4.enabled ? 'warning' : 'positive '"
+                :icon="exitRoutes.IP_v4.enabled ? 'power_off' : 'power'"
+                @click="handleRoute(exitRoutes.IP_v4)"
+                dense
+                round
+                flat
+              >
+                <q-tooltip>{{
+                  exitRoutes.IP_v4.enabled ? 'Disable Route' : 'Enable Route'
+                }}</q-tooltip>
+              </q-btn>
+              <q-btn
+                @click="deleteRoute(exitRoutes.IP_v4.id)"
+                icon="delete"
+                color="negative"
+                dense
+                flat
+                round
+              >
+                <q-tooltip>Delete Route</q-tooltip>
               </q-btn>
             </div>
-
-            <div class="text-info">
-              <span
-                class="text-weight-bold text-accent q-mr-xs hover:cursor-pointer"
-                >Format:
-              </span>
-              <span>
-                {{ route.format }}
-              </span>
-            </div>
-          </q-card-section>
-        </q-card>
-      </template>
+          </q-item-section>
+        </q-item>
+      </q-list>
       <div
         v-if="subNetRoutes.length > 0"
         class="title-text text-h6 ml-1 mb-2 mt-4"
@@ -72,58 +71,60 @@
       <q-scroll-area
         :style="{
           height:
-            exitRoutes.length > 0
+            exitRoutes.IP_v4 !== undefined
               ? 'calc(100vh - 670px)'
               : 'calc(100vh - 500px)',
         }"
         :visible="false"
         :thumb-style="{ width: '3px', backgroundColor: '#ff8700' }"
       >
-        <template v-for="route in subNetRoutes" :key="route.id">
-          <q-card flat bordered class="rounded-xl q-mb-sm q-mr-sm">
-            <q-card-section class="q-py-sm">
-              <div class="row justify-between items-center">
-                <div class="row items-center gap-4px">
-                  <animated-circle :is_positive="route.enabled" />
-                  {{ route.prefix }}
+        <q-list
+          separator
+          bordered
+          class="rounded-xl"
+          v-if="subNetRoutes.length > 0"
+        >
+          <template v-for="route in subNetRoutes" :key="route.id">
+            <q-item>
+              <q-item-section side>
+                <animated-circle :is_positive="route.enabled" />
+              </q-item-section>
+              <q-item-section>
+                {{ route.prefix }}
+              </q-item-section>
+              <q-item-section side>
+                <div class="row items-center">
+                  <q-btn
+                    :class="
+                      route.enabled
+                        ? 'text-warning i-material-symbols:phonelink-ring-off'
+                        : 'text-positive i-material-symbols:phonelink-ring'
+                    "
+                    @click="handleRoute(route)"
+                    dense
+                    round
+                    flat
+                    size="xs"
+                  >
+                    <q-tooltip>{{
+                      route ? 'Disable Route' : 'Enable Route'
+                    }}</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    @click="deleteRoute(route.id)"
+                    icon="delete"
+                    color="negative"
+                    dense
+                    flat
+                    round
+                  >
+                    <q-tooltip>Delete Route</q-tooltip>
+                  </q-btn>
                 </div>
-
-                <q-btn flat round dense icon="more_vert">
-                  <q-menu auto-close>
-                    <q-list style="width: max-content">
-                      <q-item clickable @click="handleRoute(route)">
-                        <q-item-section
-                          :class="
-                            route.enabled ? 'text-warning' : 'text-positive'
-                          "
-                        >
-                          {{ route.enabled ? 'Disable Route' : 'Enable Route' }}
-                        </q-item-section>
-                      </q-item>
-
-                      <q-separator />
-                      <q-item clickable @click="deleteRoute(route.id)">
-                        <q-item-section class="text-negative"
-                          >Delete Route</q-item-section
-                        >
-                      </q-item>
-                    </q-list>
-                  </q-menu>
-                </q-btn>
-              </div>
-
-              <div class="text-info">
-                <span
-                  class="text-weight-bold text-accent q-mr-xs hover:cursor-pointer"
-                  >Format:
-                </span>
-                <span>
-                  {{ route.format }}
-                </span>
-              </div>
-            </q-card-section>
-          </q-card>
-        </template>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-list>
       </q-scroll-area>
     </q-card-section>
   </q-card>
@@ -141,7 +142,12 @@ const props = defineProps<{
   }
 }>()
 
-const exitRoutes = ref<QuasascaleRoute[]>([])
+const exitRoutes = ref<
+  Partial<{
+    IP_v4: QuasascaleRoute
+    IP_v6: QuasascaleRoute
+  }>
+>({})
 const subNetRoutes = ref<QuasascaleRoute[]>([])
 
 async function handleRoute(route: QuasascaleRoute) {
@@ -167,6 +173,7 @@ async function deleteRoute(routeId: string) {
       .onOk(async () => {
         await removeRoute(routeId)
         await getNodeRoutes(props.componentProps.nodeId)
+        seperateRoutesByType()
         useNotify('Route deleted successfully', 'check')
       })
   } catch (error) {
@@ -178,11 +185,24 @@ async function deleteRoute(routeId: string) {
   }
 }
 onMounted(() => {
-  exitRoutes.value = props.componentProps.routes.filter((route) => {
+  seperateRoutesByType()
+})
+
+function seperateRoutesByType() {
+  const exitRouteArray = props.componentProps.routes.filter((route) => {
     return route.type === 'Exit node'
   })
+  if (exitRouteArray.length > 0) {
+    if (exitRouteArray[0].prefix === '::/0') {
+      exitRoutes.value.IP_v6 = exitRouteArray[0]
+      exitRoutes.value.IP_v4 = exitRouteArray[1]
+    } else {
+      exitRoutes.value.IP_v6 = exitRouteArray[1]
+      exitRoutes.value.IP_v4 = exitRouteArray[0]
+    }
+  }
   subNetRoutes.value = props.componentProps.routes.filter((route) => {
     return route.type === 'Subnet'
   })
-})
+}
 </script>

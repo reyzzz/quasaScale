@@ -9,16 +9,9 @@ export const useAclsStore = defineStore('acls', () => {
   const tag_owners = ref<TagOwners>({})
   const acls = ref<ACL[]>([])
   const acl_config = ref<ACLConfig>({
-    groups: {
-      'group:group1': ['galaxys23'],
-    },
-    Hosts: {
-      'postgresql.internal': '10.20.0.2/32',
-      'webservers.internal': '10.20.10.1/29',
-    },
-    tagOwners: {
-      'tag:tag1': ['group:group1', 'group:group2'],
-    },
+    groups: {},
+    Hosts: {},
+    tagOwners: {},
     acls: [],
   })
 

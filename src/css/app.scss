@@ -17,3 +17,6 @@ body {
   border: 1px solid $primary;
   box-shadow: 0 0 #0000;
 }
+::-webkit-scrollbar {
+  scrollbar-width: thin;
+}

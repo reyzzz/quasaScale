@@ -20,6 +20,11 @@
         </div>
       </q-card-section>
       <q-card-section class="q-gutter-y-sm">
+        <p class="text-body2">
+          <code>groups</code> are collections of users having a common scope. A
+          user can be in multiple groups. Groups cannot be composed of other
+          groups.
+        </p>
         <q-input
           outlined
           hide-bottom-space

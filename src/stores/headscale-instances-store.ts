@@ -5,6 +5,7 @@ import { QuasascaleInstance } from 'src/types/Database'
 export const useHeadscaleInstancesStore = defineStore(
   'headscale-instances',
   () => {
+    const { getUsers } = useUsersStore()
     const { headscale_version } = storeToRefs(useSettingsStore())
     const instances = ref<QuasascaleInstance[]>([])
     const active_headscale = computed(() =>
@@ -16,10 +17,12 @@ export const useHeadscaleInstancesStore = defineStore(
     }
 
     async function addHeadscaleInstance(headscale: QuasascaleInstance) {
-      await db.headscale_instances.add({ ...headscale })
+      const headscale_instance_id = await db.headscale_instances.add({
+        ...headscale,
+      })
       await getHeadscaleInstances()
       if (instances.value.length === 1) {
-        activateHeadscale(headscale)
+        activateHeadscale({ ...headscale, id: headscale_instance_id })
       }
     }
 
@@ -57,7 +60,9 @@ export const useHeadscaleInstancesStore = defineStore(
         await db.headscale_instances.update(headscale.id, {
           active: true,
         })
+
         await getHeadscaleInstances()
+        await getUsers()
       } catch (error) {
         useNotify('Headscale instance not reachable', 'warning', 'negative')
       }

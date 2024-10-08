@@ -193,9 +193,10 @@ const linksList = ref([
 const router = useRouter()
 onMounted(async () => {
   await getHeadscaleInstances()
-  await getUsers()
+
   if (active_headscale.value === undefined)
     router.replace({ name: 'headscale-instances' })
+  else await getUsers()
 })
 
 async function restartHeadscale() {

@@ -1,12 +1,12 @@
-import { route } from 'quasar/wrappers';
+import { route } from 'quasar/wrappers'
 import {
   createMemoryHistory,
   createRouter,
   createWebHashHistory,
   createWebHistory,
-} from 'vue-router';
+} from 'vue-router'
 
-import routes from './routes';
+import routes from './routes'
 
 /*
  * If not building with SSR mode, you can
@@ -20,8 +20,10 @@ import routes from './routes';
 export default route(function (/* { store, ssrContext } */) {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
-    : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory);
-
+    : process.env.VUE_ROUTER_MODE === 'history'
+      ? createWebHistory
+      : createWebHashHistory
+  const { active_headscale } = storeToRefs(useHeadscaleInstancesStore())
   const Router = createRouter({
     scrollBehavior: () => ({ left: 0, top: 0 }),
     routes,
@@ -30,7 +32,29 @@ export default route(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
-  });
+  })
+  let appLaunched = false
 
-  return Router;
-});
+  Router.beforeEach((to, from, next) => {
+    if (!appLaunched && active_headscale.value === undefined) {
+      appLaunched = true
+      return next({ name: 'headscale-instances' })
+    }
+
+    if (
+      to.name !== 'headscale-instances' &&
+      active_headscale.value === undefined
+    ) {
+      useNotify(
+        'Please create or activate a headscale instance before proceeding',
+        'warning',
+        'warning',
+      )
+      return next({ name: 'headscale-instances' })
+    }
+
+    next() // Proceed to the requested route
+  })
+
+  return Router
+})

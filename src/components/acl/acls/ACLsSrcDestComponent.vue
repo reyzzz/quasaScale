@@ -77,7 +77,7 @@ const chips = [
   },
   {
     label: 'All',
-    color: 'red-13',
+    color: 'green-13',
   },
 ]
 const { users } = storeToRefs(useUsersStore())

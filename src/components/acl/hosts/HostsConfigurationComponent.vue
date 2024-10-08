@@ -48,6 +48,7 @@
             (val) => !!val || 'FIled required',
             (val) => validateIPv4(val) || 'Wrong IPv4 format',
           ]"
+          lazy-rules="ondemand"
         />
       </q-card-section>
       <q-card-actions vertical>

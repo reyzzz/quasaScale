@@ -5,7 +5,7 @@
     class="rounded-xl! w-100% bg-stone-950"
   >
     <q-form @submit="save">
-      <q-card-section class="q-py-sm sticky top-0 bg-[#0c0a09] z-10">
+      <q-card-section class="q-py-sm sticky top-0 bg-stone-950 z-1">
         <div class="row justify-between items-center">
           <div class="items-center text-h6">
             {{
@@ -29,7 +29,7 @@
               v-model="protocole_type_name"
               dense
               @update:model-value="_acl.proto = ''"
-              size="md"
+              size="lg"
               class="q-mr-sm"
             />
           </label>
@@ -47,10 +47,12 @@
           >. For more information about ACLs,
           <a
             href="https://tailscale.com/kb/1337/acl-syntax"
+            target="_blank"
             class="text-primary"
           >
-            visit this page </a
-          >.
+            visit this page
+          </a>
+          . Leave protocol empty to allow all protocols.
         </p>
 
         <q-select

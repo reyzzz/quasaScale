@@ -7,9 +7,10 @@
           ports: ports,
         })
       "
+      class="full-width"
     >
       <q-item-section>
-        <div class="q-gutter-xs q-mt-xs row no-wrap justify-between">
+        <div class="q-mt-xs row no-wrap justify-between">
           <div class="col-shrink">
             <template v-for="chip in chips" :key="chip.label">
               <q-chip
@@ -18,8 +19,8 @@
                 :color="chip.color"
                 text-color="white"
                 class="q-pt-xs"
+                :label="chip.label"
               >
-                {{ chip.label }}
               </q-chip>
             </template>
           </div>
@@ -44,6 +45,7 @@
             :rules="[(val) => !!val || 'Field required']"
             v-model="role"
             :options="_options"
+            lazy-rules="ondemand"
           />
           <q-input
             v-if="selected_option === 'IP'"
@@ -52,6 +54,7 @@
             v-model="role"
             label="IP"
             :rules="[(val) => validateIPv4(val) || 'Wrong IPv4 format']"
+            lazy-rules="ondemand"
           />
           <q-select
             v-if="!is_src"
@@ -71,6 +74,7 @@
               (val) =>
                 validatePorts(val) || 'Please enter either port numbers or *',
             ]"
+            lazy-rules="ondemand"
           />
         </div>
       </q-item-section>

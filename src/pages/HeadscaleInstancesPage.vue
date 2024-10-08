@@ -102,24 +102,28 @@
                 <animated-circle v-if="props.row.active" />
                 {{ props.row.name }}
               </div>
-              <q-btn flat round dense icon="more_vert">
-                <q-menu auto-close>
-                  <q-list style="width: max-content">
-                    <q-item clickable @click="update(props.row)">
-                      <q-item-section class="text-primary">
-                        Edit Instance
-                      </q-item-section>
-                    </q-item>
-
-                    <q-separator />
-                    <q-item clickable @click="remove(props.row.id)">
-                      <q-item-section class="text-negative">
-                        Delete Instance
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-menu>
-              </q-btn>
+              <div>
+                <q-btn
+                  icon="edit"
+                  color="secondary"
+                  round
+                  flat
+                  dense
+                  @click="update(props.row)"
+                >
+                  <q-tooltip>Edit Instance</q-tooltip>
+                </q-btn>
+                <q-btn
+                  icon="delete"
+                  color="negative"
+                  round
+                  flat
+                  dense
+                  @click="remove(props.row.id)"
+                >
+                  <q-tooltip>Delete Instance</q-tooltip>
+                </q-btn>
+              </div>
             </div>
 
             <div class="q-my-sm">
@@ -237,7 +241,7 @@ async function add(): Promise<void> {
 
 async function remove(id: number): Promise<void> {
   useDialog()
-    .del()
+    .del('Are you sure you want to delete this headscale instance?')
     .onOk(async () => {
       try {
         await deleteHeadscaleInstance(id)

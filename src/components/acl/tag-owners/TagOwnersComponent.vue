@@ -40,17 +40,18 @@
     <template #body="props">
       <q-tr :props="props">
         <q-td>
-          {{ props.row.name }}
+          <span class="text-base">{{ props.row.name }}</span>
         </q-td>
-        <q-td
-          ><template v-for="value in props.row.value" :key="value">
+        <q-td>
+          <template v-for="value in props.row.value" :key="value">
             <q-badge
               outline
               color="primary"
               :label="value"
-              class="q-mr-sm"
-            /> </template
-        ></q-td>
+              class="q-mr-sm text-sm"
+            />
+          </template>
+        </q-td>
         <q-td key="actions" :props="props">
           <q-btn
             flat
@@ -80,7 +81,7 @@
       <q-card flat bordered class="rounded-xl">
         <q-card-section>
           <div class="row q-mb-sm justify-between">
-            <div class="text-h5 row">
+            <div class="text-h6 row">
               {{ props.row.name }}
             </div>
             <div>
@@ -109,7 +110,12 @@
 
           <div>
             <template v-for="value in props.row.value" :key="value">
-              <q-badge outline color="primary" :label="value" class="q-mr-sm" />
+              <q-badge
+                outline
+                color="primary"
+                :label="value"
+                class="q-mr-sm text-sm"
+              />
             </template>
           </div>
         </q-card-section>
@@ -143,11 +149,11 @@ const cols = ref<QTableColumn[]>([
     align: 'left',
   },
   {
-    name: 'groups',
+    name: 'owners',
     required: true,
-    label: 'Groups',
+    label: 'Owners',
     format: (val) => val.name,
-    field: 'groups',
+    field: 'owners',
     align: 'left',
   },
   {

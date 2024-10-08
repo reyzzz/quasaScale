@@ -21,8 +21,8 @@
       </q-card-section>
       <q-card-section>
         <p class="text-body2">
-          <code>tagOwners</code> in Tailscale is an association between a TAG
-          and the people allowed to set this TAG on a server. This is documented
+          TagOwners in Tailscale is an association between a TAG and the people
+          allowed to set this TAG on a server. This is documented
           <a
             href="https://tailscale.com/kb/1068/acl-tags#defining-a-tag"
             target="_blank"

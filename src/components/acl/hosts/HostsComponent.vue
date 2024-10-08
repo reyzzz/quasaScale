@@ -40,10 +40,10 @@
     <template #body="props">
       <q-tr :props="props">
         <q-td>
-          {{ props.row.name }}
+          <span class="text-base">{{ props.row.name }}</span>
         </q-td>
         <q-td>
-          {{ props.row.value }}
+          <span class="text-base">{{ props.row.value }}</span>
         </q-td>
         <q-td key="actions" :props="props">
           <q-btn
@@ -74,7 +74,7 @@
       <q-card flat bordered class="rounded-xl">
         <q-card-section>
           <div class="row q-mb-sm justify-between">
-            <div class="text-h5 row">
+            <div class="text-h6">
               {{ props.row.name }}
             </div>
             <div>

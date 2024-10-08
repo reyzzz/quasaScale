@@ -40,25 +40,29 @@
 
     <template #body="props">
       <q-tr :props="props">
-        <q-td>{{ props.row.proto }}</q-td>
+        <q-td>
+          <span class="text-base">{{ props.row.proto }}</span>
+        </q-td>
         <q-td>
           <template v-for="src in props.row.src" :key="src">
-            <q-badge outline color="secondary" :label="src" class="q-mr-sm" />
+            <q-badge outline color="secondary" :label="src" class="text-sm" />
           </template>
         </q-td>
         <q-td>
           <template v-for="dst in props.row.dst" :key="dst">
             <q-badge
               outline
+              square
               color="purple-13"
               :label="dst"
-              class="q-mr-sm"
+              class="q-mr-sm text-sm"
             /> </template
         ></q-td>
         <q-td key="actions" :props="props">
           <q-btn
             round
             flat
+            dense
             color="secondary"
             icon="edit"
             @click="editACL(props.row, props.rowIndex)"
@@ -68,6 +72,7 @@
           <q-btn
             round
             flat
+            dense
             color="negative"
             icon="delete"
             @click="deleteACL(props.rowIndex)"
@@ -83,7 +88,7 @@
           <div class="row q-mb-sm justify-between">
             <div>
               <span class="text-h6">{{
-                props.row.proto ? props.row.proto : 'No Protocol'
+                props.row.proto ? props.row.proto : 'All Protocols'
               }}</span>
             </div>
             <div>
@@ -113,13 +118,23 @@
           <div class="q-mb-xs">
             <span class="text-body1 text-accent q-mr-sm">Source:</span>
             <template v-for="src in props.row.src" :key="src">
-              <q-badge outline color="secondary" :label="src" class="q-mr-sm" />
+              <q-badge
+                outline
+                color="secondary"
+                :label="src"
+                class="q-mr-sm text-sm"
+              />
             </template>
           </div>
           <div>
             <span class="text-body1 text-accent q-mr-xs">Destination:</span>
             <template v-for="dst in props.row.dst" :key="dst">
-              <q-badge outline color="purple-13" :label="dst" class="q-mr-sm" />
+              <q-badge
+                outline
+                color="green-13"
+                :label="dst"
+                class="q-mr-sm text-sm"
+              />
             </template>
           </div>
         </q-card-section>

@@ -17,7 +17,7 @@ export function useDialog() {
         flat: true,
       },
       html: true,
-      class: options?.class || '',
+      class: options?.class || 'dialog-delete',
       transitionShow: 'slide-up',
       transitionHide: 'slide-down',
       message: msg || 'Are you sure you want to delete this item?',

@@ -207,13 +207,13 @@ async function restartHeadscale() {
         ok_label: 'Restart',
         ok_color: 'primary',
         cancel_color: 'secondary',
-        class: 'dialog-restart',
       },
     )
     .onOk(async () => {
       try {
         restarting.value = true
-        await api.post('/restart')
+        const resp = await api.post('/restart')
+        useNotify(resp.data.message, 'check')
         has_config_changed.value = false
       } catch (ex) {
         if (ex instanceof AxiosError)

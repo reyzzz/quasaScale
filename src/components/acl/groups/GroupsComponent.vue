@@ -39,16 +39,19 @@
     </template>
     <template #body="props">
       <q-tr :props="props">
-        <q-td>{{ props.row.name }}</q-td>
-        <q-td
-          ><template v-for="user in props.row.users" :key="user.id">
+        <q-td>
+          <span class="text-base">{{ props.row.name }}</span>
+        </q-td>
+        <q-td>
+          <template v-for="user in props.row.users" :key="user.id">
             <q-badge
               outline
               color="primary"
               :label="user"
-              class="q-mr-sm"
-            /> </template
-        ></q-td>
+              class="q-mr-sm text-sm"
+            />
+          </template>
+        </q-td>
         <q-td key="actions" :props="props">
           <q-btn
             icon="edit"
@@ -77,7 +80,7 @@
       <q-card flat bordered class="rounded-xl">
         <q-card-section>
           <div class="row q-mb-sm justify-between">
-            <div class="text-h5 row">
+            <div class="text-h6">
               {{ props.row.name }}
             </div>
             <div>
@@ -106,7 +109,12 @@
 
           <div>
             <template v-for="user in props.row.users" :key="user.id">
-              <q-badge outline color="primary" :label="user" class="q-mr-sm" />
+              <q-badge
+                outline
+                color="primary"
+                :label="user"
+                class="q-mr-sm text-sm"
+              />
             </template>
           </div>
         </q-card-section>

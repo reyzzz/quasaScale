@@ -115,8 +115,6 @@ export const useNodesStore = defineStore('nodes', () => {
     const resp = await api.get(`/node/${node_id}/routes`)
     const routes = resp.data.routes as HeadscaleRoute[]
     return routes.map((route) => {
-      const ipRegex =
-        /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}\/([0-9]|[1-2][0-9]|3[0-2])$/
       return {
         id: route.id,
         enabled: route.enabled,
@@ -125,7 +123,6 @@ export const useNodesStore = defineStore('nodes', () => {
           route.prefix === '0.0.0.0/0' || route.prefix === '::/0'
             ? 'Exit node'
             : 'Subnet',
-        format: ipRegex.test(route.prefix) ? 'IPv4' : 'IPv6',
       }
     })
   }

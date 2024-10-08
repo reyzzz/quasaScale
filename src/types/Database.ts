@@ -21,7 +21,6 @@ export interface QuasascaleRoute {
   prefix: string
   enabled: boolean
   type: 'Subnet' | 'Exit node'
-  format: 'IPv4' | 'IPv6'
 }
 export interface Settings {
   headscale_url: string
@@ -70,7 +69,7 @@ export interface RowTagOwner {
   value: Array<string | Groups>
 }
 
-type WithPrefix<T extends string> = `${T}${string}`
+export type WithPrefix<T extends string> = `${T}${string}`
 
 export interface Groups {
   [key: WithPrefix<'group:'>]: string[]
@@ -84,18 +83,9 @@ export interface Hosts {
   [key: string]: string
 }
 
-export interface Host {
-  [
-    key:
-      | WithPrefix<'group:'>
-      | WithPrefix<'tag:'>
-      | WithPrefix<'autogroup:'>
-      | string
-  ]: string
-}
 export interface ACL {
   action: 'accept'
-  proto:
+  proto?:
     | 'igmp'
     | 'ipv4'
     | 'ip-in-ip'
@@ -108,8 +98,18 @@ export interface ACL {
     | 'ah'
     | 'sctp'
     | (string & {})
-  src: Host[]
-  dst: Host[]
+  src: (
+    | WithPrefix<'group:'>
+    | WithPrefix<'tag:'>
+    | WithPrefix<'autogroup:'>
+    | string
+  )[]
+  dst: (
+    | WithPrefix<'group:'>
+    | WithPrefix<'tag:'>
+    | WithPrefix<'autogroup:'>
+    | string
+  )[]
 }
 
 export interface ACLConfig {

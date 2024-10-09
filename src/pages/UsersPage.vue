@@ -88,35 +88,45 @@
               <div class="text-h5 row">
                 {{ props.row.name }}
               </div>
-              <q-btn flat round dense icon="more_vert">
-                <q-menu auto-close>
-                  <q-list class="w-max">
-                    <q-item clickable @click="managePreAuthKeys(props.row)">
-                      <q-item-section class="text-primary">
-                        Manage PreAuthKeys
-                      </q-item-section>
-                    </q-item>
-                    <q-item clickable @click="renameUser(props.row)">
-                      <q-item-section class="text-secondary">
-                        Rename user
-                      </q-item-section>
-                    </q-item>
-
-                    <q-separator />
-                    <q-item clickable @click="deleteUser(props.row)">
-                      <q-item-section class="text-negative">
-                        Delete user
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-menu>
-              </q-btn>
+              <div>
+                <q-btn
+                  flat
+                  round
+                  dense
+                  @click="renameUser(props.row)"
+                  color="secondary"
+                  icon="edit"
+                >
+                  <q-tooltip>Rename User</q-tooltip>
+                </q-btn>
+                <q-btn
+                  flat
+                  round
+                  dense
+                  @click="deleteUser(props.rowIndex)"
+                  color="negative"
+                  icon="delete"
+                >
+                  <q-tooltip> Delete User </q-tooltip>
+                </q-btn>
+              </div>
             </div>
 
             <div>
               <span class="text-weight-bold text-accent"> Creation Date: </span>
               <span class="text-info">{{ props.row.createdAt }} </span>
             </div>
+            <q-btn
+              flat
+              round
+              dense
+              @click="managePreAuthKeys(props.row)"
+              color="positive"
+              icon="key"
+              class="absolute-bottom-right right-15px bottom-5px"
+            >
+              <q-tooltip>Manage PreAuthKeys</q-tooltip>
+            </q-btn>
           </q-card-section>
         </q-card>
       </template>
@@ -125,12 +135,13 @@
 </template>
 
 <script setup lang="ts">
-import { date, QTableColumn, useQuasar } from 'quasar'
+import { QTableColumn, useQuasar } from 'quasar'
 import PreAuthKeyComponent from 'src/components/users/PreAuthKeyComponent.vue'
 import PromptComponent from 'src/components/PromptComponent.vue'
 import { User } from 'src/types/Database'
-
+const { isPatternPresentInEntity, replacePatternInEntity } = useUtils()
 const { users } = storeToRefs(useUsersStore())
+
 const { getuserPreAuthKeys, removeUser, addNewUser, modifyUserName } =
   useUsersStore()
 const $q = useQuasar()
@@ -182,8 +193,11 @@ function renameUser(user: User): void {
           useNotify('Username already exist', 'warning', 'negative')
           return
         }
+
         await modifyUserName(user.name, username)
+        await replacePatternInEntity(user.name, username)
         user.name = username
+
         useNotify('Username updated successfully', 'check')
       } catch (error) {
         useNotify(
@@ -196,11 +210,20 @@ function renameUser(user: User): void {
 }
 
 function deleteUser(index: number): void {
+  const user = users.value[index] as User
+
   useDialog()
     .del()
     .onOk(async () => {
+      if (isPatternPresentInEntity(user.name)) {
+        useNotify(
+          'Unable to remove this User as it is currently associated with ACLs ',
+          'warning',
+          'negative',
+        )
+        return
+      }
       try {
-        const user = users.value[index]
         await removeUser(user.name)
         users.value.splice(index, 1)
         useNotify('User delete successfully', 'check')
@@ -240,16 +263,8 @@ function addUser(): void {
           useNotify('Username already exist', 'warning', 'negative')
           return
         }
-        const updatedUser = await addNewUser(userName)
-        const creationDate = date.formatDate(
-          updatedUser.createdAt,
-          'YYYY-MM-DD HH:mm',
-        )
-        const user: User = {
-          id: '8',
-          name: userName,
-          createdAt: creationDate,
-        }
+        const user = await addNewUser(userName)
+
         users.value.push(user)
         useNotify('User added successfully', 'check')
       } catch (error) {

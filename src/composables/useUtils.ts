@@ -1,5 +1,6 @@
 import { copyToClipboard } from 'quasar'
-
+const { acl_config } = storeToRefs(useAclsStore())
+const { refreshVariables, updateACLs } = useAclsStore()
 export function useUtils() {
   function chopString(message: string): string {
     return (
@@ -30,11 +31,39 @@ export function useUtils() {
 
     return ipRegex.test(IP)
   }
+
+  function isPatternPresentInEntity(pattern: string) {
+    const regex = new RegExp(
+      `"${pattern}(:((\\*)|([1-9][0-9]*(,[1-9][0-9]*)*)))?"(,|])`,
+      'g',
+    )
+
+    const matches = JSON.stringify(acl_config.value).match(regex)
+
+    return matches !== null
+  }
+
+  async function replacePatternInEntity(pattern: string, new_pattern: string) {
+    const regex = new RegExp(
+      `"${pattern}(:((\\*)|([1-9][0-9]*(,[1-9][0-9]*)*)))?"(,|]|:)`,
+      'g',
+    )
+    const stringify_acl_config = JSON.stringify(acl_config.value)
+
+    if (regex.test(stringify_acl_config)) {
+      const test = stringify_acl_config.replace(regex, `"${new_pattern}$1"$6`)
+      acl_config.value = await JSON.parse(test)
+      await updateACLs(acl_config.value)
+      refreshVariables()
+    }
+  }
   return {
     chopString,
     copyString,
     generateMachineKey,
     validateIPv4,
     validateIPv6,
+    isPatternPresentInEntity,
+    replacePatternInEntity,
   }
 }

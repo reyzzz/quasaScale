@@ -41,11 +41,18 @@
     <template #body="props">
       <q-tr :props="props">
         <q-td>
-          <span class="text-base">{{ props.row.proto }}</span>
+          <span class="text-base">{{
+            props.row.proto ? props.row.proto : 'All Protocols'
+          }}</span>
         </q-td>
         <q-td>
           <template v-for="src in props.row.src" :key="src">
-            <q-badge outline color="secondary" :label="src" class="text-sm" />
+            <q-badge
+              outline
+              color="secondary"
+              :label="src"
+              class="text-sm q-mr-sm"
+            />
           </template>
         </q-td>
         <q-td>
@@ -115,7 +122,7 @@
             </div>
           </div>
 
-          <div class="q-mb-xs">
+          <div class="q-mb-sm">
             <span class="text-body1 text-accent q-mr-sm">Source:</span>
             <template v-for="src in props.row.src" :key="src">
               <q-badge

@@ -32,6 +32,12 @@ export const useAclsStore = defineStore('acls', () => {
     }
   }
 
+  function refreshVariables() {
+    groups.value = extend(true, {}, acl_config.value.groups)
+    tag_owners.value = extend(true, {}, acl_config.value.tagOwners)
+    hosts.value = extend(true, {}, acl_config.value.Hosts)
+    acls.value = extend(true, [], acl_config.value.acls)
+  }
   async function updateACLs(data: Partial<ACLConfig>) {
     try {
       const key = Object.keys(data)[0]
@@ -50,7 +56,9 @@ export const useAclsStore = defineStore('acls', () => {
     hosts,
     tag_owners,
     acls,
+    acl_config,
     getACL,
     updateACLs,
+    refreshVariables,
   }
 })

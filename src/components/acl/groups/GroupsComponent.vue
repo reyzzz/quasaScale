@@ -129,8 +129,10 @@ import GroupsConfiguration from './GroupsConfiguration.vue'
 import { RowGroup } from 'src/types/Database'
 
 const { grid_view } = storeToRefs(useSettingsStore())
+const { isPatternPresentInEntity, replacePatternInEntity } = useUtils()
 const { groups } = storeToRefs(useAclsStore())
 const { updateACLs } = useAclsStore()
+
 const filter = ref('')
 const cols = ref<QTableColumn[]>([
   {
@@ -169,9 +171,7 @@ function editGroup(group: RowGroup) {
       all_groups: groupsArray.value,
     })
     .onOk(async (updatedGroup: RowGroup) => {
-      delete groups.value[group.name]
-      groups.value[updatedGroup.name] = updatedGroup.users
-      await updateACLs({ groups: groups.value })
+      await replacePatternInEntity(group.name, updatedGroup.name)
     })
 }
 
@@ -188,6 +188,14 @@ function addGroup() {
 }
 
 function deleteGroup(group: RowGroup) {
+  if (isPatternPresentInEntity(group.name)) {
+    useNotify(
+      'Unable to remove this group as it is currently associated with ACLs or Tag Owners.',
+      'warning',
+      'negative',
+    )
+    return
+  }
   useDialog()
     .del()
     .onOk(async () => {

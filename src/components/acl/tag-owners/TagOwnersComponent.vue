@@ -132,6 +132,7 @@ const { grid_view } = storeToRefs(useSettingsStore())
 const filter = ref('')
 const { tag_owners } = storeToRefs(useAclsStore())
 const { updateACLs } = useAclsStore()
+const { isPatternPresentInEntity, replacePatternInEntity } = useUtils()
 const tag_owners_array = computed(() => {
   return Object.entries(tag_owners.value).map(([key, tag_owner]) => {
     return {
@@ -169,12 +170,10 @@ function editTag(tag_owner: RowTagOwner) {
   useDialog()
     .show(TagOwnersConfigurationComponent, {
       tag_owner: tag_owner,
+      all_tag_owners: tag_owners_array.value,
     })
     .onOk(async (updated_tag_owner: RowTagOwner) => {
-      delete tag_owners.value[tag_owner.name]
-      tag_owners.value[updated_tag_owner.name] =
-        updated_tag_owner.value as string[]
-      await updateACLs({ tagOwners: tag_owners.value })
+      await replacePatternInEntity(tag_owner.name, updated_tag_owner.name)
     })
 }
 
@@ -182,6 +181,7 @@ function addTagOwner() {
   useDialog()
     .show(TagOwnersConfigurationComponent, {
       tag_owner: { name: 'tag:', value: [] } satisfies RowTagOwner,
+      all_tag_owners: tag_owners_array.value,
     })
     .onOk(async (tag_owner: RowTagOwner) => {
       tag_owners.value[tag_owner.name] = tag_owner.value as string[]
@@ -193,6 +193,14 @@ function deleteTag(tag_owner: RowTagOwner) {
   useDialog()
     .del()
     .onOk(async () => {
+      if (isPatternPresentInEntity(tag_owner.name)) {
+        useNotify(
+          'Unable to remove this Tag Owner as it is currently associated with ACLs ',
+          'warning',
+          'negative',
+        )
+        return
+      }
       delete tag_owners.value[tag_owner.name]
       await updateACLs({ tagOwners: tag_owners.value })
     })

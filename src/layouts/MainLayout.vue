@@ -152,6 +152,7 @@ const $q = useQuasar()
 const drawer = ref(true)
 const { active_headscale } = storeToRefs(useHeadscaleInstancesStore())
 const { getHeadscaleInstances } = useHeadscaleInstancesStore()
+const { getACL } = useAclsStore()
 const { getUsers } = useUsersStore()
 const { grid_view, has_config_changed, headscale_version } =
   storeToRefs(useSettingsStore())
@@ -196,7 +197,10 @@ onMounted(async () => {
 
   if (active_headscale.value === undefined)
     router.replace({ name: 'headscale-instances' })
-  else await getUsers()
+  else {
+    await getUsers()
+    await getACL()
+  }
 })
 
 async function restartHeadscale() {

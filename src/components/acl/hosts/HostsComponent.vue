@@ -119,6 +119,7 @@ import { Hosts, RowHost } from 'src/types/Database'
 const { grid_view } = storeToRefs(useSettingsStore())
 const { hosts } = storeToRefs(useAclsStore())
 const { updateACLs } = useAclsStore()
+const { replacePatternInEntity, isPatternPresentInEntity } = useUtils()
 
 const hostsArray = computed(() => {
   return Object.entries(hosts.value).map(([key, host]) => {
@@ -158,6 +159,7 @@ function addHost() {
   useDialog()
     .show(HostsConfigurationComponent, {
       host: { name: '', IP_address: '' },
+      all_hosts: hostsArray.value,
     })
     .onOk((host: RowHost) => {
       hosts.value[host.name] = host.value
@@ -169,15 +171,22 @@ function editHost(host: Hosts) {
   useDialog()
     .show(HostsConfigurationComponent, {
       host: host,
+      all_hosts: hostsArray.value,
     })
-    .onOk((updatedHost: RowHost) => {
-      delete hosts.value[host.name]
-      hosts.value[updatedHost.name] = updatedHost.value
-      updateACLs({ Hosts: hosts.value })
+    .onOk(async (updatedHost: RowHost) => {
+      await replacePatternInEntity(host.name, updatedHost.name)
     })
 }
 
 function deleteHost(host: RowHost) {
+  if (isPatternPresentInEntity(host.name)) {
+    useNotify(
+      'Unable to remove this Host as it is currently associated with ACLs ',
+      'warning',
+      'negative',
+    )
+    return
+  }
   useDialog()
     .del()
     .onOk(async () => {

@@ -1,3 +1,5 @@
+import { copyToClipboard } from 'quasar'
+
 export function useUtils() {
   function chopString(message: string): string {
     return (
@@ -6,8 +8,8 @@ export function useUtils() {
       message.substring(message.length - 4, message.length)
     )
   }
-  function copyString(message: string) {
-    navigator.clipboard.writeText(message)
+  async function copyString(message: string) {
+    await copyToClipboard(message)
     useNotify('Value copied to clipboard', 'check')
   }
 

@@ -7,7 +7,7 @@
   >
     <q-card-section class="row justify-between items-center q-py-sm">
       <div class="text-h6">
-        PreAuthKeys {{ $q.screen.gt.sm ? 'Management' : '' }}
+        {{ $q.screen.gt.sm ? 'Manage' : '' }} PreAuthKeys
       </div>
       <div>
         <q-btn icon="close" round flat v-close-popup />
@@ -20,20 +20,19 @@
           :label="addKeySection ? 'hide Input' : 'add key'"
           color="primary"
           outline
-          dense
           class="q-mb-sm"
           @click="addKeySection = !addKeySection"
         />
       </div>
       <q-scroll-area
-        style="height: calc(100vh - 500px)"
+        style="height: calc(100vh - 450px)"
         :visible="false"
         :thumb-style="{ width: '3px', backgroundColor: '#ff8700' }"
       >
         <q-card
           flat
           bordered
-          class="rounded-xl q-mb-sm q-mr-xs"
+          class="rounded-xl q-mb-sm full-width"
           v-if="addKeySection"
         >
           <q-card-section>
@@ -60,7 +59,7 @@
               />
             </div>
 
-            <div class="max-w-300px q-mt-md">
+            <div class="q-mt-sm">
               <q-input filled v-model="expiration" label="Expiration Date">
                 <template v-slot:prepend>
                   <q-icon name="event" class="cursor-pointer">
@@ -112,7 +111,7 @@
           </q-card-section>
         </q-card>
         <template v-for="pre_auth_key in _preAuthKeys" :key="pre_auth_key.id">
-          <q-card flat bordered class="rounded-xl q-mb-sm q-mr-xs">
+          <q-card flat bordered class="rounded-xl q-mb-sm">
             <q-card-section>
               <div class="row justify-between">
                 <div class="q-mb-sm">
@@ -165,8 +164,16 @@
                   @click="copyString(pre_auth_key.key)"
                   class="hover:cursor-pointer"
                 >
-                  {{ pre_auth_key.key }}
+                  {{ chopString(pre_auth_key.key) }}
                 </span>
+                <q-btn
+                  icon="content_copy"
+                  flat
+                  dense
+                  size="xs"
+                  round
+                  @click="copyString(pre_auth_key.key)"
+                />
               </div>
               <div class="text-info">
                 <span class="text-weight-bold text-accent q-mr-xs">
@@ -186,7 +193,7 @@
 import { date, extend } from 'quasar'
 import { PreAuthKeys } from 'src/types/Database'
 const { addPreAuthKey, expirePreAuthKey, getuserPreAuthKeys } = useUsersStore()
-const { copyString } = useUtils()
+const { copyString, chopString } = useUtils()
 defineOptions({ name: 'preAuthKeys-dialog' })
 const props = defineProps<{
   onDialogOK: (payload: PreAuthKeys[]) => void

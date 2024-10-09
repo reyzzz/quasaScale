@@ -97,7 +97,7 @@
                       </q-item-section>
                     </q-item>
                     <q-item clickable @click="renameUser(props.row)">
-                      <q-item-section class="text-primary">
+                      <q-item-section class="text-secondary">
                         Rename user
                       </q-item-section>
                     </q-item>

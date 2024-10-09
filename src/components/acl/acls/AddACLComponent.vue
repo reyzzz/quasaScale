@@ -96,9 +96,10 @@ const emit = defineEmits<{
   'send-value': [{ role: string; ports: string[] }]
   'chip-changed': [chip: string]
 }>()
-const role = ref()
+
 const selected_option = ref(props.chips[0].label)
 const _options = ref(props.options)
+const role = ref<string | null>(_options.value[0])
 function handleSelected(selected: string) {
   selected_option.value = selected
   role.value = null
@@ -127,6 +128,7 @@ watch(
   () => props.options,
   (newOptions) => {
     _options.value = newOptions
+    role.value = newOptions[0]
   },
 )
 </script>

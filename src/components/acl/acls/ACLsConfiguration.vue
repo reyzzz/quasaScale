@@ -159,7 +159,7 @@ function handleDstEmitValue(payload: {
   if (ports.length > 0) {
     _acl.value.dst.push(`${role}:${ports.join(',')}`)
   } else {
-    _acl.value.dst.push(role)
+    _acl.value.dst.push(`${role}:*`)
   }
 }
 

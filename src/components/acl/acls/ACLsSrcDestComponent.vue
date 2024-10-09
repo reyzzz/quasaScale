@@ -44,6 +44,7 @@
 <script setup lang="ts">
 import { WithPrefix } from 'src/types/Database'
 import AddACLComponent from './AddACLComponent.vue'
+
 const props = defineProps<{
   title: string
   values: string[]

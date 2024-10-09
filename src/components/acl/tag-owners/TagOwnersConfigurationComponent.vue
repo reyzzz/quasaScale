@@ -47,6 +47,7 @@
           :rules="[
             (val) => val.length > 4 || 'You need to enter a tag',
             (val) => val.startsWith('tag:') || 'Tag must start with tag:',
+            () => checkTagOwnername() || 'Tag name already used',
           ]"
         />
         <div class="px-8px py-4px text-subtitle1">Owners:</div>
@@ -113,6 +114,7 @@ const props = defineProps<{
   onDialogOK: (tag_owner: RowTagOwner) => void
   componentProps: {
     tag_owner: RowTagOwner
+    all_tag_owners: RowTagOwner[]
   }
 }>()
 const { groups } = storeToRefs(useAclsStore())
@@ -131,6 +133,19 @@ const _tag_owner = ref<RowTagOwner>(
 function handleEmitValue(role: string) {
   _tag_owner.value.value.push(role)
   show_add_card.value = false
+}
+
+function checkTagOwnername() {
+  const tag_owner = props.componentProps.all_tag_owners.find(
+    (tag_owner) => tag_owner.name === _tag_owner.value.name,
+  )
+  if (
+    tag_owner &&
+    _tag_owner.value.name !== props.componentProps.tag_owner.name
+  )
+    return false
+
+  return true
 }
 
 function save() {

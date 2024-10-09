@@ -37,7 +37,10 @@
           hide-bottom-space
           v-model="_host.name"
           label="Host Name"
-          :rules="[(val) => !!val || 'Field required']"
+          :rules="[
+            (val) => !!val || 'Field required',
+            () => checkHostName() || 'Host name already used',
+          ]"
         />
         <q-input
           outlined
@@ -73,10 +76,19 @@ const props = defineProps<{
   onDialogOK: (host: Hosts) => void
   componentProps: {
     host: Hosts
+    all_hosts: Hosts[]
   }
 }>()
 
 const _host = ref<Hosts>(extend(true, {}, props.componentProps.host))
+
+function checkHostName() {
+  const host = props.componentProps.all_hosts.find(
+    (host) => host.name === _host.value.name,
+  )
+  if (host && props.componentProps.host.name !== _host.value.name) return false
+  return true
+}
 
 function save() {
   props.onDialogOK(_host.value)

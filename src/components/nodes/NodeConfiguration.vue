@@ -81,21 +81,7 @@
           hide-bottom-space
           v-model="_node.machine_key"
           label="Machine Key"
-        >
-          <template #append>
-            <q-btn
-              class="q-my-md q-ml-auto"
-              icon="lock_reset"
-              dense
-              flat
-              round
-              color="primary"
-              @click="_node.machine_key = generateMachineKey()"
-            >
-              <q-tooltip>Generate Key</q-tooltip>
-            </q-btn>
-          </template>
-        </q-input>
+        />
       </q-card-section>
       <q-card-actions vertical>
         <q-btn
@@ -124,7 +110,6 @@ const props = defineProps<{
 const { validateIPv4, validateIPv6 } = useUtils()
 const { users } = storeToRefs(useUsersStore())
 const _node = ref<QuasascaleNode>(extend(true, {}, props.componentProps.node))
-const { generateMachineKey } = useUtils()
 
 const forced_tags = ref(
   _node.value.forced_tags.map((tag) => {

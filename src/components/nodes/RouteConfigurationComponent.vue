@@ -95,16 +95,12 @@
               <q-item-section side>
                 <div class="row items-center">
                   <q-btn
-                    :class="
-                      route.enabled
-                        ? 'text-warning i-material-symbols:phonelink-ring-off'
-                        : 'text-positive i-material-symbols:phonelink-ring'
-                    "
+                    :color="route.enabled ? 'warning' : 'positive'"
+                    :icon="route.enabled ? 'power_off' : 'power'"
                     @click="handleRoute(route)"
                     dense
                     round
                     flat
-                    size="xs"
                   >
                     <q-tooltip>{{
                       route ? 'Disable Route' : 'Enable Route'

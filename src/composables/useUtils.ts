@@ -1,6 +1,5 @@
 import { copyToClipboard } from 'quasar'
-const { acl_config } = storeToRefs(useAclsStore())
-const { refreshVariables, updateACLs } = useAclsStore()
+import { ACLConfig } from 'src/types/Database'
 export function useUtils() {
   function chopString(message: string): string {
     return (
@@ -32,31 +31,28 @@ export function useUtils() {
     return ipRegex.test(IP)
   }
 
-  function isPatternPresentInEntity(pattern: string) {
-    const regex = new RegExp(
-      `"${pattern}(:((\\*)|([1-9][0-9]*(,[1-9][0-9]*)*)))?"(,|])`,
-      'g',
-    )
+  function isPatternPresentInEntity(pattern: string, string_to_check: string) {
+    const regex = new RegExp(pattern, 'g')
 
-    const matches = JSON.stringify(acl_config.value).match(regex)
+    const matches = JSON.stringify(string_to_check).match(regex)
 
     return matches !== null
   }
 
-  async function replacePatternInEntity(pattern: string, new_pattern: string) {
-    const regex = new RegExp(
-      `"${pattern}(:((\\*)|([1-9][0-9]*(,[1-9][0-9]*)*)))?"(,|]|:)`,
-      'g',
-    )
-    const stringify_acl_config = JSON.stringify(acl_config.value)
+  async function replacePatternInEntity(
+    pattern: string,
+    new_pattern: string,
+    string_to_check: string,
+  ): Promise<ACLConfig> {
+    const regex = new RegExp(pattern, 'g')
 
-    if (regex.test(stringify_acl_config)) {
-      const test = stringify_acl_config.replace(regex, `"${new_pattern}$1"$6`)
-      acl_config.value = await JSON.parse(test)
-      await updateACLs(acl_config.value)
-      refreshVariables()
+    if (regex.test(string_to_check)) {
+      const test = string_to_check.replace(regex, new_pattern)
+      return JSON.parse(test)
     }
+    return JSON.parse(string_to_check)
   }
+
   return {
     chopString,
     copyString,

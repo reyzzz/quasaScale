@@ -1,16 +1,16 @@
 <template>
-  <span class="relative flex h-3 w-3">
+  <div class="relative h-2 w-2">
     <span
-      class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+      class="animate-ping absolute h-full w-full rounded-full opacity-75"
       :class="props.is_positive ? 'bg-[#ade25d]' : 'bg-[#c10015]'"
     >
     </span>
     <span
-      class="relative inline-flex rounded-full h-3 w-3"
+      class="absolute rounded-full h-2 w-2"
       :class="props.is_positive ? 'bg-[#ade25d]' : 'bg-[#c10015]'"
     >
     </span>
-  </span>
+  </div>
 </template>
 
 <script lang="ts" setup>

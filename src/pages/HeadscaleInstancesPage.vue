@@ -125,35 +125,47 @@
                 </q-btn>
               </div>
             </div>
+            <div class="row justify-between">
+              <div class="column">
+                <div>
+                  <span class="text-weight-bold text-accent"> URL: </span>
+                  <span class="text-info"
+                    >{{ props.row.quasascale_backend_url }}
+                  </span>
+                </div>
 
-            <div class="q-my-sm">
-              <span class="text-weight-bold text-accent"> URL: </span>
-              <span class="text-info"
-                >{{ props.row.quasascale_backend_url }}
-              </span>
+                <div>
+                  <span class="text-weight-bold text-accent"> API Key: </span>
+                  <span
+                    class="text-info hover:cursor-pointer"
+                    @click="copyString(props.row.headscale_api_key)"
+                    >{{ chopString(props.row.headscale_api_key) }}
+                  </span>
+                  <q-btn
+                    icon="content_copy"
+                    dense
+                    round
+                    flat
+                    size="xs"
+                    @click="copyString(props.row.headscale_api_key)"
+                  />
+                </div>
+              </div>
+
+              <div class="column justify-end">
+                <q-btn
+                  round
+                  dense
+                  flat
+                  color="positive"
+                  icon="majesticons:rocket-3-start-line"
+                  @click="activateHeadscale(props.row)"
+                  :disable="props.row.active"
+                >
+                  <q-tooltip> Activate Instance </q-tooltip>
+                </q-btn>
+              </div>
             </div>
-
-            <div>
-              <span class="text-weight-bold text-accent"> API Key: </span>
-              <span
-                class="text-info hover:cursor-pointer"
-                @click="copyString(props.row.headscale_api_key)"
-                >{{ chopString(props.row.headscale_api_key) }}
-              </span>
-            </div>
-
-            <q-btn
-              class="absolute-bottom-right right-16px bottom-12px"
-              round
-              dense
-              flat
-              color="positive"
-              icon="majesticons:rocket-3-start-line"
-              @click="activateHeadscale(props.row)"
-              :disable="props.row.active"
-            >
-              <q-tooltip> Activate Instance </q-tooltip>
-            </q-btn>
           </q-card-section>
         </q-card>
       </template>

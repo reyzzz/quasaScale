@@ -32,7 +32,7 @@
         <q-card
           flat
           bordered
-          class="rounded-xl q-mb-sm full-width"
+          class="rounded-xl q-mb-sm full-width bg-stone-950"
           v-if="addKeySection"
         >
           <q-card-section>
@@ -111,7 +111,7 @@
           </q-card-section>
         </q-card>
         <template v-for="pre_auth_key in _preAuthKeys" :key="pre_auth_key.id">
-          <q-card flat bordered class="rounded-xl q-mb-sm">
+          <q-card flat bordered class="rounded-xl q-mb-sm bg-stone-950">
             <q-card-section>
               <div class="row justify-between">
                 <div class="q-mb-sm">

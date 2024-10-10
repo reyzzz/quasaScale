@@ -117,7 +117,7 @@ import HostsConfigurationComponent from './HostsConfigurationComponent.vue'
 import { Hosts, RowHost } from 'src/types/Database'
 
 const { grid_view } = storeToRefs(useSettingsStore())
-const { hosts } = storeToRefs(useAclsStore())
+const { hosts, acl_config } = storeToRefs(useAclsStore())
 const { updateACLs } = useAclsStore()
 const { replacePatternInEntity, isPatternPresentInEntity } = useUtils()
 
@@ -174,12 +174,17 @@ function editHost(host: Hosts) {
       all_hosts: hostsArray.value,
     })
     .onOk(async (updatedHost: RowHost) => {
-      await replacePatternInEntity(host.name, updatedHost.name)
+      acl_config.value = await replacePatternInEntity(
+        host.name,
+        updatedHost.name,
+        JSON.stringify(acl_config.value),
+      )
+      updateACLs({ ...acl_config.value })
     })
 }
 
 function deleteHost(host: RowHost) {
-  if (isPatternPresentInEntity(host.name)) {
+  if (isPatternPresentInEntity(host.name, JSON.stringify(acl_config.value))) {
     useNotify(
       'Unable to remove this Host as it is currently associated with ACLs ',
       'warning',

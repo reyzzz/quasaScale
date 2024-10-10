@@ -38,12 +38,14 @@ export const useAclsStore = defineStore('acls', () => {
     hosts.value = extend(true, {}, acl_config.value.Hosts)
     acls.value = extend(true, [], acl_config.value.acls)
   }
+
   async function updateACLs(data: Partial<ACLConfig>) {
     try {
-      const key = Object.keys(data)[0]
       const resp = await api.patch('/acls', { data: data })
-      // @ts-expect-error key error
-      acl_config.value[key] = extend(true, {}, data[key])
+      Object.keys(data).forEach((key: string) => {
+        // @ts-expect-error key error
+        acl_config.value[key] = extend(true, {}, data[key])
+      })
       useNotify(resp.data.message, 'check')
     } catch (ex) {
       if (ex instanceof AxiosError)

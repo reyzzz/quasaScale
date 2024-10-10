@@ -36,6 +36,7 @@ export const useUsersStore = defineStore('users', () => {
   async function removeUser(name: string): Promise<void> {
     await api.delete(`/user/${name}`)
   }
+
   async function modifyUserName(
     oldName: string,
     newName: string,

@@ -111,22 +111,24 @@
                 </q-btn>
               </div>
             </div>
-
-            <div>
-              <span class="text-weight-bold text-accent"> Creation Date: </span>
-              <span class="text-info">{{ props.row.createdAt }} </span>
+            <div class="row justify-between items-center">
+              <div>
+                <span class="text-weight-bold text-accent">
+                  Creation Date:
+                </span>
+                <span class="text-info">{{ props.row.createdAt }} </span>
+              </div>
+              <q-btn
+                flat
+                round
+                dense
+                @click="managePreAuthKeys(props.row)"
+                color="positive"
+                icon="key"
+              >
+                <q-tooltip>Manage PreAuthKeys</q-tooltip>
+              </q-btn>
             </div>
-            <q-btn
-              flat
-              round
-              dense
-              @click="managePreAuthKeys(props.row)"
-              color="positive"
-              icon="key"
-              class="absolute-bottom-right right-15px bottom-5px"
-            >
-              <q-tooltip>Manage PreAuthKeys</q-tooltip>
-            </q-btn>
           </q-card-section>
         </q-card>
       </template>
@@ -141,7 +143,8 @@ import PromptComponent from 'src/components/PromptComponent.vue'
 import { User } from 'src/types/Database'
 const { isPatternPresentInEntity, replacePatternInEntity } = useUtils()
 const { users } = storeToRefs(useUsersStore())
-
+const { acl_config } = storeToRefs(useAclsStore())
+const { updateACLs } = useAclsStore()
 const { getuserPreAuthKeys, removeUser, addNewUser, modifyUserName } =
   useUsersStore()
 const $q = useQuasar()
@@ -193,11 +196,14 @@ function renameUser(user: User): void {
           useNotify('Username already exist', 'warning', 'negative')
           return
         }
-
         await modifyUserName(user.name, username)
-        await replacePatternInEntity(user.name, username)
+        acl_config.value = await replacePatternInEntity(
+          user.name,
+          username,
+          JSON.stringify(acl_config.value),
+        )
+        updateACLs({ ...acl_config.value })
         user.name = username
-
         useNotify('Username updated successfully', 'check')
       } catch (error) {
         useNotify(
@@ -215,7 +221,9 @@ function deleteUser(index: number): void {
   useDialog()
     .del()
     .onOk(async () => {
-      if (isPatternPresentInEntity(user.name)) {
+      if (
+        isPatternPresentInEntity(user.name, JSON.stringify(acl_config.value))
+      ) {
         useNotify(
           'Unable to remove this User as it is currently associated with ACLs ',
           'warning',

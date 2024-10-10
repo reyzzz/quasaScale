@@ -125,9 +125,12 @@
     <q-footer bordered class="bg-dark" v-else>
       <q-item>
         <q-item-section avatar>
-          <div class="row items-center gap-4px">
-            <animated-circle v-if="active_headscale !== undefined" />
-            {{ active_headscale?.name }} {{ headscale_version }}
+          <div class="row items-center">
+            <animated-circle
+              v-if="active_headscale !== undefined"
+              class="mr-6px"
+            />
+            <div>{{ active_headscale?.name }} {{ headscale_version }}</div>
           </div>
         </q-item-section>
       </q-item>

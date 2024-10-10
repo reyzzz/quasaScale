@@ -1,5 +1,9 @@
 <template>
-  <q-card flat :bordered="$q.screen.gt.xs" class="rounded-xl! bg-stone-950">
+  <q-card
+    flat
+    :bordered="$q.screen.gt.xs"
+    class="rounded-xl! bg-stone-950 w-100%"
+  >
     <q-form @submit="save">
       <q-card-section class="q-py-sm">
         <div class="row justify-between items-center">

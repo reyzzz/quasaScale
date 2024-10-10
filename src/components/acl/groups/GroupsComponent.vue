@@ -130,7 +130,7 @@ import { RowGroup } from 'src/types/Database'
 
 const { grid_view } = storeToRefs(useSettingsStore())
 const { isPatternPresentInEntity, replacePatternInEntity } = useUtils()
-const { groups } = storeToRefs(useAclsStore())
+const { groups, acl_config } = storeToRefs(useAclsStore())
 const { updateACLs } = useAclsStore()
 
 const filter = ref('')
@@ -171,7 +171,12 @@ function editGroup(group: RowGroup) {
       all_groups: groupsArray.value,
     })
     .onOk(async (updatedGroup: RowGroup) => {
-      await replacePatternInEntity(group.name, updatedGroup.name)
+      acl_config.value = await replacePatternInEntity(
+        group.name,
+        updatedGroup.name,
+        JSON.stringify(acl_config.value),
+      )
+      updateACLs({ ...acl_config.value })
     })
 }
 
@@ -188,7 +193,7 @@ function addGroup() {
 }
 
 function deleteGroup(group: RowGroup) {
-  if (isPatternPresentInEntity(group.name)) {
+  if (isPatternPresentInEntity(group.name, JSON.stringify(acl_config.value))) {
     useNotify(
       'Unable to remove this group as it is currently associated with ACLs or Tag Owners.',
       'warning',

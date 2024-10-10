@@ -12,7 +12,7 @@
           v-model="tailnetName"
           outlined
           dense
-          class="q-mr-sm col-6"
+          class="q-mr-sm col-grow"
           v-if="is_edditing"
         />
         <span v-else class="text-h6 text-[#d2d2d2]">{{ tailnetName }} </span>
@@ -22,7 +22,7 @@
           dense
           @click="handleTailnetName"
           :icon="is_edditing ? 'check' : 'edit'"
-          :color="is_edditing ? 'positive' : 'primary'"
+          :color="is_edditing ? 'positive' : 'secondary'"
         />
       </div>
     </q-card-section>

@@ -101,10 +101,10 @@
         <q-card flat bordered class="rounded-xl">
           <q-card-section>
             <div class="row justify-between items-center q-mb-sm">
-              <div class="text-h6 col-10 row items-center">
+              <div class="text-h6 col-grow row items-center">
                 <div class="row items-center gap-6px">
                   <animated-circle :is_positive="props.row.online" />
-                  {{ props.row.name }}
+                  <div>{{ props.row.name }}</div>
                 </div>
 
                 <template v-for="tag in props.row.forced_tags" :key="tag">
@@ -116,52 +116,57 @@
                   />
                 </template>
               </div>
-              <q-btn flat round dense icon="more_vert">
-                <q-menu auto-close>
-                  <q-list class="w-max">
-                    <q-item clickable @click="manageRoutes(props.row)">
-                      <q-item-section class="text-primary">
-                        Manage Routes
-                      </q-item-section>
-                    </q-item>
-                    <q-item
-                      clickable
-                      @click="editNode(props.row, props.rowIndex)"
-                    >
-                      <q-item-section class="text-primary">
-                        Edit Node
-                      </q-item-section>
-                    </q-item>
-
-                    <q-separator />
-                    <q-item clickable @click="deleteNode(props.rowIndex)">
-                      <q-item-section class="text-negative">
-                        Delete Node
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-menu>
-              </q-btn>
+              <q-btn
+                flat
+                round
+                dense
+                color="secondary"
+                icon="edit"
+                @click="editNode(props.row, props.rowIndex)"
+              />
+              <q-btn
+                flat
+                round
+                dense
+                color="negative"
+                icon="delete"
+                @click="deleteNode(props.rowIndex)"
+              />
             </div>
-
-            <div class="row q-mb-sm">
-              <div class="col-5">
-                <span class="text-weight-bold text-accent"> User: </span>
-                <span class="text-info">{{ props.row.user.name }} </span>
+            <div class="row justify-between">
+              <div class="column col-grow">
+                <div class="row justify-between">
+                  <div>
+                    <span class="text-weight-bold text-accent"> User: </span>
+                    <span class="text-info">{{ props.row.user.name }} </span>
+                  </div>
+                  <div>
+                    <span class="text-weight-bold text-accent"
+                      >Last Seen:
+                    </span>
+                    <span class="text-info">{{ props.row.last_seen }}</span>
+                  </div>
+                </div>
+                <div class="row justify-between">
+                  <div>
+                    <span class="text-weight-bold text-accent"> IPv4: </span>
+                    <span class="text-info">{{ props.row.ipv4 }} </span>
+                  </div>
+                  <div>
+                    <span class="text-weight-bold text-accent"> IPv6: </span>
+                    <span class="text-info">{{ props.row.ipv6 }} </span>
+                  </div>
+                </div>
               </div>
-              <div class="col-7">
-                <span class="text-weight-bold text-accent">Last Seen: </span>
-                <span class="text-info">{{ props.row.last_seen }}</span>
-              </div>
-            </div>
-            <div class="row q-mb-sm">
-              <div class="col-5">
-                <span class="text-weight-bold text-accent"> IPv4: </span>
-                <span class="text-info">{{ props.row.ipv4 }} </span>
-              </div>
-              <div class="col-7">
-                <span class="text-weight-bold text-accent"> IPv6: </span>
-                <span class="text-info">{{ props.row.ipv6 }} </span>
+              <div class="column justify-end">
+                <q-btn
+                  flat
+                  round
+                  dense
+                  color="positive"
+                  icon="route"
+                  @click="manageRoutes(props.row)"
+                />
               </div>
             </div>
           </q-card-section>

@@ -48,7 +48,7 @@ export function useUtils() {
     string_to_check: string,
   ): Promise<ACLConfig> {
     const regex = new RegExp(
-      `"${pattern}(:((\\*)|([1-9][0-9]*(,[1-9][0-9]*)*)))?"(,|])`,
+      `"${pattern}(:((\\*)|([1-9][0-9]*(,[1-9][0-9]*)*)))?"(,|]|:)`,
       'g',
     )
 

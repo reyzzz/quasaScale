@@ -2,34 +2,30 @@
 import { defineStore } from 'pinia'
 import { IP, QuasascaleNode, QuasascaleRoute } from 'src/types/Database'
 import { api } from 'boot/axios'
-import { HeadscaleNode, HeadscaleRoute } from 'src/types/headscale-types'
+import { HeadscaleRoute } from 'src/types/headscale-types'
 import { AxiosError } from 'axios'
-const { validateIPv4, validateIPv6 } = useUtils()
 
 export const useNodesStore = defineStore('nodes', () => {
   const { has_config_changed } = storeToRefs(useSettingsStore())
 
   async function getNodes(): Promise<QuasascaleNode[]> {
-    const resp = await api.get('/node')
-    return resp.data.nodes.map((node: HeadscaleNode) => {
-      return {
-        name: node.givenName,
-        last_seen: new Date(node.lastSeen).toLocaleString(),
-        ipv4:
-          Array.isArray(node.ipAddresses) && validateIPv4(node.ipAddresses[0])
-            ? node.ipAddresses[0]
-            : '',
-        ipv6:
-          Array.isArray(node.ipAddresses) && validateIPv6(node.ipAddresses[1])
-            ? node.ipAddresses[1]
-            : '',
-        online: node.online,
-        machine_key: node.machineKey,
-        forced_tags: node.forcedTags,
-        id: node.id,
-        user: node.user,
-      } satisfies QuasascaleNode
-    })
+    const resp = await api.get('/nodes')
+
+    // return resp.data.nodes.map((node: HeadscaleNode) => {
+    //   return {
+    //     name: node.givenName,
+    //     last_seen: new Date(node.lastSeen).toLocaleString(),
+    //     ipv4: Array.isArray(node.ipAddresses) ? node.ipAddresses[0] : '',
+    //     ipv6: Array.isArray(node.ipAddresses) ? node.ipAddresses[1] : '',
+    //     online: node.online,
+    //     machine_key: node.machineKey,
+    //     forced_tags: node.forcedTags,
+    //     id: node.id,
+    //     user: node.user,
+    //     routes: 1,
+    //   } satisfies QuasascaleNode
+    // })
+    return resp.data as QuasascaleNode[]
   }
 
   async function renameNode(node: QuasascaleNode): Promise<void> {

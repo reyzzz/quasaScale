@@ -14,6 +14,7 @@ export interface QuasascaleNode {
   machine_key: string
   forced_tags: string[]
   online: boolean
+  routes: number
 }
 
 export interface QuasascaleRoute {

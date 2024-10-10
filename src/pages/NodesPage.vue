@@ -79,6 +79,7 @@
               round
               color="green"
               dense
+              v-if="props.row.routes > 0"
               @click="manageRoutes(props.row)"
             >
               <q-tooltip> Manage Routes </q-tooltip>
@@ -134,30 +135,27 @@
               />
             </div>
             <div class="row justify-between">
-              <div class="column col-grow">
-                <div class="row justify-between">
-                  <div>
-                    <span class="text-weight-bold text-accent"> User: </span>
-                    <span class="text-info">{{ props.row.user.name }} </span>
-                  </div>
-                  <div>
-                    <span class="text-weight-bold text-accent"
-                      >Last Seen:
-                    </span>
-                    <span class="text-info">{{ props.row.last_seen }}</span>
-                  </div>
+              <div class="column gap-5px">
+                <div>
+                  <span class="text-weight-bold text-accent"> User: </span>
+                  <span class="text-info">{{ props.row.user.name }} </span>
                 </div>
-                <div class="row justify-between">
-                  <div>
-                    <span class="text-weight-bold text-accent"> IPv4: </span>
-                    <span class="text-info">{{ props.row.ipv4 }} </span>
-                  </div>
-                  <div>
-                    <span class="text-weight-bold text-accent"> IPv6: </span>
-                    <span class="text-info">{{ props.row.ipv6 }} </span>
-                  </div>
+                <div>
+                  <span class="text-weight-bold text-accent"> IPv4: </span>
+                  <span class="text-info">{{ props.row.ipv4 }} </span>
                 </div>
               </div>
+              <div class="column gap-5px">
+                <div>
+                  <span class="text-weight-bold text-accent">Last Seen: </span>
+                  <span class="text-info">{{ props.row.last_seen }}</span>
+                </div>
+                <div>
+                  <span class="text-weight-bold text-accent"> IPv6: </span>
+                  <span class="text-info">{{ props.row.ipv6 }} </span>
+                </div>
+              </div>
+
               <div class="column justify-end">
                 <q-btn
                   flat
@@ -166,6 +164,7 @@
                   color="positive"
                   icon="route"
                   @click="manageRoutes(props.row)"
+                  v-if="props.row.routes > 0"
                 />
               </div>
             </div>
@@ -290,6 +289,7 @@ function addNode(): void {
     machine_key: '',
     forced_tags: [],
     user: { id: '0', name: '', createdAt: '' },
+    routes: 0,
   }
   useDialog()
     .show(NodeConfiguration, {

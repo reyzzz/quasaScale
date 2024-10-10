@@ -32,7 +32,10 @@ export function useUtils() {
   }
 
   function isPatternPresentInEntity(pattern: string, string_to_check: string) {
-    const regex = new RegExp(pattern, 'g')
+    const regex = new RegExp(
+      `"${pattern}(:((\\*)|([1-9][0-9]*(,[1-9][0-9]*)*)))?"(,|])`,
+      'g',
+    )
 
     const matches = JSON.stringify(string_to_check).match(regex)
 
@@ -44,7 +47,10 @@ export function useUtils() {
     new_pattern: string,
     string_to_check: string,
   ): Promise<ACLConfig> {
-    const regex = new RegExp(pattern, 'g')
+    const regex = new RegExp(
+      `"${pattern}(:((\\*)|([1-9][0-9]*(,[1-9][0-9]*)*)))?"(,|])`,
+      'g',
+    )
 
     if (regex.test(string_to_check)) {
       const test = string_to_check.replace(regex, new_pattern)

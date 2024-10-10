@@ -14,7 +14,7 @@ export const useUsersStore = defineStore('users', () => {
         return {
           ...user,
           createdAt: date.formatDate(user.createdAt, 'YYYY-MM-DD HH:mm:ss'),
-          pre_auth_keys: [],
+          //pre_auth_keys: [],
         }
       }),
     )

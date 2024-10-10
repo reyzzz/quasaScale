@@ -46,6 +46,7 @@
 </template>
 
 <script setup lang="ts">
+defineOptions({ name: 'prompt-dialog' })
 const props = defineProps<{
   onDialogOK: (payload: string) => void
   componentProps: {

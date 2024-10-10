@@ -102,7 +102,7 @@
 <script setup lang="ts">
 import { extend } from 'quasar'
 import { ACL, WithPrefix } from 'src/types/Database'
-
+defineOptions({ name: 'acls-dialog' })
 import ACLsSrcDestComponent from './ACLsSrcDestComponent.vue'
 
 const props = defineProps<{

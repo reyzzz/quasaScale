@@ -69,6 +69,7 @@
 </template>
 
 <script lang="ts" setup>
+defineOptions({ name: 'hosts-dialog' })
 import { extend } from 'quasar'
 import { Hosts } from 'src/types/Database'
 const { validateIPv4 } = useUtils()

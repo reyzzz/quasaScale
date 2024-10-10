@@ -59,7 +59,7 @@
 <script setup lang="ts">
 import { extend } from 'quasar'
 import { QuasascaleInstance } from 'src/types/Database.ts'
-
+defineOptions({ name: 'headscale-instance-dialog' })
 const props = defineProps<{
   onDialogOK: (payload: QuasascaleInstance) => void
   componentProps: {

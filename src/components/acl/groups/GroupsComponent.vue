@@ -176,7 +176,7 @@ function editGroup(group: RowGroup) {
         updatedGroup.name,
         JSON.stringify(acl_config.value),
       )
-      updateACLs({ ...acl_config.value })
+      updateACLs(acl_config.value)
     })
 }
 

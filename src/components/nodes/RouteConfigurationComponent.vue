@@ -128,7 +128,7 @@
 
 <script setup lang="ts">
 import { QuasascaleRoute } from 'src/types/Database'
-
+defineOptions({ name: 'routes-dialog' })
 const { enableRoute, disableRoute, removeRoute, getNodeRoutes } =
   useNodesStore()
 const props = defineProps<{

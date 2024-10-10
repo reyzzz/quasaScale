@@ -24,7 +24,7 @@
 import { useDialogPluginComponent } from 'quasar'
 import type { Component } from 'vue'
 
-defineProps<{
+const props = defineProps<{
   componentToRender: Component
   componentToRenderProps: Record<string, unknown>
   persistent: false
@@ -37,4 +37,17 @@ defineEmits([
 ])
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
   useDialogPluginComponent()
+onMounted(() => {
+  location.hash = '#' + props.componentToRender.name
+})
+onUnmounted(() => {
+  location.hash = ''
+})
+const route = useRoute()
+watch(
+  () => route.hash,
+  (newHash) => {
+    if (newHash === '') onDialogCancel()
+  },
+)
 </script>

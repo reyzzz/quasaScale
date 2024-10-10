@@ -64,6 +64,7 @@
 </template>
 
 <script setup lang="ts">
+defineOptions({ name: 'groups-dialog' })
 import { extend } from 'quasar'
 import { RowGroup } from 'src/types/Database'
 const { users } = storeToRefs(useUsersStore())

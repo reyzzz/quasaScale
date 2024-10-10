@@ -202,7 +202,7 @@ function renameUser(user: User): void {
           username,
           JSON.stringify(acl_config.value),
         )
-        updateACLs({ ...acl_config.value })
+        updateACLs(acl_config.value)
         user.name = username
         useNotify('Username updated successfully', 'check')
       } catch (error) {

@@ -178,7 +178,7 @@ function editTag(tag_owner: RowTagOwner) {
         updated_tag_owner.name,
         JSON.stringify(acl_config.value),
       )
-      updateACLs({ ...acl_config.value })
+      updateACLs(acl_config.value)
     })
 }
 

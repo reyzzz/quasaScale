@@ -106,6 +106,7 @@
 </template>
 
 <script lang="ts" setup>
+defineOptions({ name: 'tag-owners-dialog' })
 import { extend } from 'quasar'
 import { RowTagOwner } from 'src/types/Database'
 import RoleSelectorComponent from './RoleSelectorComponent.vue'

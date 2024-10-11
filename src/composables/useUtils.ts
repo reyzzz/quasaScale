@@ -37,7 +37,7 @@ export function useUtils() {
       'g',
     )
 
-    const matches = JSON.stringify(string_to_check).match(regex)
+    const matches = string_to_check.match(regex)
 
     return matches !== null
   }
@@ -53,7 +53,8 @@ export function useUtils() {
     )
 
     if (regex.test(string_to_check)) {
-      const test = string_to_check.replace(regex, new_pattern)
+      const test = string_to_check.replace(regex, `"${new_pattern}$1"$6`)
+
       return JSON.parse(test)
     }
     return JSON.parse(string_to_check)

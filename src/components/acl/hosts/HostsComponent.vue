@@ -184,17 +184,19 @@ function editHost(host: Hosts) {
 }
 
 function deleteHost(host: RowHost) {
-  if (isPatternPresentInEntity(host.name, JSON.stringify(acl_config.value))) {
-    useNotify(
-      'Unable to remove this Host as it is currently associated with ACLs ',
-      'warning',
-      'negative',
-    )
-    return
-  }
   useDialog()
     .del()
     .onOk(async () => {
+      if (
+        isPatternPresentInEntity(host.name, JSON.stringify(acl_config.value))
+      ) {
+        useNotify(
+          'Unable to remove this Host as it is currently associated with ACLs ',
+          'warning',
+          'negative',
+        )
+        return
+      }
       delete hosts.value[host.name]
       await updateACLs({ Hosts: hosts.value })
     })

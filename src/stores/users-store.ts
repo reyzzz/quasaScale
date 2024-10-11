@@ -52,9 +52,7 @@ export const useUsersStore = defineStore('users', () => {
   }
 
   async function addPreAuthKey(preauthkey: PreAuthKeys, user: string) {
-    const expiration = new Date(
-      preauthkey.expiration_date.replace(' ', 'T') + 'Z',
-    )
+    const expiration = new Date(preauthkey.expiration_date)
     const resp = await api.post('preauthkey', {
       user: user,
       reusable: preauthkey.reusable,
@@ -65,10 +63,11 @@ export const useUsersStore = defineStore('users', () => {
     return resp.data.preAuthKey
   }
 
-  async function addNewUser(name: User) {
+  async function addNewUser(username: string) {
     const resp = await api.post('/user', {
-      name: name,
+      name: username,
     })
+
     return resp.data.user
   }
   return {

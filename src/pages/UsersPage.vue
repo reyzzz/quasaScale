@@ -221,17 +221,17 @@ function deleteUser(index: number): void {
   useDialog()
     .del()
     .onOk(async () => {
-      if (
-        isPatternPresentInEntity(user.name, JSON.stringify(acl_config.value))
-      ) {
-        useNotify(
-          'Unable to remove this User as it is currently associated with ACLs ',
-          'warning',
-          'negative',
-        )
-        return
-      }
       try {
+        if (
+          isPatternPresentInEntity(user.name, JSON.stringify(acl_config.value))
+        ) {
+          useNotify(
+            'Unable to remove this User as it is currently associated with ACLs ',
+            'warning',
+            'negative',
+          )
+          return
+        }
         await removeUser(user.name)
         users.value.splice(index, 1)
         useNotify('User delete successfully', 'check')
@@ -265,14 +265,14 @@ function addUser(): void {
       label: 'save',
       input_label: 'Username',
     })
-    .onOk(async (userName) => {
+    .onOk(async (userName: string) => {
       try {
         if (isUserExist(userName)) {
           useNotify('Username already exist', 'warning', 'negative')
           return
         }
-        const user = await addNewUser(userName)
-
+        const user: User = await addNewUser(userName)
+        user.createdAt = new Date(user.createdAt).toLocaleString()
         users.value.push(user)
         useNotify('User added successfully', 'check')
       } catch (error) {

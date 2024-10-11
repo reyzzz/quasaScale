@@ -193,17 +193,19 @@ function addGroup() {
 }
 
 function deleteGroup(group: RowGroup) {
-  if (isPatternPresentInEntity(group.name, JSON.stringify(acl_config.value))) {
-    useNotify(
-      'Unable to remove this group as it is currently associated with ACLs or Tag Owners.',
-      'warning',
-      'negative',
-    )
-    return
-  }
   useDialog()
     .del()
     .onOk(async () => {
+      if (
+        isPatternPresentInEntity(group.name, JSON.stringify(acl_config.value))
+      ) {
+        useNotify(
+          'Unable to remove this group as it is currently associated with ACLs or Tag Owners.',
+          'warning',
+          'negative',
+        )
+        return
+      }
       delete groups.value[group.name]
       await updateACLs({ groups: groups.value })
     })

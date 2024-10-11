@@ -152,6 +152,7 @@
                 icon="timer_off"
                 color="negative"
                 flat
+                v-if="new Date(pre_auth_key.expiration_date) > new Date()"
               >
                 <q-tooltip>Expire</q-tooltip>
               </q-btn>

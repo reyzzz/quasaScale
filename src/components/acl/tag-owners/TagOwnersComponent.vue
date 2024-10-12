@@ -84,7 +84,7 @@
             <div class="text-h6 row">
               {{ props.row.name }}
             </div>
-            <div>
+            <div class="row gap-2px">
               <q-btn
                 icon="edit"
                 color="secondary"
@@ -126,7 +126,7 @@
 <script lang="ts" setup>
 import { QTableColumn } from 'quasar'
 import { RowTagOwner } from 'src/types/Database'
-import TagOwnersConfigurationComponent from './TagOwnersConfigurationComponent.vue'
+import TagOwnersConfiguration from './TagOwnersConfiguration.vue'
 
 const { grid_view } = storeToRefs(useSettingsStore())
 const filter = ref('')
@@ -168,7 +168,7 @@ const cols = ref<QTableColumn[]>([
 
 function editTag(tag_owner: RowTagOwner) {
   useDialog()
-    .show(TagOwnersConfigurationComponent, {
+    .show(TagOwnersConfiguration, {
       tag_owner: tag_owner,
       all_tag_owners: tag_owners_array.value,
     })
@@ -184,7 +184,7 @@ function editTag(tag_owner: RowTagOwner) {
 
 function addTagOwner() {
   useDialog()
-    .show(TagOwnersConfigurationComponent, {
+    .show(TagOwnersConfiguration, {
       tag_owner: { name: 'tag:', value: [] } satisfies RowTagOwner,
       all_tag_owners: tag_owners_array.value,
     })

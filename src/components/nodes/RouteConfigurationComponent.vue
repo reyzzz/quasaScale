@@ -134,7 +134,7 @@ const { enableRoute, disableRoute, removeRoute, getNodeRoutes } =
 const props = defineProps<{
   componentProps: {
     routes: QuasascaleRoute[]
-    nodeId: string
+    nodeId: number
   }
 }>()
 

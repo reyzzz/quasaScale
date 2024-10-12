@@ -29,7 +29,6 @@
               v-model="protocole_type_name"
               dense
               @update:model-value="_acl.proto = ''"
-              size="lg"
               class="q-mr-sm"
             />
           </label>
@@ -72,20 +71,8 @@
           label="Protocol"
         />
       </q-card-section>
-      <ACLsSrcDestComponent
-        :values="_acl.src"
-        title="Src"
-        :initial_visibility="initial_visibility"
-        @delete-item="_acl.src.splice($event, 1)"
-        @send-value="handleSrcEmitValue($event)"
-      />
-      <ACLsSrcDestComponent
-        :values="_acl.dst"
-        :initial_visibility="initial_visibility"
-        title="Dst"
-        @delete-item="_acl.dst.splice($event, 1)"
-        @send-value="handleDstEmitValue($event)"
-      />
+      <AclsSource v-model="_acl.src" />
+      <AclsDestination v-model="_acl.dst" />
       <q-card-actions vertical>
         <q-btn
           color="primary"
@@ -101,9 +88,10 @@
 </template>
 <script setup lang="ts">
 import { extend } from 'quasar'
-import { ACL, WithPrefix } from 'src/types/Database'
+import { ACL } from 'src/types/Database'
+import AclsDestination from './AclsDestination.vue'
+import AclsSource from './AclsSource.vue'
 defineOptions({ name: 'acls-dialog' })
-import ACLsSrcDestComponent from './ACLsSrcDestComponent.vue'
 
 const props = defineProps<{
   onDialogOK: (acl: ACL) => void
@@ -125,51 +113,14 @@ const protocols = [
   'ah',
   'sctp',
 ]
-const initial_visibility = ref(
-  props.componentProps.acl.dst.length === 0 &&
-    props.componentProps.acl.src.length === 0,
-)
-const show_src_add = ref(false)
+
 const _acl = ref<ACL>(extend(true, {}, props.componentProps.acl))
 const protocole_type_name = ref(true)
-function handleSrcEmitValue(payload: {
-  role:
-    | WithPrefix<'group:'>
-    | WithPrefix<'tag:'>
-    | WithPrefix<'autogroup:'>
-    | string
-  ports: string[]
-}) {
-  const { role } = payload
-
-  _acl.value.src.push(role)
-
-  show_src_add.value = false
-}
-
-function handleDstEmitValue(payload: {
-  role:
-    | WithPrefix<'group:'>
-    | WithPrefix<'tag:'>
-    | WithPrefix<'autogroup:'>
-    | string
-  ports: string[]
-}) {
-  const { ports, role } = payload
-  if (ports.length > 0) {
-    _acl.value.dst.push(`${role}:${ports.join(',')}`)
-  } else {
-    _acl.value.dst.push(`${role}:*`)
-  }
-}
 
 function save() {
-  if (_acl.value.dst.length === 0 && _acl.value.src.length === 0) {
-    useNotify(
-      'Please enter a source or destination value to save',
-      'warning',
-      'negative',
-    )
+  console.log(_acl.value)
+  if (_acl.value.dst.length === 0 || _acl.value.src.length === 0) {
+    useNotify('Please enter a source and a destination', 'warning', 'negative')
     return
   }
   props.onDialogOK(_acl.value)

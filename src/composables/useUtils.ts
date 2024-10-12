@@ -60,6 +60,50 @@ export function useUtils() {
     return JSON.parse(string_to_check)
   }
 
+  const src_dst_chips = [
+    {
+      label: 'Users',
+      color: 'secondary',
+    },
+    {
+      label: 'Groups',
+      color: 'purple-13',
+    },
+    {
+      label: 'Hosts',
+      color: 'pink-13',
+    },
+    {
+      label: 'Tag Owners',
+      color: 'indigo-13',
+    },
+    {
+      label: 'IP',
+      color: 'amber-13',
+    },
+    {
+      label: 'All',
+      color: 'green-13',
+    },
+  ]
+
+  function validatePorts(port: string[]) {
+    if (port.length === 0) return true
+    const isAsterisk = port[port.length - 1] === '*'
+    if (isAsterisk && port.length > 1) return false
+
+    const isNumber = /^\d+$/.test(port[port.length - 1])
+
+    if (!isNumber && !isAsterisk) return false
+
+    const hasNumber = port.some((input) => /^\d+$/.test(input))
+    const hasAsterisk = port.includes('*')
+
+    if (hasNumber && hasAsterisk) return false
+
+    return true
+  }
+
   return {
     chopString,
     copyString,
@@ -68,5 +112,7 @@ export function useUtils() {
     validateIPv6,
     isPatternPresentInEntity,
     replacePatternInEntity,
+    src_dst_chips,
+    validatePorts,
   }
 }

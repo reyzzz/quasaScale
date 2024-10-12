@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { date } from 'quasar'
 import { api } from 'src/boot/axios'
 import { PreAuthKeys, User } from 'src/types/Database'
+import { HeadscalePreAuthKey } from 'src/types/headscale-types'
 import { ref } from 'vue'
 
 export const useUsersStore = defineStore('users', () => {
@@ -60,7 +61,7 @@ export const useUsersStore = defineStore('users', () => {
       expiration: expiration.toISOString(),
       aclTags: [],
     })
-    return resp.data.preAuthKey
+    return resp.data.preAuthKey as HeadscalePreAuthKey
   }
 
   async function addNewUser(username: string) {

@@ -9,23 +9,8 @@ export const useNodesStore = defineStore('nodes', () => {
   const { has_config_changed } = storeToRefs(useSettingsStore())
 
   async function getNodes(): Promise<QuasascaleNode[]> {
-    const resp = await api.get('/nodes')
-
-    // return resp.data.nodes.map((node: HeadscaleNode) => {
-    //   return {
-    //     name: node.givenName,
-    //     last_seen: new Date(node.lastSeen).toLocaleString(),
-    //     ipv4: Array.isArray(node.ipAddresses) ? node.ipAddresses[0] : '',
-    //     ipv6: Array.isArray(node.ipAddresses) ? node.ipAddresses[1] : '',
-    //     online: node.online,
-    //     machine_key: node.machineKey,
-    //     forced_tags: node.forcedTags,
-    //     id: node.id,
-    //     user: node.user,
-    //     routes: 1,
-    //   } satisfies QuasascaleNode
-    // })
-    return resp.data as QuasascaleNode[]
+    const resp = await api.get<QuasascaleNode[]>('/nodes')
+    return resp.data
   }
 
   async function renameNode(node: QuasascaleNode): Promise<void> {
@@ -64,17 +49,6 @@ export const useNodesStore = defineStore('nodes', () => {
     }
   }
 
-  async function removeNode(node: QuasascaleNode): Promise<void> {
-    try {
-      await api.delete(`/node/${node.id}`)
-    } catch (ex: unknown) {
-      if (ex instanceof AxiosError) {
-        useNotify(ex.response?.data.message, 'warning', 'negative')
-        throw ex
-      }
-    }
-  }
-
   async function createNode(node: QuasascaleNode): Promise<void> {
     try {
       const resp = await api.post(
@@ -92,7 +66,7 @@ export const useNodesStore = defineStore('nodes', () => {
     }
   }
 
-  async function updateIP(nodeId: string, ips: IP) {
+  async function updateIP(nodeId: number, ips: IP) {
     try {
       const resp = await api.patch(`/ip/${nodeId}`, {
         ...ips,
@@ -107,7 +81,7 @@ export const useNodesStore = defineStore('nodes', () => {
     }
   }
 
-  async function getNodeRoutes(node_id: string): Promise<QuasascaleRoute[]> {
+  async function getNodeRoutes(node_id: number): Promise<QuasascaleRoute[]> {
     const resp = await api.get(`/node/${node_id}/routes`)
     const routes = resp.data.routes as HeadscaleRoute[]
     return routes.map((route) => {
@@ -160,7 +134,7 @@ export const useNodesStore = defineStore('nodes', () => {
     renameNode,
     updateTags,
     changeUser,
-    removeNode,
+
     createNode,
     getNodeRoutes,
     disableRoute,

@@ -114,20 +114,18 @@
           <q-card flat bordered class="rounded-xl q-mb-sm bg-stone-950">
             <q-card-section>
               <div class="row justify-between">
-                <div class="q-mb-sm">
+                <div class="row q-mb-sm gap-8px">
                   <q-badge
                     outline
                     color="amber-8"
                     label="Ephemeral"
                     v-if="pre_auth_key.ephemeral"
-                    class="q-mr-sm"
                   />
                   <q-badge
                     outline
                     color="purple-13"
                     label="reusable"
                     v-if="pre_auth_key.reusable"
-                    class="q-mr-sm"
                   />
                   <q-badge
                     outline
@@ -138,24 +136,22 @@
                   <q-badge
                     outline
                     color="negative"
-                    class="q-ml-sm"
                     label="expired"
                     v-if="new Date(pre_auth_key.expiration_date) < new Date()"
                   />
                 </div>
+                <q-btn
+                  @click="expireKey(pre_auth_key.key)"
+                  dense
+                  round
+                  icon="timer_off"
+                  color="warning"
+                  flat
+                  v-if="new Date(pre_auth_key.expiration_date) > new Date()"
+                >
+                  <q-tooltip>Expire</q-tooltip>
+                </q-btn>
               </div>
-              <q-btn
-                class="absolute top-2 right-3"
-                @click="expireKey(pre_auth_key.key)"
-                dense
-                round
-                icon="timer_off"
-                color="negative"
-                flat
-                v-if="new Date(pre_auth_key.expiration_date) > new Date()"
-              >
-                <q-tooltip>Expire</q-tooltip>
-              </q-btn>
               <div class="text-info">
                 <span
                   class="text-weight-bold text-accent q-mr-xs hover:cursor-pointer"
@@ -221,7 +217,8 @@ async function addKey(): Promise<void> {
       expiration_date: expiration.value,
     }
     const key = await addPreAuthKey(preAuthKey, props.componentProps.username)
-    preAuthKey.expiration_date = new Date().toLocaleString()
+    preAuthKey.expiration_date = key.expiration
+    preAuthKey.id = key.id
     preAuthKey.key = key.key
     _preAuthKeys.value.push(preAuthKey)
     addKeySection.value = false
@@ -239,7 +236,9 @@ async function expireKey(key: string) {
       })
       .onOk(async () => {
         await expirePreAuthKey(key, props.componentProps.username)
-        await getuserPreAuthKeys(props.componentProps.username)
+        _preAuthKeys.value = await getuserPreAuthKeys(
+          props.componentProps.username,
+        )
         useNotify('PreAuthKey expired successfully', 'check')
       })
   } catch (error) {

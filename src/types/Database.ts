@@ -5,7 +5,7 @@ export interface User {
 }
 
 export interface QuasascaleNode {
-  id?: string
+  id: number
   name: string
   last_seen: string
   ipv4: string

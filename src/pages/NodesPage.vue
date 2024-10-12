@@ -61,40 +61,50 @@
               /> </template
           ></q-td>
           <q-td key="actions" :props="props">
-            <q-btn
-              icon="edit"
-              flat
-              round
-              color="secondary"
-              dense
-              class="q-ml-md"
-              @click="editNode(props.row, props.rowIndex)"
-            >
-              <q-tooltip> Edit Node </q-tooltip>
-            </q-btn>
-            <q-btn
-              class="q-ml-md"
-              icon="route"
-              flat
-              round
-              color="green"
-              dense
-              v-if="props.row.routes > 0"
-              @click="manageRoutes(props.row)"
-            >
-              <q-tooltip> Manage Routes </q-tooltip>
-            </q-btn>
-            <q-btn
-              icon="delete"
-              flat
-              round
-              color="negative"
-              dense
-              class="q-ml-md"
-              @click="deleteNode(props.rowIndex)"
-            >
-              <q-tooltip> Delete Node </q-tooltip>
-            </q-btn>
+            <div class="row gap-3px justify-end">
+              <q-btn
+                icon="route"
+                flat
+                round
+                color="green"
+                dense
+                v-if="props.row.routes > 0"
+                @click="manageRoutes(props.row)"
+              >
+                <q-tooltip> Manage Routes </q-tooltip>
+              </q-btn>
+              <q-btn
+                icon="edit"
+                flat
+                round
+                color="secondary"
+                dense
+                @click="editNode(props.row, props.rowIndex)"
+              >
+                <q-tooltip> Edit Node </q-tooltip>
+              </q-btn>
+
+              <q-btn
+                flat
+                round
+                dense
+                color="warning"
+                icon="timer_off"
+                @click="expireNode(props.rowIndex)"
+              >
+                <q-tooltip> Expire Node </q-tooltip>
+              </q-btn>
+              <q-btn
+                icon="delete"
+                flat
+                round
+                color="negative"
+                dense
+                @click="removeNode(props.rowIndex)"
+              >
+                <q-tooltip> Delete Node </q-tooltip>
+              </q-btn>
+            </div>
           </q-td>
         </q-tr>
       </template>
@@ -117,22 +127,38 @@
                   />
                 </template>
               </div>
-              <q-btn
-                flat
-                round
-                dense
-                color="secondary"
-                icon="edit"
-                @click="editNode(props.row, props.rowIndex)"
-              />
-              <q-btn
-                flat
-                round
-                dense
-                color="negative"
-                icon="delete"
-                @click="deleteNode(props.rowIndex)"
-              />
+              <div class="row gap-2px">
+                <q-btn
+                  flat
+                  round
+                  dense
+                  color="secondary"
+                  icon="edit"
+                  @click="editNode(props.row, props.rowIndex)"
+                >
+                  <q-tooltip> Edit Node </q-tooltip>
+                </q-btn>
+                <q-btn
+                  flat
+                  round
+                  dense
+                  color="warning"
+                  icon="timer_off"
+                  @click="expireNode(props.rowIndex)"
+                >
+                  <q-tooltip> Expire Node </q-tooltip>
+                </q-btn>
+                <q-btn
+                  flat
+                  round
+                  dense
+                  color="negative"
+                  icon="delete"
+                  @click="removeNode(props.rowIndex)"
+                >
+                  <q-tooltip> Delete Node </q-tooltip>
+                </q-btn>
+              </div>
             </div>
             <div class="row justify-between">
               <div class="column gap-5px">
@@ -148,7 +174,9 @@
               <div class="column gap-5px">
                 <div>
                   <span class="text-weight-bold text-accent">Last Seen: </span>
-                  <span class="text-info">{{ props.row.last_seen }}</span>
+                  <span class="text-info">{{
+                    new Date(props.row.last_seen).toLocaleString()
+                  }}</span>
                 </div>
                 <div>
                   <span class="text-weight-bold text-accent"> IPv6: </span>
@@ -165,7 +193,9 @@
                   icon="route"
                   @click="manageRoutes(props.row)"
                   v-if="props.row.routes > 0"
-                />
+                >
+                  <q-tooltip> Manage Routes </q-tooltip>
+                </q-btn>
               </div>
             </div>
           </q-card-section>
@@ -181,6 +211,9 @@ import NodeConfiguration from 'src/components/nodes/NodeConfiguration.vue'
 import RouteConfigurationComponent from 'src/components/nodes/RouteConfigurationComponent.vue'
 import { QuasascaleNode } from 'src/types/Database'
 import { is } from 'quasar'
+import { AxiosError } from 'axios'
+import { api } from 'boot/axios'
+
 const filter = ref('')
 const { grid_view } = storeToRefs(useSettingsStore())
 const {
@@ -188,7 +221,6 @@ const {
   renameNode,
   changeUser,
   updateTags,
-  removeNode,
   createNode,
   getNodeRoutes,
   updateIP,
@@ -267,20 +299,20 @@ function editNode(node: QuasascaleNode, index: number): void {
         if (node.user?.id !== updatedNode.user?.id)
           await changeUser(updatedNode)
         if (node.ipv4 !== updatedNode.ipv4 && node.ipv6 !== updatedNode.ipv6)
-          await updateIP(updatedNode.id as string, {
+          await updateIP(updatedNode.id, {
             IPv4: updatedNode.ipv4,
             IPv6: updatedNode.ipv6,
           })
         else if (node.ipv4 !== updatedNode.ipv4)
-          await updateIP(updatedNode.id as string, { IPv4: updatedNode.ipv4 })
+          await updateIP(updatedNode.id, { IPv4: updatedNode.ipv4 })
         else if (node.ipv6 !== updatedNode.ipv6)
-          await updateIP(updatedNode.id as string, { IPv6: updatedNode.ipv6 })
+          await updateIP(updatedNode.id, { IPv6: updatedNode.ipv6 })
         nodes.value[index] = updatedNode
       } catch {}
     })
 }
 function addNode(): void {
-  const node: QuasascaleNode = {
+  const node: Omit<QuasascaleNode, 'id'> = {
     name: '',
     online: false,
     last_seen: new Date().toISOString(),
@@ -310,27 +342,40 @@ function addNode(): void {
     })
 }
 
-function deleteNode(index: number): void {
+function removeNode(nodeId: number): void {
   useDialog()
     .del()
     .onOk(async () => {
       try {
-        await removeNode(nodes.value[index])
-        nodes.value = nodes.value.filter((_, ind) => index !== ind)
+        await api.delete(`/node/${nodeId}`)
+        nodes.value = nodes.value.splice(nodeId, 1)
         useNotify('Node delete successfully', 'check')
-      } catch (error) {
-        useNotify(
-          'An error has occured while deleting this node',
-          'warning',
-          'negative',
-        )
+      } catch (ex) {
+        if (ex instanceof AxiosError) {
+          useNotify(ex.response?.data.message, 'warning', 'negative')
+        }
+      }
+    })
+}
+
+function expireNode(nodeId: number): void {
+  useDialog()
+    .del('Are you sure you want to expire this node?')
+    .onOk(async () => {
+      try {
+        await api.post(`/node/${nodeId}/expire`)
+        useNotify('Node expired successfully', 'check')
+      } catch (ex) {
+        if (ex instanceof AxiosError) {
+          useNotify(ex.response?.data.message, 'warning', 'negative')
+        }
       }
     })
 }
 
 async function manageRoutes(node: QuasascaleNode): Promise<void> {
   try {
-    const routes = await getNodeRoutes(node.id as string)
+    const routes = await getNodeRoutes(node.id)
     if (routes.length === 0) {
       useNotify('Node has no routes', 'directions_off', 'negative')
       return

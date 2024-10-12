@@ -102,7 +102,7 @@
                 <animated-circle v-if="props.row.active" />
                 {{ props.row.name }}
               </div>
-              <div>
+              <div class="row gap-2px">
                 <q-btn
                   icon="edit"
                   color="secondary"

@@ -30,3 +30,15 @@ export interface HeadscaleRoute {
   updatedAt: string
   deletedAt: string
 }
+
+export interface HeadscalePreAuthKey {
+  user: string
+  id: string
+  key: string
+  reusable: boolean
+  ephemeral: boolean
+  used: boolean
+  expiration: string
+  createdAt: string
+  aclTags: string[]
+}

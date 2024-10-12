@@ -98,7 +98,7 @@
                 props.row.proto ? props.row.proto : 'All Protocols'
               }}</span>
             </div>
-            <div>
+            <div class="row gap-2px">
               <q-btn
                 icon="edit"
                 color="secondary"
@@ -152,7 +152,7 @@
 <script setup lang="ts">
 import { QTableColumn } from 'quasar'
 import { ACL } from 'src/types/Database'
-import ACLsConfiguration from './ACLsConfiguration.vue'
+import AclsConfiguration from './AclsConfiguration.vue'
 const { updateACLs } = useAclsStore()
 const { grid_view } = storeToRefs(useSettingsStore())
 const { acls } = storeToRefs(useAclsStore())
@@ -190,7 +190,7 @@ const filter = ref('')
 
 async function addACL() {
   useDialog()
-    .show(ACLsConfiguration, {
+    .show(AclsConfiguration, {
       acl: { proto: '', action: 'accept', src: [], dst: [] } satisfies ACL,
     })
     .onOk(async (ACL: ACL) => {
@@ -202,7 +202,7 @@ async function addACL() {
 
 async function editACL(acl: ACL, index: number) {
   useDialog()
-    .show(ACLsConfiguration, {
+    .show(AclsConfiguration, {
       acl: acl,
     })
     .onOk(async (updatedAcl: ACL) => {

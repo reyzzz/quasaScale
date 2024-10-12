@@ -49,6 +49,7 @@
             (val) => val.startsWith('tag:') || 'Tag must start with tag:',
             () => checkTagOwnername() || 'Tag name already used',
           ]"
+          lazy-rules="ondemand"
         />
         <div class="px-8px py-4px text-subtitle1">Owners:</div>
         <q-list separator bordered class="rounded-xl">
@@ -69,14 +70,9 @@
               </q-item-section>
             </q-item>
           </template>
-          <RoleSelectorComponent
-            @send-value="handleEmitValue($event)"
-            @chip-changed="selected_option = $event"
-            :chips="[
-              { label: 'Group', color: 'purple-13' },
-              { label: 'Users', color: 'secondary' },
-            ]"
-            :options="options"
+          <OwnerSelector
+            v-model="_tag_owner.value"
+            v-model:is_adding="show_add_card"
             v-if="show_add_card"
           />
         </q-list>
@@ -109,7 +105,7 @@
 defineOptions({ name: 'tag-owners-dialog' })
 import { extend } from 'quasar'
 import { RowTagOwner } from 'src/types/Database'
-import RoleSelectorComponent from './RoleSelectorComponent.vue'
+import OwnerSelector from './OwnerSelector.vue'
 
 const props = defineProps<{
   onDialogOK: (tag_owner: RowTagOwner) => void
@@ -118,23 +114,12 @@ const props = defineProps<{
     all_tag_owners: RowTagOwner[]
   }
 }>()
-const { groups } = storeToRefs(useAclsStore())
-const { users } = storeToRefs(useUsersStore())
-const selected_option = ref('Group')
-const options = computed(() => {
-  if (selected_option.value === 'Group') return Object.keys(groups.value)
-  else return users.value.map((user) => user.name)
-})
+
 const show_add_card = ref(props.componentProps.tag_owner.name === 'tag:')
 
 const _tag_owner = ref<RowTagOwner>(
   extend(true, {}, props.componentProps.tag_owner),
 )
-
-function handleEmitValue(role: string) {
-  _tag_owner.value.value.push(role)
-  show_add_card.value = false
-}
 
 function checkTagOwnername() {
   const tag_owner = props.componentProps.all_tag_owners.find(

@@ -83,7 +83,7 @@
             <div class="text-h6">
               {{ props.row.name }}
             </div>
-            <div>
+            <div class="row gap-2px">
               <q-btn
                 icon="edit"
                 color="secondary"

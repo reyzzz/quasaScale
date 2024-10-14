@@ -179,6 +179,7 @@ function editHost(host: Hosts) {
         updatedHost.name,
         JSON.stringify(acl_config.value),
       )
+      acl_config.value.Hosts[updatedHost.name] = updatedHost.value
       updateACLs(acl_config.value)
     })
 }

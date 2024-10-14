@@ -176,6 +176,7 @@ function editGroup(group: RowGroup) {
         updatedGroup.name,
         JSON.stringify(acl_config.value),
       )
+      acl_config.value.groups[updatedGroup.name] = updatedGroup.users
       updateACLs(acl_config.value)
     })
 }

@@ -178,6 +178,8 @@ function editTag(tag_owner: RowTagOwner) {
         updated_tag_owner.name,
         JSON.stringify(acl_config.value),
       )
+      acl_config.value.tagOwners[updated_tag_owner.name] =
+        updated_tag_owner.value as string[]
       updateACLs(acl_config.value)
     })
 }

@@ -59,7 +59,16 @@
               />
             </div>
 
-            <div class="q-mt-sm">
+            <div class="q-mt-sm column gap-4">
+              <q-select
+                label="Tags"
+                outlined
+                use-chips
+                multiple
+                use-input
+                v-model="_tags"
+                :options="componentProps.tags"
+              />
               <q-input filled v-model="expiration" label="Expiration Date">
                 <template v-slot:prepend>
                   <q-icon name="event" class="cursor-pointer">
@@ -139,6 +148,9 @@
                     label="expired"
                     v-if="new Date(pre_auth_key.expiration_date) < new Date()"
                   />
+                  <template v-for="tag in pre_auth_key.acl_tags" :key="tag">
+                    <q-badge outline color="secondary" :label="tag" />
+                  </template>
                 </div>
                 <q-btn
                   @click="expireKey(pre_auth_key.key)"
@@ -197,6 +209,7 @@ const props = defineProps<{
   componentProps: {
     pre_auth_keys: PreAuthKeys[]
     username: string
+    tags: string[]
   }
 }>()
 const addKeySection = ref(false)
@@ -206,7 +219,7 @@ const expiration = ref(date.formatDate(new Date(), 'YYYY-MM-DD HH:mm'))
 const _preAuthKeys = ref<PreAuthKeys[]>(
   extend(true, [], props.componentProps.pre_auth_keys),
 )
-
+const _tags = ref<string[]>([])
 async function addKey(): Promise<void> {
   try {
     const preAuthKey: PreAuthKeys = {
@@ -215,6 +228,7 @@ async function addKey(): Promise<void> {
       used: false,
       key: '',
       expiration_date: expiration.value,
+      acl_tags: _tags.value,
     }
     const key = await addPreAuthKey(preAuthKey, props.componentProps.username)
     preAuthKey.expiration_date = key.expiration
@@ -224,6 +238,7 @@ async function addKey(): Promise<void> {
     addKeySection.value = false
     ephemeral.value = false
     reusable.value = false
+    _tags.value = []
   } catch (error) {
     useNotify('Failed to add this PreAuthKey', 'warning', 'negative')
   }

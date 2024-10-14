@@ -34,6 +34,7 @@ export interface PreAuthKeys {
   reusable: boolean
   ephemeral: boolean
   used: boolean
+  acl_tags: string[]
 }
 
 export interface DNSRecord {

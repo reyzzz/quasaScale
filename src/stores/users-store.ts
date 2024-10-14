@@ -28,6 +28,7 @@ export const useUsersStore = defineStore('users', () => {
         return {
           ...preAthKey,
           expiration_date: new Date(preAthKey.expiration).toLocaleString(),
+          acl_tags: preAthKey.aclTags,
         }
       },
     )
@@ -59,7 +60,7 @@ export const useUsersStore = defineStore('users', () => {
       reusable: preauthkey.reusable,
       ephemeral: preauthkey.ephemeral,
       expiration: expiration.toISOString(),
-      aclTags: [],
+      aclTags: preauthkey.acl_tags,
     })
     return resp.data.preAuthKey as HeadscalePreAuthKey
   }

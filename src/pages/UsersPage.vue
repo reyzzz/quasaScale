@@ -140,7 +140,7 @@
 import { QTableColumn, useQuasar } from 'quasar'
 import PreAuthKeyComponent from 'src/components/users/PreAuthKeyComponent.vue'
 import PromptComponent from 'src/components/PromptComponent.vue'
-import { User } from 'src/types/Database'
+import { User, WithPrefix } from 'src/types/Database'
 const { isPatternPresentInEntity, replacePatternInEntity } = useUtils()
 const { users } = storeToRefs(useUsersStore())
 const { acl_config } = storeToRefs(useAclsStore())
@@ -247,10 +247,13 @@ function deleteUser(index: number): void {
 
 async function managePreAuthKeys(user: User): Promise<void> {
   const pre_auth_key = await getuserPreAuthKeys(user.name)
+  const user_accepted_tags = fetchUserTags(user.name)
+
   useDialog()
     .show(PreAuthKeyComponent, {
       pre_auth_keys: pre_auth_key,
       username: user.name,
+      tags: user_accepted_tags,
     })
     .onOk(() => {
       useNotify('PreAuthsKeys updated successfully', 'check')
@@ -286,5 +289,27 @@ function isUserExist(name: string, org_name?: string): boolean {
   }
   const user = users.value.find((user) => user.name === name)
   return user ? true : false
+}
+function fetchUserTags(user: string): string[] {
+  return Object.entries(acl_config.value.tagOwners).reduce(
+    (acc, [tag, owners]) => {
+      const hasAccess = owners.some((owner: string) => {
+        if (owner.startsWith('group:')) {
+          const groupKey = owner as WithPrefix<'group:'>
+          const groupMembers = acl_config.value.groups[groupKey]
+          return groupMembers.includes(user)
+        } else {
+          return owner === user
+        }
+      })
+
+      if (hasAccess) {
+        acc.push(tag)
+      }
+
+      return acc
+    },
+    [] as string[],
+  )
 }
 </script>

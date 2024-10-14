@@ -128,7 +128,10 @@ const options = computed(() => {
 function addDestination() {
   const dest = destination.value === null ? '*' : destination.value
   const port = ports.value.length === 0 ? '*' : ports.value.toString()
-  if (destinations.value.includes(`${dest}:${port}`)) return
+  if (destinations.value.includes(`${dest}:${port}`)) {
+    is_adding.value = false
+    return
+  }
   destinations.value.push(`${dest}:${port}`)
   ports.value = []
   is_adding.value = false

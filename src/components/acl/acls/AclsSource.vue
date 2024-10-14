@@ -105,9 +105,11 @@ const options = computed(() => {
 })
 
 function addSource() {
-  if (source.value === null || sources.value.includes(source.value)) return
-  if (source.value) sources.value.push(source.value)
-  else sources.value.push('*')
+  if (source.value === null) {
+    if (!sources.value.includes('*')) sources.value.push('*')
+  } else {
+    if (!sources.value.includes(source.value)) sources.value.push(source.value)
+  }
   is_adding.value = false
 }
 

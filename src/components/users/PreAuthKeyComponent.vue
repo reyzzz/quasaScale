@@ -60,15 +60,6 @@
             </div>
 
             <div class="q-mt-sm column gap-4">
-              <q-select
-                label="Tags"
-                outlined
-                use-chips
-                multiple
-                use-input
-                v-model="_tags"
-                :options="componentProps.tags"
-              />
               <q-input filled v-model="expiration" label="Expiration Date">
                 <template v-slot:prepend>
                   <q-icon name="event" class="cursor-pointer">
@@ -116,6 +107,15 @@
                   </q-icon>
                 </template>
               </q-input>
+              <q-select
+                label="Tags"
+                outlined
+                use-chips
+                multiple
+                use-input
+                v-model="_tags"
+                :options="componentProps.tags"
+              />
             </div>
           </q-card-section>
         </q-card>
@@ -127,7 +127,7 @@
                   <q-badge
                     outline
                     color="amber-8"
-                    label="Ephemeral"
+                    label="ephemeral"
                     v-if="pre_auth_key.ephemeral"
                   />
                   <q-badge

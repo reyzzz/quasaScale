@@ -42,7 +42,7 @@
         <q-tr :props="props">
           <q-td>{{ props.row.id }}</q-td>
           <q-td>{{ props.row.name }}</q-td>
-          <q-td>{{ props.row.createdAt }}</q-td>
+          <q-td>{{ new Date(props.row.createdAt).toLocaleString() }}</q-td>
 
           <q-td key="actions" :props="props">
             <q-btn
@@ -116,7 +116,9 @@
                 <span class="text-weight-bold text-accent">
                   Creation Date:
                 </span>
-                <span class="text-info">{{ props.row.createdAt }} </span>
+                <span class="text-info"
+                  >{{ new Date(props.row.createdAt).toLocaleString() }}
+                </span>
               </div>
               <q-btn
                 flat
@@ -275,7 +277,6 @@ function addUser(): void {
           return
         }
         const user: User = await addNewUser(userName)
-        user.createdAt = new Date(user.createdAt).toLocaleString()
         users.value.push(user)
         useNotify('User added successfully', 'check')
       } catch (error) {

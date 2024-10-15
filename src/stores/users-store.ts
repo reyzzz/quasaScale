@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { date } from 'quasar'
 import { api } from 'src/boot/axios'
 import { PreAuthKeys, User } from 'src/types/Database'
 import { HeadscalePreAuthKey } from 'src/types/headscale-types'
@@ -9,16 +8,7 @@ export const useUsersStore = defineStore('users', () => {
   const users = ref<User[]>([])
   async function getUsers(): Promise<void> {
     const resp = await api.get('/user')
-
-    users.value = await Promise.all(
-      resp.data.users.map(async (user: Record<string, string>) => {
-        return {
-          ...user,
-          createdAt: date.formatDate(user.createdAt, 'YYYY-MM-DD HH:mm:ss'),
-          //pre_auth_keys: [],
-        }
-      }),
-    )
+    users.value = resp.data.users
   }
 
   async function getuserPreAuthKeys(name: string) {

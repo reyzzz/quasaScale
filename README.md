@@ -6,8 +6,13 @@ an intuitive and responsive web interface for managing Headscale, a self-hosted,
 open-source implementation of Tailscale's coordination server.
 
 This is how it looks like
-
-
+![nodes](https://github.com/user-attachments/assets/30b46747-c6ed-4087-9422-47777ef82b81)
+![users](https://github.com/user-attachments/assets/18d5fcc1-b2f6-4c24-9f1b-da35b353c246)
+![dns-settings](https://github.com/user-attachments/assets/63f7b10c-966c-4d2a-976a-cf6131969b41)
+![dns-records](https://github.com/user-attachments/assets/8ef77c0b-0bf9-4a3f-8bcb-051e0488d03d)
+![groups](https://github.com/user-attachments/assets/9592801e-09b5-4326-be9b-15314e2f5ca5)
+![acls](https://github.com/user-attachments/assets/11bf6f45-a00c-4e3a-bbd7-1c0ce6f256dc)
+![hinstances](https://github.com/user-attachments/assets/a9115e14-51b5-410d-8787-6dcddc987115)
 
 ## Features
 1. Node Management: Add, remove, and edit nodes quickly, manage routes, expire node and <b>IP address management</b>.

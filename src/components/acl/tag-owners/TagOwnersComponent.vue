@@ -125,7 +125,7 @@
 </template>
 <script lang="ts" setup>
 import { QTableColumn } from 'quasar'
-import { RowTagOwner } from 'src/types/Database'
+import { RowTagOwner, TagOwners } from 'src/types/Database'
 import TagOwnersConfiguration from './TagOwnersConfiguration.vue'
 
 const { grid_view } = storeToRefs(useSettingsStore())
@@ -173,14 +173,14 @@ function editTag(tag_owner: RowTagOwner) {
       all_tag_owners: tag_owners_array.value,
     })
     .onOk(async (updated_tag_owner: RowTagOwner) => {
-      acl_config.value = await replacePatternInEntity(
+      const acls = await replacePatternInEntity(
         tag_owner.name,
         updated_tag_owner.name,
         JSON.stringify(acl_config.value),
       )
-      acl_config.value.tagOwners[updated_tag_owner.name] =
+      acls.tagOwners[updated_tag_owner.name] =
         updated_tag_owner.value as string[]
-      updateACLs(acl_config.value)
+      updateACLs(acls)
     })
 }
 
@@ -191,8 +191,11 @@ function addTagOwner() {
       all_tag_owners: tag_owners_array.value,
     })
     .onOk(async (tag_owner: RowTagOwner) => {
-      tag_owners.value[tag_owner.name] = tag_owner.value as string[]
-      await updateACLs({ tagOwners: tag_owners.value })
+      const tagOwners = {
+        ...tag_owners.value,
+        [tag_owner.name]: tag_owner.value,
+      }
+      await updateACLs({ tagOwners })
     })
 }
 
@@ -213,8 +216,9 @@ function deleteTag(tag_owner: RowTagOwner) {
         )
         return
       }
-      delete tag_owners.value[tag_owner.name]
-      await updateACLs({ tagOwners: tag_owners.value })
+      const tagOwners: TagOwners = { ...tag_owners.value }
+      delete tagOwners[tag_owner.name]
+      await updateACLs({ tagOwners })
     })
 }
 </script>

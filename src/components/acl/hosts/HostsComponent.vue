@@ -162,25 +162,25 @@ function addHost() {
       all_hosts: hostsArray.value,
     })
     .onOk((host: RowHost) => {
-      hosts.value[host.name] = host.value
-      updateACLs({ Hosts: hosts.value })
+      const _hosts: Hosts = { ...hosts.value, [host.name]: host.value }
+      updateACLs({ Hosts: _hosts })
     })
 }
 
-function editHost(host: Hosts) {
+function editHost(host: RowHost) {
   useDialog()
     .show(HostsConfigurationComponent, {
       host: host,
       all_hosts: hostsArray.value,
     })
     .onOk(async (updatedHost: RowHost) => {
-      acl_config.value = await replacePatternInEntity(
+      const acls = await replacePatternInEntity(
         host.name,
         updatedHost.name,
         JSON.stringify(acl_config.value),
       )
-      acl_config.value.Hosts[updatedHost.name] = updatedHost.value
-      updateACLs(acl_config.value)
+      acls.Hosts[updatedHost.name] = updatedHost.value
+      updateACLs(acls)
     })
 }
 
@@ -198,8 +198,9 @@ function deleteHost(host: RowHost) {
         )
         return
       }
-      delete hosts.value[host.name]
-      await updateACLs({ Hosts: hosts.value })
+      const _hosts: Hosts = { ...hosts.value }
+      delete _hosts[host.name]
+      await updateACLs({ Hosts: _hosts })
     })
 }
 </script>

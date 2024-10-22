@@ -171,13 +171,13 @@ function editGroup(group: RowGroup) {
       all_groups: groupsArray.value,
     })
     .onOk(async (updatedGroup: RowGroup) => {
-      acl_config.value = await replacePatternInEntity(
+      const acls = await replacePatternInEntity(
         group.name,
         updatedGroup.name,
         JSON.stringify(acl_config.value),
       )
-      acl_config.value.groups[updatedGroup.name] = updatedGroup.users
-      updateACLs(acl_config.value)
+      acls.groups[updatedGroup.name] = updatedGroup.users
+      updateACLs(acls)
     })
 }
 
@@ -188,8 +188,8 @@ function addGroup() {
       all_groups: groupsArray.value,
     })
     .onOk(async (group: RowGroup) => {
-      groups.value[group.name] = group.users
-      await updateACLs({ groups: groups.value })
+      const _groups = { ...groups.value, [group.name]: group.users }
+      await updateACLs({ groups: _groups })
     })
 }
 
@@ -207,8 +207,9 @@ function deleteGroup(group: RowGroup) {
         )
         return
       }
-      delete groups.value[group.name]
-      await updateACLs({ groups: groups.value })
+      const _groups = { ...groups.value }
+      delete _groups[group.name]
+      await updateACLs({ groups: _groups })
     })
 }
 </script>

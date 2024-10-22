@@ -48,10 +48,10 @@ export const useHeadscaleInstancesStore = defineStore(
           },
         )
         if (resp.status !== 200) {
-          headscale_version.value = (await resp.json()).version
           useNotify('Headscale instance not reachable', 'warning', 'negative')
           return
         }
+        headscale_version.value = (await resp.json()).version
 
         if (active_headscale.value !== undefined)
           await db.headscale_instances.update(active_headscale.value.id, {

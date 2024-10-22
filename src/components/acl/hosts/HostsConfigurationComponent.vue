@@ -71,17 +71,17 @@
 <script lang="ts" setup>
 defineOptions({ name: 'hosts-dialog' })
 import { extend } from 'quasar'
-import { Hosts } from 'src/types/Database'
+import { RowHost } from 'src/types/Database'
 const { validateIPv4 } = useUtils()
 const props = defineProps<{
-  onDialogOK: (host: Hosts) => void
+  onDialogOK: (host: RowHost) => void
   componentProps: {
-    host: Hosts
-    all_hosts: Hosts[]
+    host: RowHost
+    all_hosts: RowHost[]
   }
 }>()
 
-const _host = ref<Hosts>(extend(true, {}, props.componentProps.host))
+const _host = ref<RowHost>(extend(true, {}, props.componentProps.host))
 
 function checkHostName() {
   const host = props.componentProps.all_hosts.find(

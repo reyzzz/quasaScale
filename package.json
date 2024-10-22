@@ -1,9 +1,9 @@
 {
   "name": "quasascale",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Headscale Web UI",
   "productName": "QuasaScale",
-  "author": "Roy El Hage <hajjroy@gmail.com>",
+  "author": "Roy El Hage <hajjroy@yahoo.com>",
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",

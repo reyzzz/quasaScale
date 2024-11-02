@@ -90,7 +90,7 @@
                 dense
                 color="warning"
                 icon="timer_off"
-                @click="expireNode(props.rowIndex)"
+                @click="expireNode(props.row)"
               >
                 <q-tooltip> Expire Node </q-tooltip>
               </q-btn>
@@ -100,7 +100,7 @@
                 round
                 color="negative"
                 dense
-                @click="removeNode(props.rowIndex)"
+                @click="removeNode(props.row, props.rowIndex)"
               >
                 <q-tooltip> Delete Node </q-tooltip>
               </q-btn>
@@ -144,7 +144,7 @@
                   dense
                   color="warning"
                   icon="timer_off"
-                  @click="expireNode(props.rowIndex)"
+                  @click="expireNode(props.row)"
                 >
                   <q-tooltip> Expire Node </q-tooltip>
                 </q-btn>
@@ -154,7 +154,7 @@
                   dense
                   color="negative"
                   icon="delete"
-                  @click="removeNode(props.rowIndex)"
+                  @click="removeNode(props.row, props.rowIndex)"
                 >
                   <q-tooltip> Delete Node </q-tooltip>
                 </q-btn>
@@ -342,13 +342,13 @@ function addNode(): void {
     })
 }
 
-function removeNode(nodeId: number): void {
+function removeNode(node: QuasascaleNode, index: number): void {
   useDialog()
     .del()
     .onOk(async () => {
       try {
-        await api.delete(`/node/${nodeId}`)
-        nodes.value = nodes.value.splice(nodeId, 1)
+        await api.delete(`/node/${node.id}`)
+        nodes.value = nodes.value.splice(index, 1)
         useNotify('Node delete successfully', 'check')
       } catch (ex) {
         if (ex instanceof AxiosError) {
@@ -358,12 +358,12 @@ function removeNode(nodeId: number): void {
     })
 }
 
-function expireNode(nodeId: number): void {
+function expireNode(node: QuasascaleNode): void {
   useDialog()
     .del('Are you sure you want to expire this node?')
     .onOk(async () => {
       try {
-        await api.post(`/node/${nodeId}/expire`)
+        await api.post(`/node/${node.id}/expire`)
         useNotify('Node expired successfully', 'check')
       } catch (ex) {
         if (ex instanceof AxiosError) {

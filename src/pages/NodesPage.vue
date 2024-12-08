@@ -14,6 +14,7 @@
       flat
       bordered
       hide-pagination
+      binary-state-sort
     >
       <template v-slot:top-right>
         <q-input
@@ -38,6 +39,19 @@
           :dense="$q.screen.lt.sm"
         />
       </template>
+      <template #header-cell-id="props">
+        <q-th auto-width :props="props">
+          <q-toggle
+            v-model="online"
+            @update:model-value="showOnlineOnly"
+            dense
+            class="q-mr-sm"
+            color="positive"
+            size="xs"
+          />
+          <span @click="props.sort">ID</span>
+        </q-th>
+      </template>
       <template #body="props">
         <q-tr :props="props">
           <q-td>
@@ -47,7 +61,7 @@
             </div>
           </q-td>
           <q-td>{{ props.row.name }}</q-td>
-          <q-td>{{ props.row.last_seen }}</q-td>
+          <q-td>{{ new Date(props.row.last_seen).toLocaleString() }}</q-td>
           <q-td>{{ props.row.ipv4 }}</q-td>
           <q-td>{{ props.row.ipv6 }}</q-td>
           <q-td>{{ props.row.user.name }}</q-td>
@@ -206,7 +220,7 @@
 </template>
 
 <script setup lang="ts">
-import { QTableColumn } from 'quasar'
+import { extend, QTableColumn } from 'quasar'
 import NodeConfiguration from 'src/components/nodes/NodeConfiguration.vue'
 import RouteConfigurationComponent from 'src/components/nodes/RouteConfigurationComponent.vue'
 import { QuasascaleNode } from 'src/types/Database'
@@ -234,6 +248,8 @@ const cols = ref<QTableColumn[]>([
     label: 'ID',
     field: 'id',
     align: 'left',
+    sortable: true,
+    sort: (a, b) => parseInt(a) - parseInt(b),
   },
   {
     name: 'name',
@@ -241,6 +257,7 @@ const cols = ref<QTableColumn[]>([
     label: 'Name',
     field: 'name',
     align: 'left',
+    sortable: true,
   },
   {
     name: 'lastSeen',
@@ -255,6 +272,8 @@ const cols = ref<QTableColumn[]>([
     label: 'IPv4',
     field: 'ipv4',
     align: 'left',
+    sortable: true,
+    sort: (a, b) => sortIPv4(a, b),
   },
   {
     name: 'ipv6',
@@ -269,13 +288,14 @@ const cols = ref<QTableColumn[]>([
     label: 'User',
     field: 'user',
     align: 'left',
-    format: (val) => val.name,
+    sortable: true,
+    sort: (a, b) => a.name.localeCompare(b.name),
   },
   {
     name: 'tags',
     required: true,
     label: 'Forced Tags',
-    field: 'tags',
+    field: 'forced_tags',
     align: 'left',
   },
   {
@@ -285,6 +305,23 @@ const cols = ref<QTableColumn[]>([
     align: 'right',
   },
 ])
+
+const online = ref(false)
+function sortIPv4(a: string, b: string) {
+  const num1 = Number(
+    a
+      .split('.')
+      .map((num) => `000${num}`.slice(-3))
+      .join(''),
+  )
+  const num2 = Number(
+    b
+      .split('.')
+      .map((num) => `000${num}`.slice(-3))
+      .join(''),
+  )
+  return num1 - num2
+}
 
 function editNode(node: QuasascaleNode, index: number): void {
   useDialog()
@@ -392,7 +429,18 @@ async function manageRoutes(node: QuasascaleNode): Promise<void> {
 function formatTag(tag: string) {
   return tag.replace('tag:', '')
 }
+
 onMounted(async () => {
   nodes.value = await getNodes()
 })
+
+const initial_nodes: QuasascaleNode[] = []
+function showOnlineOnly(value: boolean) {
+  if (value) {
+    extend(true, initial_nodes, nodes.value)
+    nodes.value = nodes.value.filter((node) => node.online)
+  } else {
+    extend(true, nodes.value, initial_nodes)
+  }
+}
 </script>

@@ -12,7 +12,7 @@ import { AutoImport } from './autoimport.config'
 import Unocss from 'unocss/vite'
 import unoConfig from 'uno.config'
 
-export default configure((/* ctx */) => {
+export default configure((ctx) => {
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
@@ -54,7 +54,9 @@ export default configure((/* ctx */) => {
 
       // publicPath: '/',
       // analyze: true,
-      env: { BUN_URL: 'http://localhost:3000/' },
+      env: {
+        BUN_URL: ctx.dev ? 'http://localhost:3000/' : 'http://localhost:3000/',
+      },
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,
@@ -194,19 +196,7 @@ export default configure((/* ctx */) => {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'com.blur.bidding',
-        win: {
-          target: 'nsis',
-          verifyUpdateCodeSignature: false,
-        },
-        publish: [
-          {
-            provider: 'generic',
-            url: 'https://nftbot-update.hage-it.com/',
-            channel: 'latest',
-            useMultipleRangeRequest: false,
-          },
-        ],
+        appId: 'quasar-project',
       },
     },
 

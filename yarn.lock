@@ -495,10 +495,10 @@
   dependencies:
     "@iconify/types" "*"
 
-"@iconify-json/material-symbols-light@^1.2.1":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@iconify-json/material-symbols-light/-/material-symbols-light-1.2.2.tgz#6867eddacf0cf95bca82d6ba5636ffa27b4e637a"
-  integrity sha512-Wey9XCGiZPK9zenZATmA0yz6jUK40c3WwgCOhxbtEbPji/IidgtAd3Oa57AfUcViC3M3AP5sHIb2FV2o5p1NEA==
+"@iconify-json/material-symbols-light@^1.2.2":
+  version "1.2.12"
+  resolved "https://registry.yarnpkg.com/@iconify-json/material-symbols-light/-/material-symbols-light-1.2.12.tgz#2ddf13b7b5b3383dea0d3c03080f72d65ed99107"
+  integrity sha512-9ys2my8tdC3UUAV10UXF2SSE+7wwcmHbZtW4JIZuMu+S4E7hZCn3R0sxg8izdazyXCK0tnGrSNPfS5JY+SpPDw==
   dependencies:
     "@iconify/types" "*"
 

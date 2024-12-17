@@ -60,10 +60,43 @@
               {{ props.row.id }}
             </div>
           </q-td>
-          <q-td>{{ props.row.name }}</q-td>
+          <q-td>
+            {{ props.row.name }}
+            <q-btn
+              icon="content_copy"
+              size="xs"
+              dense
+              round
+              flat
+              color="primary"
+              @click="copyName(props.row.name)"
+            />
+          </q-td>
           <q-td>{{ new Date(props.row.last_seen).toLocaleString() }}</q-td>
-          <q-td>{{ props.row.ipv4 }}</q-td>
-          <q-td>{{ props.row.ipv6 }}</q-td>
+          <q-td>
+            {{ props.row.ipv4 }}
+            <q-btn
+              icon="content_copy"
+              size="xs"
+              dense
+              round
+              flat
+              color="primary"
+              @click="copyToClipboard(props.row.ipv4)"
+            />
+          </q-td>
+          <q-td>
+            {{ props.row.ipv6 }}
+            <q-btn
+              icon="content_copy"
+              size="xs"
+              dense
+              round
+              flat
+              color="primary"
+              @click="copyToClipboard(props.row.ipv6)"
+            />
+          </q-td>
           <q-td>{{ props.row.user.name }}</q-td>
           <q-td
             ><template v-for="tag in props.row.forced_tags" :key="tag">
@@ -224,10 +257,11 @@ import { extend, QTableColumn } from 'quasar'
 import NodeConfiguration from 'src/components/nodes/NodeConfiguration.vue'
 import RouteConfigurationComponent from 'src/components/nodes/RouteConfigurationComponent.vue'
 import { QuasascaleNode } from 'src/types/Database'
-import { is } from 'quasar'
+import { is, copyToClipboard } from 'quasar'
 import { AxiosError } from 'axios'
 import { api } from 'boot/axios'
-
+const { tailnetName } = storeToRefs(useDnsSettingsStore())
+const { getDNSSettings } = useDnsSettingsStore()
 const filter = ref('')
 const { grid_view } = storeToRefs(useSettingsStore())
 const {
@@ -442,5 +476,12 @@ function showOnlineOnly(value: boolean) {
   } else {
     extend(true, nodes.value, initial_nodes)
   }
+}
+
+async function copyName(name: string) {
+  if (tailnetName.value === null) {
+    await getDNSSettings()
+  }
+  copyToClipboard(`${name}.${tailnetName.value}`)
 }
 </script>

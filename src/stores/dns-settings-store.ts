@@ -4,7 +4,7 @@ import { NamedResource } from 'src/types/Database'
 
 export const useDnsSettingsStore = defineStore('dns-settings', () => {
   const { has_config_changed } = storeToRefs(useSettingsStore())
-  const tailnetName = ref()
+  const tailnetName = ref<string | null>(null)
   const is_edditing = ref(false)
   const is_magic_dns = ref(true)
   const override_local_dns = ref(false)
